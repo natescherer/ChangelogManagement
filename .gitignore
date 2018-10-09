@@ -1,0 +1,5 @@
+# Compiled/packaged files
+out/*
+
+# Don't track README.md until project is ready to go live
+README.md
