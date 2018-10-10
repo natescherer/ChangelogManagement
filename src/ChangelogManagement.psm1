@@ -78,30 +78,42 @@ function Update-Changelog {
     $Today = (Get-Date -Format 'o').Split('T')[0]
     $NewRelease = "## [$ReleaseVersion] - $Today$Eol" + $NewRelease
 
-    # Inject compare/tree URL(s) into footer
-    if ($Data.Released -ne "") {
-        $UrlBase = ($Data.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
-        if (($UrlBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
-            $ReleasePrefix = "v"
-        }
-        $NewFooter = ($Data.Footer -replace "\[Unreleased\].*",("[Unreleased]: " +
-            "$UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-            "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($Data.LastVersion)..$ReleasePrefix$ReleaseVersion"))
-        $NewFooter = $NewFooter
-    } else {
-        $NewFooter = "$Eol[Unreleased]: " +
-            "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD"
-        $NewFooter += "$Eol[$ReleaseVersion]: " +
-            "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion"
+    # Inject links into footer
+    if ($LinkMode -eq "Automatic") {
+        if ($Data.Released -ne "") {
+            $UrlBase = ($Data.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
+            if (($UrlBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
+                $ReleasePrefix = "v"
+            }
+            $NewFooter = ($Data.Footer -replace "\[Unreleased\].*",("[Unreleased]: " +
+                "$UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
+                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($Data.LastVersion)..$ReleasePrefix$ReleaseVersion"))
+        } else {
+            $NewFooter = "$Eol[Unreleased]: " +
+                "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD"
+            $NewFooter += "$Eol[$ReleaseVersion]: " +
+                "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion"
 
-        Write-Output ("Because this is the first release, you will need to manually update the URLs " +
-            "at the bottom of the file. Future releases will reuse this information, and won't require this " +
-            "manual step.")
+            Write-Output ("Because this is the first release, you will need to manually update the URLs " +
+                "at the bottom of the file. Future releases will reuse this information, and won't require this " +
+                "manual step.")
+        }
+        if (($UrlBase -notlike "*github.com*") -and ($UrlBase -notlike "*gitlab.com*")) {
+            Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +
+                "properly. Interested in having your SCM work with this Automatic LinkMode? Open an issue " +
+                "at https://github.com/natescherer/ChangelogManagement/issues.")
+        }
     }
-    if (($UrlBase -notlike "*github.com*") -and ($UrlBase -notlike "*gitlab.com*")) {
-        Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +
-            "properly. Interested in having your SCM work with this functionality? Open an issue " +
-            "at https://github.com/natescherer/ChangelogManagement/issues.")
+    if ($LinkMode -eq "Manual") {
+        if ($Data.Released -ne "") {
+            $NewFooter = $Data.Footer -replace "\[Unreleased\].*",("[Unreleased]: ENTER-URL-HERE$Eol" +
+                "[$ReleaseVersion]: ENTER-URL-HERE")
+        } else {
+            $NewFooter = "$Eol[Unreleased]: ENTER-URL-HERE"
+            $NewFooter += "$Eol[$ReleaseVersion]: ENTER-URL-HERE"
+        }
+        Write-Output ("Because you selected LinkMode Manual, you will need to manually update the links at the " +
+            "bottom of the output file.")
     }
 
     # Build & write updated CHANGELOG.md
