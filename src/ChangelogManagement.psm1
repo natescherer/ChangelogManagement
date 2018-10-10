@@ -58,15 +58,15 @@ function Update-Changelog {
         [string]$LinkMode = "Automatic"
     )
 
-    $Data = Get-ChangelogData -Path $Path
+    $ChangelogData = Get-ChangelogData -Path $Path
 
     # Make sure $ReleaseVersion is newer than the last version in the changelog
-    if ([System.Version]$ReleaseVersion -le [System.Version]$Data.LastVersion) {
-        throw "$ReleaseVersion is not greater than the previous version in the changelog ($Data.LastVersion)."
+    if ([System.Version]$ReleaseVersion -le [System.Version]$ChangelogData.LastVersion) {
+        throw "$ReleaseVersion is not greater than the previous version in the changelog ($ChangelogData.LastVersion)."
     }
 
-    # Create $NewRelease by removing empty sections from $Data.Unreleased
-    $NewRelease = $Data.Unreleased.RawData -replace "## \[Unreleased\]$Eol",""
+    # Create $NewRelease by removing empty sections from $ChangelogData.Unreleased
+    $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$Eol",""
     $NewRelease = $NewRelease -replace "### Added$Eol### Changed","### Changed"
     $NewRelease = $NewRelease -replace "### Changed$Eol### Deprecated","### Deprecated"
     $NewRelease = $NewRelease -replace "### Deprecated$Eol### Removed","### Removed"
@@ -80,14 +80,14 @@ function Update-Changelog {
 
     # Inject links into footer
     if ($LinkMode -eq "Automatic") {
-        if ($Data.Released -ne "") {
-            $UrlBase = ($Data.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
+        if ($ChangelogData.Released -ne "") {
+            $UrlBase = ($ChangelogData.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
             if (($UrlBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
                 $ReleasePrefix = "v"
             }
-            $NewFooter = ($Data.Footer -replace "\[Unreleased\].*",("[Unreleased]: " +
+            $NewFooter = ($ChangelogData.Footer -replace "\[Unreleased\].*",("[Unreleased]: " +
                 "$UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($Data.LastVersion)..$ReleasePrefix$ReleaseVersion"))
+                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion"))
         } else {
             $NewFooter = "$Eol[Unreleased]: " +
                 "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD"
@@ -105,8 +105,8 @@ function Update-Changelog {
         }
     }
     if ($LinkMode -eq "Manual") {
-        if ($Data.Released -ne "") {
-            $NewFooter = $Data.Footer -replace "\[Unreleased\].*",("[Unreleased]: ENTER-URL-HERE$Eol" +
+        if ($ChangelogData.Released -ne "") {
+            $NewFooter = $ChangelogData.Footer -replace "\[Unreleased\].*",("[Unreleased]: ENTER-URL-HERE$Eol" +
                 "[$ReleaseVersion]: ENTER-URL-HERE")
         } else {
             $NewFooter = "$Eol[Unreleased]: ENTER-URL-HERE"
@@ -117,7 +117,7 @@ function Update-Changelog {
     }
 
     # Build & write updated CHANGELOG.md
-    $Output += $Data.Header
+    $Output += $ChangelogData.Header
     $Output += ("## [Unreleased]$Eol" +
         "### Added$Eol" +
         "### Changed$Eol" +
@@ -126,9 +126,9 @@ function Update-Changelog {
         "### Fixed$Eol" +
         "### Security$Eol$Eol")
     $Output += $NewRelease
-    if ($Data.Released) {
-        $Output += "$Eol"
-        foreach ($Release in $Data.Released) {
+    if ($ChangelogData.Released) {
+        $Output += $Eol
+        foreach ($Release in $ChangelogData.Released) {
             $Output += $Release.RawData
             $Output += "$Eol$Eol"
         }
@@ -168,7 +168,7 @@ function Get-ChangelogData {
         [string]$Path = "CHANGELOG.md"
     )
 
-    $Data = Get-Content -Path $Path | Out-String
+    $ChangelogData = Get-Content -Path $Path | Out-String
     $Output = [PSCustomObject]@{
         "Header" = ""
         "Unreleased" = [PSCustomObject]@{}
@@ -178,11 +178,11 @@ function Get-ChangelogData {
     }
 
     # Split changelog into $Sections and split header and footer into their own variables
-    [System.Collections.ArrayList]$Sections = $Data -split "## \["
+    [System.Collections.ArrayList]$Sections = $ChangelogData -split "## \["
     $Output.Header = $Sections[0]
     $Sections.Remove($Output.Header)
     if ($Sections[-1] -like "*[Unreleased]:*") {
-        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1].TrimEnd("$Eol")
+        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1].TrimEnd($Eol)
         $Sections[-1] = $( $Sections[-1] -split "\[Unreleased\]:" )[0]
     }
 
@@ -190,7 +190,7 @@ function Get-ChangelogData {
     # line breaks
     $i = 1
     while ($i -le $Sections.Count) {
-        $Sections[$i - 1] = "## [" + $Sections[$i - 1].TrimEnd("$Eol")
+        $Sections[$i - 1] = "## [" + $Sections[$i - 1].TrimEnd($Eol)
         $i++
     }
 
@@ -202,14 +202,14 @@ function Get-ChangelogData {
     # Construct the $Output.Unreleased object
     $Output.Unreleased = [PSCustomObject]@{
         "RawData" = $UnreleasedTemp
-        "Link" = (($Output.Footer -split "Unreleased\]: ")[1] -split "$Eol")[0]
+        "Link" = (($Output.Footer -split "Unreleased\]: ")[1] -split $Eol)[0]
         "Data" = [PSCustomObject]@{
-            Added = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-            Changed = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-            Deprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-            Removed = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-            Fixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-            Security = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
+            Added = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Changed = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Deprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Removed = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Fixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Security = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
         }
     }
 
@@ -218,16 +218,16 @@ function Get-ChangelogData {
         $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
         $Output.Released += [PSCustomObject]@{
             "RawData" = $Release
-            "Date" = Get-Date ($Release -split "\] \- ")[1].Split("$Eol")[0]
+            "Date" = Get-Date ($Release -split "\] \- ")[1].Split($Eol)[0]
             "Version" = $LoopVersionNumber
-            "Link" = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split "$Eol")[0]
+            "Link" = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $Eol)[0]
             "Data" = [PSCustomObject]@{
-                Added = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-                Changed = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-                Deprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-                Removed = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-                Fixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
-                Security = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd("$Eol") -split "$Eol" | ForEach-Object { $_.TrimStart("- ") }
+                Added = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Changed = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Deprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Removed = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Fixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Security = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
             }
         }
     }
@@ -288,27 +288,32 @@ function Convertfrom-Changelog {
         # section removed), Text (markdown and links removed), and TextRelease (Unreleased section, markdown, and
         # links removed).
         [ValidateSet("Release","Text","TextRelease")]
-        [string]$Format
+        [string]$Format,
+
+        [parameter(Mandatory=$false)]
+        # Exclude header from output
+        [switch]$NoHeader
     )
 
-    $Data = Get-ChangelogData -Path $Path
+    $ChangelogData = Get-ChangelogData -Path $Path
     $Output = ""
-
-    if ($Format -like "Text*") {
-        $Output += ($Data.Header -replace "\[","") -replace "\]"," "
-    } else {
-        $Output += $Data.Header
+    if ($NoHeader -eq $false) {
+        if ($Format -like "Text*") {
+            $Output += ($ChangelogData.Header -replace "\[","") -replace "\]"," "
+        } else {
+            $Output += $ChangelogData.Header
+        }
     }
     if ($Format -notlike "*Release") {
-        $Output += $Data.Unreleased.RawData
+        $Output += $ChangelogData.Unreleased.RawData
         $Output += "$Eol$Eol"
     }
-    foreach ($Release in $Data.Released) {
+    foreach ($Release in $ChangelogData.Released) {
         $Output += $Release.RawData
         $Output += "$Eol$Eol"
     }
     if ($Format -eq "Release") {
-        $Output += $Data.Footer -replace "\[Unreleased\].*$Eol",""
+        $Output += $ChangelogData.Footer -replace "\[Unreleased\].*$Eol",""
     }
 
     if ($Format -like "Text*") {
@@ -320,6 +325,134 @@ function Convertfrom-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
+function New-Changelog {
+    <#
+    .SYNOPSIS
+        Creates a new, blank changelog in Keep a Changelog 1.0.0 format.
+
+    .DESCRIPTION
+        This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
+
+    .INPUTS
+        This cmdlet does not accept pipeline input
+
+    .OUTPUTS
+        This cmdlet does not generate output
+
+    .EXAMPLE
+        New-Changelog
+        (Does not generate outpit, but creates a new changelog at .\CHANGELOG.md)
+
+    .EXAMPLE
+        New-Changelog -Path project\CHANGELOG.md -NoSemVer
+        (Does not generate outpit, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+
+    .LINK
+        https://github.com/natescherer/ChangelogManagement
+    #>
+
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        # The path to the output changelog file, if it is different than .\CHANGELOG.md
+        [string]$Path = "CHANGELOG.md",
+
+        [parameter(Mandatory=$false)]
+        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
+        # versioning scheme
+        [switch]$NoSemVer
+    )
+
+    $Output = ""
+
+    $Output += "# Changelog$Eol"
+    $Output += "All notable changes to this project will be documented in this file.$Eol$Eol"
+    $Output += "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)"
+    if ($NoSemVer -eq $false) {
+        $Output += ",$Eol"
+        $Output += "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)"
+    }
+    $Output += ".$Eol$Eol"
+    $Output += "## [Unreleased]$Eol"
+    $Output += "### Added$Eol"
+    $Output += "### Changed$Eol"
+    $Output += "### Deprecated$Eol"
+    $Output += "### Removed$Eol"
+    $Output += "### Fixed$Eol"
+    $Output += "### Security"
+
+    Set-Content -Value $Output -Path $Path -NoNewline
+}
+
+function Add-ChangelogData {
+    <#
+    .SYNOPSIS
+        Adds an item to a changelog file in Keep a Changelog 1.0.0 format.
+
+    .DESCRIPTION
+        This cmdlet adds new Added/Changed/Deprecated/Removed/Fixed/Security items to the Unreleased section of a
+        changelog in Keep a Changelog 1.0.0 format.
+
+    .INPUTS
+        This cmdlet does not accept pipeline input
+
+    .OUTPUTS
+        This cmdlet does not generate output
+
+    .EXAMPLE
+        Add-ChangelogData -Type "Added" -Data "Spanish language translation"
+        (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+
+    .EXAMPLE
+        Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
+        (Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
+
+    .LINK
+        https://github.com/natescherer/ChangelogManagement
+    #>
+
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory=$false)]
+        [ValidateScript({Test-Path -Path $_})]
+        # The path to the source changelog file, if it is different than .\CHANGELOG.md
+        [string]$Path = "CHANGELOG.md",
+
+        [parameter(Mandatory=$false)]
+        [ValidatePattern(".*\.md")]
+        # The path to the output changelog file, if it is different than than the source path
+        [string]$OutputPath = $Path,
+
+        [parameter(Mandatory=$true)]
+        [ValidateSet("Added","Changed","Deprecated","Removed","Fixed","Security")]
+        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
+        # versioning scheme
+        [string]$Type,
+
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        # The value of the change you are adding to the changelog
+        [string]$Data
+    )
+
+    $ChangelogData = Get-ChangelogData -Path $Path
+
+    $Output = ""
+    $Output += $ChangelogData.Header
+    $Output += $ChangelogData.Unreleased.RawData -replace "### $Type","### $Type$Eol- $Data"
+    $Output += "$Eol$Eol"
+    foreach ($Release in $ChangelogData.Released) {
+        $Output += $Release.RawData
+        $Output += "$Eol$Eol"
+    }
+    $Output += $ChangelogData.Footer
+
+    Set-Content -Value $Output -Path $OutputPath -NoNewline
+}
+
 Export-ModuleMember -Function Update-Changelog
 Export-ModuleMember -Function Get-ChangelogData
 Export-ModuleMember -Function Convertfrom-Changelog
+Export-ModuleMember -Function New-Changelog
+Export-ModuleMember -Function Add-ChangelogData
