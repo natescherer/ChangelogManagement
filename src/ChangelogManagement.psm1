@@ -85,9 +85,9 @@ function Update-Changelog {
             if (($UrlBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
                 $ReleasePrefix = "v"
             }
-            $NewFooter = ($ChangelogData.Footer -replace "\[Unreleased\].*",("[Unreleased]: " +
-                "$UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion"))
+            $NewFooter = ("[Unreleased]: $UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
+                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion" +
+                ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
         } else {
             $NewFooter = "$Eol[Unreleased]: " +
                 "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD"
