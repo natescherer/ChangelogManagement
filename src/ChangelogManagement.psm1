@@ -1,5 +1,235 @@
 $Eol = [System.Environment]::NewLine
 
+function Get-ChangelogData {
+    <#
+    .SYNOPSIS
+        Takes a changelog in Keep a Changelog 1.0.0 format and parses the data into a PowerShell object.
+
+    .DESCRIPTION
+        This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 format into a PowerShell object.
+
+    .INPUTS
+        This cmdlet does not accept pipeline input
+
+    .OUTPUTS
+        This cmdlet outputs a PSCustomObject containing the changelog data.
+
+    .EXAMPLE
+        Get-ChangelogData -Path .\CHANGELOG.md
+        (Does not generate output, but updates changelog at .\CHANGELOG.md, overwriting it with changes)
+
+    .LINK
+        https://github.com/natescherer/ChangelogManagement
+    #>
+
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory=$false)]
+        [ValidateScript({Test-Path -Path $_})]
+        # Path to the changelog. Defaults to ".\CHANGELOG.md".
+        [string]$Path = "CHANGELOG.md"
+    )
+
+    $ChangelogData = $Result = ((Get-Content $Path) -join $Eol) + $Eol
+    $Output = [PSCustomObject]@{
+        "Header" = ""
+        "Unreleased" = [PSCustomObject]@{}
+        "Released" = @()
+        "Footer" = ""
+        "LastVersion" = ""
+    }
+
+    # Split changelog into $Sections and split header and footer into their own variables
+    [System.Collections.ArrayList]$Sections = $ChangelogData -split "## \["
+    $Output.Header = $Sections[0]
+    $Sections.Remove($Output.Header)
+    if ($Sections[-1] -like "*[Unreleased]:*") {
+        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1]
+        $Sections[-1] = $( $Sections[-1] -split "\[Unreleased\]:" )[0]
+    }
+
+    # Restore the leading "## [" onto each section that was previously removed by split function, and trim extra
+    # line breaks
+    $i = 1
+    while ($i -le $Sections.Count) {
+        $Sections[$i - 1] = "## [" + $Sections[$i - 1]
+        $i++
+    }
+
+    # Split the Unreleased section into $UnreleasedTemp, then remove it from $Sections
+    $UnreleasedTemp = $Sections[0]
+    $Sections.Remove($UnreleasedTemp)
+
+    # Construct the $Output.Unreleased object
+    $Output.Unreleased = [PSCustomObject]@{
+        "RawData" = $UnreleasedTemp
+        "Link" = (($Output.Footer -split "Unreleased\]: ")[1] -split $Eol)[0]
+        "Data" = [PSCustomObject]@{
+            Added = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Changed = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Deprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Removed = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Fixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Security = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+    }
+
+    # Construct the $Output.Released array
+    foreach ($Release in $Sections) {
+        $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
+        $Output.Released += [PSCustomObject]@{
+            "RawData" = $Release
+            "Date" = Get-Date ($Release -split "\] \- ")[1].Split($Eol)[0]
+            "Version" = $LoopVersionNumber
+            "Link" = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $Eol)[0]
+            "Data" = [PSCustomObject]@{
+                Added = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Changed = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Deprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Removed = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Fixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Security = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            }
+        }
+    }
+
+    # Set $Output.LastVersion to the version number of the latest release listed in the changelog, or null if there
+    # have not been any releases yet
+    if ($Output.Released[0].Version) {
+        $Output.LastVersion = $Output.Released[0].Version
+    } else {
+        $Output.LastVersion = $null
+    }
+
+    $Output
+}
+
+function Add-ChangelogData {
+    <#
+    .SYNOPSIS
+        Adds an item to a changelog file in Keep a Changelog 1.0.0 format.
+
+    .DESCRIPTION
+        This cmdlet adds new Added/Changed/Deprecated/Removed/Fixed/Security items to the Unreleased section of a
+        changelog in Keep a Changelog 1.0.0 format.
+
+    .INPUTS
+        This cmdlet does not accept pipeline input
+
+    .OUTPUTS
+        This cmdlet does not generate output
+
+    .EXAMPLE
+        Add-ChangelogData -Type "Added" -Data "Spanish language translation"
+        (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+
+    .EXAMPLE
+        Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
+        (Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
+
+    .LINK
+        https://github.com/natescherer/ChangelogManagement
+    #>
+
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory=$false)]
+        [ValidateScript({Test-Path -Path $_})]
+        # The path to the source changelog file, if it is different than .\CHANGELOG.md
+        [string]$Path = "CHANGELOG.md",
+
+        [parameter(Mandatory=$false)]
+        [ValidatePattern(".*\.md")]
+        # The path to the output changelog file, if it is different than than the source path
+        [string]$OutputPath = $Path,
+
+        [parameter(Mandatory=$true)]
+        [ValidateSet("Added","Changed","Deprecated","Removed","Fixed","Security")]
+        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
+        # versioning scheme
+        [string]$Type,
+
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        # The value of the change you are adding to the changelog
+        [string]$Data
+    )
+
+    $ChangelogData = Get-ChangelogData -Path $Path
+
+    $Output = ""
+    $Output += $ChangelogData.Header
+    $Output += $ChangelogData.Unreleased.RawData -replace "### $Type","### $Type$Eol- $Data"
+    $Output += "$Eol$Eol"
+    foreach ($Release in $ChangelogData.Released) {
+        $Output += $Release.RawData
+        $Output += "$Eol$Eol"
+    }
+    $Output += $ChangelogData.Footer
+
+    Set-Content -Value $Output -Path $OutputPath -NoNewline
+}
+
+function New-Changelog {
+    <#
+    .SYNOPSIS
+        Creates a new, blank changelog in Keep a Changelog 1.0.0 format.
+
+    .DESCRIPTION
+        This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
+
+    .INPUTS
+        This cmdlet does not accept pipeline input
+
+    .OUTPUTS
+        This cmdlet does not generate output
+
+    .EXAMPLE
+        New-Changelog
+        (Does not generate outpit, but creates a new changelog at .\CHANGELOG.md)
+
+    .EXAMPLE
+        New-Changelog -Path project\CHANGELOG.md -NoSemVer
+        (Does not generate outpit, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+
+    .LINK
+        https://github.com/natescherer/ChangelogManagement
+    #>
+
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        # The path to the output changelog file, if it is different than .\CHANGELOG.md
+        [string]$Path = "CHANGELOG.md",
+
+        [parameter(Mandatory=$false)]
+        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
+        # versioning scheme
+        [switch]$NoSemVer
+    )
+
+    $Output = ""
+
+    $Output += "# Changelog$Eol"
+    $Output += "All notable changes to this project will be documented in this file.$Eol$Eol"
+    $Output += "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)"
+    if ($NoSemVer -eq $false) {
+        $Output += ",$Eol"
+        $Output += "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)"
+    }
+    $Output += ".$Eol$Eol"
+    $Output += "## [Unreleased]$Eol"
+    $Output += "### Added$Eol$Eol"
+    $Output += "### Changed$Eol$Eol"
+    $Output += "### Deprecated$Eol$Eol"
+    $Output += "### Removed$Eol$Eol"
+    $Output += "### Fixed$Eol$Eol"
+    $Output += "### Security$Eol$Eol"
+
+    Set-Content -Value $Output -Path $Path -NoNewline
+}
+
 function Update-Changelog {
     <#
     .SYNOPSIS
@@ -137,110 +367,6 @@ function Update-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
-function Get-ChangelogData {
-    <#
-    .SYNOPSIS
-        Takes a changelog in Keep a Changelog 1.0.0 format and parses the data into a PowerShell object.
-
-    .DESCRIPTION
-        This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 format into a PowerShell object.
-
-    .INPUTS
-        This cmdlet does not accept pipeline input
-
-    .OUTPUTS
-        This cmdlet outputs a PSCustomObject containing the changelog data.
-
-    .EXAMPLE
-        Get-ChangelogData -Path .\CHANGELOG.md
-        (Does not generate output, but updates changelog at .\CHANGELOG.md, overwriting it with changes)
-
-    .LINK
-        https://github.com/natescherer/ChangelogManagement
-    #>
-
-    [CmdletBinding()]
-    param (
-        [parameter(Mandatory=$false)]
-        [ValidateScript({Test-Path -Path $_})]
-        # Path to the changelog. Defaults to ".\CHANGELOG.md".
-        [string]$Path = "CHANGELOG.md"
-    )
-
-    $ChangelogData = $Result = ((Get-Content $Path) -join $Eol) + $Eol
-    $Output = [PSCustomObject]@{
-        "Header" = ""
-        "Unreleased" = [PSCustomObject]@{}
-        "Released" = @()
-        "Footer" = ""
-        "LastVersion" = ""
-    }
-
-    # Split changelog into $Sections and split header and footer into their own variables
-    [System.Collections.ArrayList]$Sections = $ChangelogData -split "## \["
-    $Output.Header = $Sections[0]
-    $Sections.Remove($Output.Header)
-    if ($Sections[-1] -like "*[Unreleased]:*") {
-        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1]
-        $Sections[-1] = $( $Sections[-1] -split "\[Unreleased\]:" )[0]
-    }
-
-    # Restore the leading "## [" onto each section that was previously removed by split function, and trim extra
-    # line breaks
-    $i = 1
-    while ($i -le $Sections.Count) {
-        $Sections[$i - 1] = "## [" + $Sections[$i - 1]
-        $i++
-    }
-
-    # Split the Unreleased section into $UnreleasedTemp, then remove it from $Sections
-    $UnreleasedTemp = $Sections[0]
-    $Sections.Remove($UnreleasedTemp)
-
-    # Construct the $Output.Unreleased object
-    $Output.Unreleased = [PSCustomObject]@{
-        "RawData" = $UnreleasedTemp
-        "Link" = (($Output.Footer -split "Unreleased\]: ")[1] -split $Eol)[0]
-        "Data" = [PSCustomObject]@{
-            Added = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Changed = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Deprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Removed = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Fixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Security = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-        }
-    }
-
-    # Construct the $Output.Released array
-    foreach ($Release in $Sections) {
-        $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
-        $Output.Released += [PSCustomObject]@{
-            "RawData" = $Release
-            "Date" = Get-Date ($Release -split "\] \- ")[1].Split($Eol)[0]
-            "Version" = $LoopVersionNumber
-            "Link" = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $Eol)[0]
-            "Data" = [PSCustomObject]@{
-                Added = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Changed = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Deprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Removed = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Fixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Security = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            }
-        }
-    }
-
-    # Set $Output.LastVersion to the version number of the latest release listed in the changelog, or null if there
-    # have not been any releases yet
-    if ($Output.Released[0].Version) {
-        $Output.LastVersion = $Output.Released[0].Version
-    } else {
-        $Output.LastVersion = $null
-    }
-
-    $Output
-}
-
 function Convertfrom-Changelog {
     <#
     .SYNOPSIS
@@ -323,134 +449,8 @@ function Convertfrom-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
-function New-Changelog {
-    <#
-    .SYNOPSIS
-        Creates a new, blank changelog in Keep a Changelog 1.0.0 format.
-
-    .DESCRIPTION
-        This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
-
-    .INPUTS
-        This cmdlet does not accept pipeline input
-
-    .OUTPUTS
-        This cmdlet does not generate output
-
-    .EXAMPLE
-        New-Changelog
-        (Does not generate outpit, but creates a new changelog at .\CHANGELOG.md)
-
-    .EXAMPLE
-        New-Changelog -Path project\CHANGELOG.md -NoSemVer
-        (Does not generate outpit, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
-
-    .LINK
-        https://github.com/natescherer/ChangelogManagement
-    #>
-
-    [CmdletBinding()]
-    param (
-        [parameter(Mandatory=$false)]
-        [ValidateNotNullOrEmpty()]
-        # The path to the output changelog file, if it is different than .\CHANGELOG.md
-        [string]$Path = "CHANGELOG.md",
-
-        [parameter(Mandatory=$false)]
-        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-        # versioning scheme
-        [switch]$NoSemVer
-    )
-
-    $Output = ""
-
-    $Output += "# Changelog$Eol"
-    $Output += "All notable changes to this project will be documented in this file.$Eol$Eol"
-    $Output += "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)"
-    if ($NoSemVer -eq $false) {
-        $Output += ",$Eol"
-        $Output += "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)"
-    }
-    $Output += ".$Eol$Eol"
-    $Output += "## [Unreleased]$Eol"
-    $Output += "### Added$Eol$Eol"
-    $Output += "### Changed$Eol$Eol"
-    $Output += "### Deprecated$Eol$Eol"
-    $Output += "### Removed$Eol$Eol"
-    $Output += "### Fixed$Eol$Eol"
-    $Output += "### Security$Eol$Eol"
-
-    Set-Content -Value $Output -Path $Path -NoNewline
-}
-
-function Add-ChangelogData {
-    <#
-    .SYNOPSIS
-        Adds an item to a changelog file in Keep a Changelog 1.0.0 format.
-
-    .DESCRIPTION
-        This cmdlet adds new Added/Changed/Deprecated/Removed/Fixed/Security items to the Unreleased section of a
-        changelog in Keep a Changelog 1.0.0 format.
-
-    .INPUTS
-        This cmdlet does not accept pipeline input
-
-    .OUTPUTS
-        This cmdlet does not generate output
-
-    .EXAMPLE
-        Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-        (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
-
-    .EXAMPLE
-        Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
-        (Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
-
-    .LINK
-        https://github.com/natescherer/ChangelogManagement
-    #>
-
-    [CmdletBinding()]
-    param (
-        [parameter(Mandatory=$false)]
-        [ValidateScript({Test-Path -Path $_})]
-        # The path to the source changelog file, if it is different than .\CHANGELOG.md
-        [string]$Path = "CHANGELOG.md",
-
-        [parameter(Mandatory=$false)]
-        [ValidatePattern(".*\.md")]
-        # The path to the output changelog file, if it is different than than the source path
-        [string]$OutputPath = $Path,
-
-        [parameter(Mandatory=$true)]
-        [ValidateSet("Added","Changed","Deprecated","Removed","Fixed","Security")]
-        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-        # versioning scheme
-        [string]$Type,
-
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        # The value of the change you are adding to the changelog
-        [string]$Data
-    )
-
-    $ChangelogData = Get-ChangelogData -Path $Path
-
-    $Output = ""
-    $Output += $ChangelogData.Header
-    $Output += $ChangelogData.Unreleased.RawData -replace "### $Type","### $Type$Eol- $Data"
-    $Output += "$Eol$Eol"
-    foreach ($Release in $ChangelogData.Released) {
-        $Output += $Release.RawData
-        $Output += "$Eol$Eol"
-    }
-    $Output += $ChangelogData.Footer
-
-    Set-Content -Value $Output -Path $OutputPath -NoNewline
-}
-
-Export-ModuleMember -Function Update-Changelog
 Export-ModuleMember -Function Get-ChangelogData
-Export-ModuleMember -Function Convertfrom-Changelog
-Export-ModuleMember -Function New-Changelog
 Export-ModuleMember -Function Add-ChangelogData
+Export-ModuleMember -Function New-Changelog
+Export-ModuleMember -Function Update-Changelog
+Export-ModuleMember -Function Convertfrom-Changelog
