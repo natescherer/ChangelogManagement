@@ -1,5 +1,17 @@
 $Eol = [System.Environment]::NewLine
 
+function Get-ContentWithBlankLinesAsString {
+    param([string]$Path)
+
+    [System.Collections.ArrayList]$ResultArrayList = Get-Content $Path
+
+    if ($ResultArrayList[-1] -eq "") {
+        $ResultArrayList[-1] = $Eol
+    }
+
+    $ResultArrayList -join $Eol
+}
+
 function Get-ChangelogData {
     <#
     .SYNOPSIS
@@ -30,7 +42,8 @@ function Get-ChangelogData {
         [string]$Path = "CHANGELOG.md"
     )
 
-    $ChangelogData = $Result = ((Get-Content $Path) -join $Eol) + $Eol
+    $ChangelogData = Get-ContentWithBlankLinesAsString -Path $Path
+
     $Output = [PSCustomObject]@{
         "Header" = ""
         "Unreleased" = [PSCustomObject]@{}
@@ -186,11 +199,11 @@ function New-Changelog {
 
     .EXAMPLE
         New-Changelog
-        (Does not generate outpit, but creates a new changelog at .\CHANGELOG.md)
+        (Does not generate output, but creates a new changelog at .\CHANGELOG.md)
 
     .EXAMPLE
         New-Changelog -Path project\CHANGELOG.md -NoSemVer
-        (Does not generate outpit, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+        (Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -282,7 +295,7 @@ function Update-Changelog {
 
         [parameter(Mandatory=$false)]
         # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based on existing links with GitHub/GitLab stype compares), Manual (adding placeholders which
+        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
         # will need manually updated), or None (not adding links). Defaults to Automatic.
         [ValidateSet("Automatic","Manual","None")]
         [string]$LinkMode = "Automatic"
