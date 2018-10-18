@@ -67,12 +67,12 @@ function Update-Changelog {
 
     # Create $NewRelease by removing empty sections from $ChangelogData.Unreleased
     $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$Eol",""
-    $NewRelease = $NewRelease -replace "### Added$Eol### Changed","### Changed"
-    $NewRelease = $NewRelease -replace "### Changed$Eol### Deprecated","### Deprecated"
-    $NewRelease = $NewRelease -replace "### Deprecated$Eol### Removed","### Removed"
-    $NewRelease = $NewRelease -replace "### Removed$Eol### Fixed","### Fixed"
-    $NewRelease = $NewRelease -replace "### Fixed$Eol### Security","### Security"
-    $NewRelease = $NewRelease -replace "### Security",""
+    $NewRelease = $NewRelease -replace "### Added$Eol$Eol",""
+    $NewRelease = $NewRelease -replace "### Changed$Eol$Eol",""
+    $NewRelease = $NewRelease -replace "### Deprecated$Eol$Eol",""
+    $NewRelease = $NewRelease -replace "### Removed$Eol$Eol",""
+    $NewRelease = $NewRelease -replace "### Fixed$Eol$Eol",""
+    $NewRelease = $NewRelease -replace "### Security$Eol$Eol",""
 
     # Edit $NewRelease to add version number and today's date
     $Today = (Get-Date -Format 'o').Split('T')[0]
@@ -119,18 +119,17 @@ function Update-Changelog {
     # Build & write updated CHANGELOG.md
     $Output += $ChangelogData.Header
     $Output += ("## [Unreleased]$Eol" +
-        "### Added$Eol" +
-        "### Changed$Eol" +
-        "### Deprecated$Eol" +
-        "### Removed$Eol" +
-        "### Fixed$Eol" +
+        "### Added$Eol$Eol" +
+        "### Changed$Eol$Eol" +
+        "### Deprecated$Eol$Eol" +
+        "### Removed$Eol$Eol" +
+        "### Fixed$Eol$Eol" +
         "### Security$Eol$Eol")
     $Output += $NewRelease
     if ($ChangelogData.Released) {
         $Output += $Eol
         foreach ($Release in $ChangelogData.Released) {
             $Output += $Release.RawData
-            $Output += "$Eol$Eol"
         }
     }
     $Output += $NewFooter
@@ -168,7 +167,7 @@ function Get-ChangelogData {
         [string]$Path = "CHANGELOG.md"
     )
 
-    $ChangelogData = Get-Content -Path $Path | Out-String
+    $ChangelogData = $Result = ((Get-Content $Path) -join $Eol) + $Eol
     $Output = [PSCustomObject]@{
         "Header" = ""
         "Unreleased" = [PSCustomObject]@{}
@@ -182,7 +181,7 @@ function Get-ChangelogData {
     $Output.Header = $Sections[0]
     $Sections.Remove($Output.Header)
     if ($Sections[-1] -like "*[Unreleased]:*") {
-        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1].TrimEnd($Eol)
+        $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1]
         $Sections[-1] = $( $Sections[-1] -split "\[Unreleased\]:" )[0]
     }
 
@@ -190,14 +189,13 @@ function Get-ChangelogData {
     # line breaks
     $i = 1
     while ($i -le $Sections.Count) {
-        $Sections[$i - 1] = "## [" + $Sections[$i - 1].TrimEnd($Eol)
+        $Sections[$i - 1] = "## [" + $Sections[$i - 1]
         $i++
     }
 
-    # Split the Unreleased section into $UnreleasedTemp remove it from $Sections, and trim header line
+    # Split the Unreleased section into $UnreleasedTemp, then remove it from $Sections
     $UnreleasedTemp = $Sections[0]
     $Sections.Remove($UnreleasedTemp)
-    #$UnreleasedTemp = $UnreleasedTemp -replace "## \[Unreleased\]$Eol",""
 
     # Construct the $Output.Unreleased object
     $Output.Unreleased = [PSCustomObject]@{
@@ -375,12 +373,12 @@ function New-Changelog {
     }
     $Output += ".$Eol$Eol"
     $Output += "## [Unreleased]$Eol"
-    $Output += "### Added$Eol"
-    $Output += "### Changed$Eol"
-    $Output += "### Deprecated$Eol"
-    $Output += "### Removed$Eol"
-    $Output += "### Fixed$Eol"
-    $Output += "### Security"
+    $Output += "### Added$Eol$Eol"
+    $Output += "### Changed$Eol$Eol"
+    $Output += "### Deprecated$Eol$Eol"
+    $Output += "### Removed$Eol$Eol"
+    $Output += "### Fixed$Eol$Eol"
+    $Output += "### Security$Eol$Eol"
 
     Set-Content -Value $Output -Path $Path -NoNewline
 }
