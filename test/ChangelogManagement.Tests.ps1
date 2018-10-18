@@ -3,24 +3,24 @@ $ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
 Get-Module -Name $ModuleName -All | Remove-Module -Force -ErrorAction Ignore
 Import-Module -Name $ModulePath -Force -ErrorAction Stop
 
-function Get-ContentWithBlankLinesAsString {
-    param([string]$Path)
-
-    [System.Collections.ArrayList]$ResultArrayList = (Get-Content $Path)
-
-    if ($ResultArrayList[-1] -eq "") {
-        $ResultArrayList[-1] = $Eol
-    }
-
-    $ResultArrayList -join $Eol
-}
-
 InModuleScope $ModuleName {
     $Eol = [System.Environment]::NewLine
     $Today = (Get-Date -Format 'o').Split('T')[0]
     $ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
     $ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
     $ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
+
+    function Get-ContentWithBlankLinesAsString {
+        param([string]$Path)
+
+        [System.Collections.ArrayList]$ResultArrayList = Get-Content $Path
+
+        if ($ResultArrayList[-1] -eq "") {
+            $ResultArrayList[-1] = $Eol
+        }
+
+        $ResultArrayList -join $Eol
+    }
 
     Describe 'Module Manifest Tests' {
         It 'Passes Test-ModuleManifest' {
@@ -317,56 +317,44 @@ InModuleScope $ModuleName {
         It "Added" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
         It "Changed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
         It "Deprecated" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
         It "Removed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
         It "Fixed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
         It "Security" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            Throw
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
         }
     }
 
@@ -374,11 +362,8 @@ InModuleScope $ModuleName {
         It "No Parameters" {
             $TestPath="TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -403,11 +388,7 @@ InModuleScope $ModuleName {
         It "-NoSemVer" {
             $TestPath="TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath -NoSemVer
-            [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-            if ($ResultArrayList[-1] -eq "") {
-                $ResultArrayList[-1] = $Eol
-            }
-            $Result = $ResultArrayList -join $Eol
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -438,11 +419,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0"
 
-                [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-                if ($ResultArrayList[-1] -eq "") {
-                    $ResultArrayList[-1] = $Eol
-                }
-                $Result = $ResultArrayList -join $Eol
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -501,11 +478,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0"
 
-                [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-                if ($ResultArrayList[-1] -eq "") {
-                    $ResultArrayList[-1] = $Eol
-                }
-                $Result = $ResultArrayList -join $Eol
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -577,11 +550,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0"
 
-                [System.Collections.ArrayList]$ResultArrayList = (Get-Content $TestPath)
-                if ($ResultArrayList[-1] -eq "") {
-                    $ResultArrayList[-1] = $Eol
-                }
-                $Result = $ResultArrayList -join $Eol
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
