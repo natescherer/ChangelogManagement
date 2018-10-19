@@ -58,7 +58,7 @@ Enter-Build {
 
 # Synopsis: Perform all build tasks.
 task . Clean, GenerateMarkdownHelp, UpdateHelpLinkInReadme, UpdateChangelog, MarkDownHelpToHtml, EmbedDotSource, Zip, 
-    FinishRelease, GitVerify, GetDataForGitHubRelease, CreateGitHubRelease
+    FinishRelease, GitVerify, GetDataForGitHubRelease,
 
 # Synopsis: Removes files from build, doc, and out.
 task Clean -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
@@ -236,8 +236,8 @@ task FinishRelease -If {$BuildMode -eq "Release"} {
 
 # Synopsis: Verify Git changes are committed and pushed.
 task GitVerify -If {$BuildMode -eq "Publish"} {
-    $GitUncommitedChanges = git diff
-    if ($GitUncommitedChanges) {
+    $GitUncommittedChanges = git diff
+    if ($GitUncommittedChanges) {
         throw "There are changes uncommitted to Git."
     }
 
@@ -261,59 +261,4 @@ task GetDataForGitHubRelease  -If {$BuildMode -eq "Publish"} {
     $script:PublishChangelog = (($ChangelogData -split "## \[$PublishVersion")[1] -split "`r`n`r`n")[0] -replace "\].*`r`n",""
 
     $script:PublishRepo = (($ChangelogData -split "https://github.com/")[1] -split "/compare")[0]
-}
-
-task CreateGitHubRelease -If {$BuildMode -eq "Publish"} {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-    $AuthHeader = "Basic {0}" -f [System.Convert]::ToBase64String([char[]]"$GitHubApiUser`:$GitHubApiToken")
-    $ReleaseHeaders = @{
-        "Authorization" = $AuthHeader
-    }
-    $ReleaseBody = @{
-        "tag_name" = "v$PublishVersion"
-        "name" = "v$PublishVersion"
-        "body" = $PublishChangelog
-    }
-    
-    $ReleaseParams = @{
-        "Headers" = $ReleaseHeaders
-        "Body" = ConvertTo-Json -InputObject $ReleaseBody
-        "Uri" = "https://api.github.com/repos/$PublishRepo/releases"
-        "Method" = "Post"
-    }
-    
-    if ($Proxy) {
-        $ReleaseParams += @{"Proxy" = "http://$Proxy"}
-        $ReleaseParams += @{"ProxyUseDefaultCredentials" = $true}       
-    }
-    
-    $ReleaseResult = Invoke-RestMethod @ReleaseParams
-    
-    if ($ReleaseResult.upload_url) {
-        $UploadHeaders = @{
-            "Authorization" = $AuthHeader
-            "Content-Type" = "application/zip"
-        }
-        $UploadParams = @{
-            "Headers" = $UploadHeaders
-            "Uri" = $ReleaseResult.upload_url.split("{")[0] + "?name=$PublishZipName"
-            "Method" = "Post"
-            "InFile" = "out\$PublishZipName"
-        }
-
-        if ($Proxy) {
-            $UploadParams += @{"Proxy" = "http://$Proxy"}
-            $UploadParams += @{"ProxyUseDefaultCredentials" = $true}       
-        }
-
-        $UploadResult = Invoke-RestMethod @UploadParams
-        if ($UploadResult.state -ne "uploaded") {
-            Write-Output $UploadResult
-            throw "There was a problem uploading."
-        }
-    } else {
-        Write-Output $ReleaseResult
-        throw "There was a problem releasing"
-    }
 }
