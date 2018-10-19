@@ -26,12 +26,10 @@ environment:
   GitHubKey:
     secure: mhTvr/vsjuMnWB6+KlvCZ7fDxj7riYN6PdXZFGlogv9OL0G2M3K/7OjxiggarWvi
 
-init:
-  - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
-  - ps: Update-AppveyorBuild -Version "$((Get-ChangelogVersion).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
-
 # Install prereqs for build
 install:
+  - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+  - ps: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
   - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
   - ps: Install-Module -Name InvokeBuild -Force
   - ps: Install-Module -Name Pester -Force
