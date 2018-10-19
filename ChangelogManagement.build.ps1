@@ -22,7 +22,7 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = "src\$( $BuildRoot.Split("\")[-1] ).ps1"
+    $ModuleName = "$($BuildRoot.Split("\")[-1]).ps1"
     Write-Build Green "Assuming $ModuleName value of $ModuleName based on project folder name."
 }
 
