@@ -334,10 +334,8 @@ function Update-Changelog {
                 "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion" +
                 ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
         } else {
-            $NewFooter = "$Eol[Unreleased]: " +
-                "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD"
-            $NewFooter += "$Eol[$ReleaseVersion]: " +
-                "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion"
+            $NewFooter = ("[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
+                "[$ReleaseVersion]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion")
 
             Write-Output ("Because this is the first release, you will need to manually update the URLs " +
                 "at the bottom of the file. Future releases will reuse this information, and won't require this " +
@@ -356,8 +354,8 @@ function Update-Changelog {
                 ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
             
         } else {
-            $NewFooter = "$Eol[Unreleased]: ENTER-URL-HERE"
-            $NewFooter += "$Eol[$ReleaseVersion]: ENTER-URL-HERE"
+            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$Eol" +
+                "[$ReleaseVersion]: ENTER-URL-HERE")
         }
         Write-Output ("Because you selected LinkMode Manual, you will need to manually update the links at the " +
             "bottom of the output file.")
@@ -377,7 +375,7 @@ function Update-Changelog {
         "### Security$Eol$Eol")
     $Output += $NewRelease
     if ($ChangelogData.Released) {
-        $Output += $Eol
+        #$Output += $Eol
         foreach ($Release in $ChangelogData.Released) {
             $Output += $Release.RawData
         }
