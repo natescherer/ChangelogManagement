@@ -22,8 +22,8 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = "$($BuildRoot.Split("\")[-1]).ps1"
-    Write-Build Green "Assuming $ModuleName value of $ModuleName based on project folder name."
+    $ModuleName = $BuildRoot.Split("\")[-1]
+    Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
 # Synopsis: Perform all build tasks.
