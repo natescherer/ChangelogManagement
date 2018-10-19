@@ -33,7 +33,7 @@ Copyright = "(c) 2018 Nate Scherer, licensed under the MIT License."
 Description = "This module provides cmdlets for managing changelogs, including creating, updating, and preparing for new version releases."
 
 # Minimum version of the Windows PowerShell engine required by this module
-# PowerShellVersion = ""
+PowerShellVersion = "5.0"
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ""
@@ -72,13 +72,13 @@ Description = "This module provides cmdlets for managing changelogs, including c
 FunctionsToExport = @("Update-Changelog","Get-ChangelogData","Convertfrom-Changelog","New-Changelog","Add-ChangelogData")
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-# CmdletsToExport = "*"
+CmdletsToExport = @()
 
 # Variables to export from this module
-# VariablesToExport = "*"
+VariablesToExport = @()
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-# AliasesToExport = "*"
+AliasesToExport = @()
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("Changelog", "Tools", "Build", "Release")
 
         # A URL to the license for this module.
         LicenseUri = "https://github.com/natescherer/ChangelogManagement/blob/master/LICENSE"
