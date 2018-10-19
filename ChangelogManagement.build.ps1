@@ -31,7 +31,7 @@ task . Clean, GenerateMarkdownHelp, UpdateHelpLinkInReadme, UpdateChangelog, Mar
 
 # Synopsis: Removes files from build, doc, and out.
 task Clean -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    Remove-Item -Path "docs/*" -Recurse
+    Remove-Item -Path "docs/*" -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "out/*" -Recurse -ErrorAction SilentlyContinue
 }
 
