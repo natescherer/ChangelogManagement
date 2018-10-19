@@ -15,7 +15,6 @@ version: 4.0.0.{build}
 skip_commits:
   files:
     - README.md
-    - appveyor.yml
   message: /updated readme.*|update readme.*s|update docs.*|update version.*|update appveyor.*/
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
