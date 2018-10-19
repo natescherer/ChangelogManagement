@@ -38,7 +38,7 @@ install:
   - ps: Install-Module -Name MarkdownToHtml -Force
 
 build_script:
-  - ps: Invoke-Build
+  - ps: Invoke-Build -ReleaseVersion $env:APPVEYOR_BUILD_VERSION -BuildMode "Release"
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
@@ -60,7 +60,7 @@ artifacts:
 
 before_deploy:
   - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-  - ps: $env:GitHubTag = "v$((Get-ChangelogData).LastVersion)"
+  - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION)"
 
 deploy:
   tag: $(GitHubTag)
