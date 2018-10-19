@@ -1,4 +1,6 @@
-# Project Name
+# ChangelogManagement
+
+![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/natescherer/ChangelogManagement?svg=true&branch=master)
 
 ChangelogManagement is a PowerShell module designed for easy manipulation of Changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 Features include:
