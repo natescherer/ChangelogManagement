@@ -1,17 +1,5 @@
 $Eol = [System.Environment]::NewLine
 
-function Get-ContentWithBlankLinesAsString {
-    param([string]$Path)
-
-    [System.Collections.ArrayList]$ResultArrayList = Get-Content $Path
-
-    if ($ResultArrayList[-1] -eq "") {
-        $ResultArrayList[-1] = $Eol
-    }
-
-    $ResultArrayList -join $Eol
-}
-
 function Get-ChangelogData {
     <#
     .SYNOPSIS
@@ -42,7 +30,7 @@ function Get-ChangelogData {
         [string]$Path = "CHANGELOG.md"
     )
 
-    $ChangelogData = Get-ContentWithBlankLinesAsString -Path $Path
+    $ChangelogData = Get-Content -Path $Path -Raw
 
     $Output = [PSCustomObject]@{
         "Header" = ""
@@ -331,8 +319,8 @@ function Update-Changelog {
                 $ReleasePrefix = "v"
             }
             $NewFooter = ("[Unreleased]: $UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion" +
-                ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
+                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
+                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
         } else {
             $NewFooter = ("[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
                 "[$ReleaseVersion]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion")
@@ -350,9 +338,9 @@ function Update-Changelog {
     if ($LinkMode -eq "Manual") {
         if ($ChangelogData.Released -ne "") {
             $NewFooter = ("[Unreleased]: ENTER-URL-HERE$Eol" +
-                "[$ReleaseVersion]: ENTER-URL-HERE" +
-                ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
-            
+                "[$ReleaseVersion]: ENTER-URL-HERE$Eol" +
+                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
+
         } else {
             $NewFooter = ("[Unreleased]: ENTER-URL-HERE$Eol" +
                 "[$ReleaseVersion]: ENTER-URL-HERE")
@@ -361,7 +349,7 @@ function Update-Changelog {
             "bottom of the output file.")
     }
     if ($LinkMode -eq "None") {
-        $NewFooter = $ChangelogData.Footer
+        $NewFooter = $ChangelogData.Footer.Trim()
     }
 
     # Build & write updated CHANGELOG.md

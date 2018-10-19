@@ -9,18 +9,6 @@ InModuleScope $ModuleName {
     $ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
     $ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
 
-    function Get-ContentWithBlankLinesAsString {
-        param([string]$Path)
-
-        [System.Collections.ArrayList]$ResultArrayList = Get-Content $Path
-
-        if ($ResultArrayList[-1] -eq "") {
-            $ResultArrayList[-1] = $Eol
-        }
-
-        $ResultArrayList -join $Eol
-    }
-
     Describe 'Module Manifest Tests' {
         It 'Passes Test-ModuleManifest' {
             Test-ModuleManifest -Path $ModuleManifestPath | Should -Not -BeNullOrEmpty
@@ -298,7 +286,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Added" -Data "Unreleased Addition 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -349,7 +337,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Changed" -Data "Unreleased Change 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -400,7 +388,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Deprecated" -Data "Unreleased Deprecation 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -451,7 +439,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Removed" -Data "Unreleased Removal 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -502,7 +490,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Fixed" -Data "Unreleased Fix 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -553,7 +541,7 @@ InModuleScope $ModuleName {
 
                 Add-ChangelogData -Path $TestPath -Type "Security" -Data "Unreleased Vulnerability 2"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -606,7 +594,7 @@ InModuleScope $ModuleName {
 
             Add-ChangelogData -Path $TestPath -Type "Added" -Data "Unreleased Addition 2" -OutputPath $TestPath2
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath2
+            $Result = Get-Content -Path $TestPath2 -Raw
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -659,7 +647,7 @@ InModuleScope $ModuleName {
             $TestPath = "TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+            $Result = Get-Content -Path $TestPath -Raw
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -684,7 +672,7 @@ InModuleScope $ModuleName {
         It "-NoSemVer" {
             $TestPath = "TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath -NoSemVer
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+            $Result = Get-Content -Path $TestPath -Raw
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -737,7 +725,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -799,7 +787,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -874,7 +862,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0"
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -945,7 +933,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode Manual
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1007,7 +995,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0" -LinkMode Manual
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1082,7 +1070,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0" -LinkMode Manual
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1153,7 +1141,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1213,7 +1201,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0" -LinkMode None
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1287,7 +1275,7 @@ InModuleScope $ModuleName {
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0" -LinkMode None
 
-                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-Content -Path $TestPath -Raw
 
                 $Result | Should -Be ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -1353,10 +1341,10 @@ InModuleScope $ModuleName {
                 "$Eol")
 
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
-            
+
             Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -ReleasePrefix "TEST"
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+            $Result = Get-Content -Path $TestPath -Raw
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -1410,10 +1398,10 @@ InModuleScope $ModuleName {
                 "$Eol")
 
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
-            
+
             Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath2
+            $Result = Get-Content -Path $TestPath2 -Raw
 
             $Result | Should -Be ("# Changelog$Eol" +
                 "All notable changes to this project will be documented in this file.$Eol" +
@@ -1439,7 +1427,7 @@ InModuleScope $ModuleName {
                 "- Unreleased Addition 1$Eol" +
                 "$Eol" +
                 "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/1.0.0..HEAD$Eol" +
-                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")            
+                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")
         }
     }
 }
