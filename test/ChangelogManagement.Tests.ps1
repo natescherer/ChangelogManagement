@@ -7,7 +7,6 @@ InModuleScope $ModuleName {
     $Eol = [System.Environment]::NewLine
     $Today = (Get-Date -Format 'o').Split('T')[0]
     $ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
-    $ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
     $ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
 
     function Get-ContentWithBlankLinesAsString {
@@ -30,7 +29,7 @@ InModuleScope $ModuleName {
     }
 
     Describe "Get-ChangelogData" {
-        $TestPath="TestDrive:\CHANGELOG.md"
+        $TestPath = "TestDrive:\CHANGELOG.md"
         $SeedData = ("# Changelog$Eol" +
             "All notable changes to this project will be documented in this file.$Eol" +
             "$Eol" +
@@ -250,7 +249,7 @@ InModuleScope $ModuleName {
     }
 
     Describe "Add-ChangelogData" {
-        $TestPath="TestDrive:\CHANGELOG.md"
+        $TestPath = "TestDrive:\CHANGELOG.md"
         $SeedData = ("# Changelog$Eol" +
             "All notable changes to this project will be documented in this file.$Eol" +
             "$Eol" +
@@ -260,52 +259,31 @@ InModuleScope $ModuleName {
             "## [Unreleased]$Eol" +
             "### Added$Eol" +
             "- Unreleased Addition 1$Eol" +
-            "- Unreleased Addition 2$Eol" +
             "$Eol" +
             "### Changed$Eol" +
             "- Unreleased Change 1$Eol" +
-            "- Unreleased Change 2$Eol" +
             "$Eol" +
             "### Deprecated$Eol" +
             "- Unreleased Deprecation 1$Eol" +
-            "- Unreleased Deprecation 2$Eol" +
             "$Eol" +
             "### Removed$Eol" +
             "- Unreleased Removal 1$Eol" +
-            "- Unreleased Removal 2$Eol" +
             "$Eol" +
             "### Fixed$Eol" +
             "- Unreleased Fix 1$Eol" +
-            "- Unreleased Fix 2$Eol" +
             "$Eol" +
             "### Security$Eol" +
             "- Unreleased Vulnerability 1$Eol" +
-            "- Unreleased Vulnerability 2$Eol" +
             "$Eol" +
             "## [1.1.0] - 2001-01-01$Eol" +
             "### Added$Eol" +
             "- Released Addition 1$Eol" +
-            "- Released Addition 2$Eol" +
             "$Eol" +
             "### Changed$Eol" +
             "- Released Change 1$Eol" +
-            "- Released Change 2$Eol" +
-            "$Eol" +
-            "### Deprecated$Eol" +
-            "- Released Deprecation 1$Eol" +
-            "- Released Deprecation 2$Eol" +
-            "$Eol" +
-            "### Removed$Eol" +
-            "- Released Removal 1$Eol" +
-            "- Released Removal 2$Eol" +
             "$Eol" +
             "### Fixed$Eol" +
             "- Released Fix 1$Eol" +
-            "- Released Fix 2$Eol" +
-            "$Eol" +
-            "### Security$Eol" +
-            "- Released Vulnerability 1$Eol" +
-            "- Released Vulnerability 2$Eol" +
             "$Eol" +
             "## [1.0.0] - 2000-01-01$Eol" +
             "### Added$Eol" +
@@ -314,53 +292,371 @@ InModuleScope $ModuleName {
             "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
             "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
             "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
-        It "Added" {
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+        Context "Types" {
+            It "Added" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            Throw
+                Add-ChangelogData -Path $TestPath -Type "Added" -Data "Unreleased Addition 2"
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 2$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Changed" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type "Changed" -Data "Unreleased Change 2"
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 2$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Deprecated" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type "Deprecated" -Data "Unreleased Deprecation 2"
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 2$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Removed" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type "Removed" -Data "Unreleased Removal 2"
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 2$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Fixed" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type "Fixed" -Data "Unreleased Fix 2"
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 2$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Security" {
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type "Security" -Data "Unreleased Vulnerability 2"
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Unreleased Change 1$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "- Unreleased Deprecation 1$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "- Unreleased Removal 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Unreleased Fix 1$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "- Unreleased Vulnerability 2$Eol" +
+                    "- Unreleased Vulnerability 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Released Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Released Change 1$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "- Released Fix 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
         }
-        It "Changed" {
+        It "OutputPath" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
+            $TestPath2 = "TestDrive:\CHANGELOG2.md"
 
-            Throw
+            Add-ChangelogData -Path $TestPath -Type "Added" -Data "Unreleased Addition 2" -OutputPath $TestPath2
 
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
-        }
-        It "Deprecated" {
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath2
 
-            Throw
-
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
-        }
-        It "Removed" {
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-            Throw
-
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
-        }
-        It "Fixed" {
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-            Throw
-
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
-        }
-        It "Security" {
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-            Throw
-
-            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+            $Result | Should -Be ("# Changelog$Eol" +
+                "All notable changes to this project will be documented in this file.$Eol" +
+                "$Eol" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                "$Eol" +
+                "## [Unreleased]$Eol" +
+                "### Added$Eol" +
+                "- Unreleased Addition 2$Eol" +
+                "- Unreleased Addition 1$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "- Unreleased Change 1$Eol" +
+                "$Eol" +
+                "### Deprecated$Eol" +
+                "- Unreleased Deprecation 1$Eol" +
+                "$Eol" +
+                "### Removed$Eol" +
+                "- Unreleased Removal 1$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "- Unreleased Fix 1$Eol" +
+                "$Eol" +
+                "### Security$Eol" +
+                "- Unreleased Vulnerability 1$Eol" +
+                "$Eol" +
+                "## [1.1.0] - 2001-01-01$Eol" +
+                "### Added$Eol" +
+                "- Released Addition 1$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "- Released Change 1$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "- Released Fix 1$Eol" +
+                "$Eol" +
+                "## [1.0.0] - 2000-01-01$Eol" +
+                "### Added$Eol" +
+                "- Initial release$Eol" +
+                "$Eol" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
         }
     }
 
     Describe "New-Changelog" {
         It "No Parameters" {
-            $TestPath="TestDrive:\CHANGELOG.md"
+            $TestPath = "TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath
 
             $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
@@ -386,7 +682,7 @@ InModuleScope $ModuleName {
                 "$Eol")
         }
         It "-NoSemVer" {
-            $TestPath="TestDrive:\CHANGELOG.md"
+            $TestPath = "TestDrive:\CHANGELOG.md"
             New-Changelog -Path $TestPath -NoSemVer
             $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
 
@@ -414,8 +710,30 @@ InModuleScope $ModuleName {
     Describe "Update-Changelog" {
         Context "Mandatory Parameters" {
             It "First Release" {
-                $TestPath="TestDrive:\CHANGELOG.md"
-                New-Changelog -Path $TestPath
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
                 Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0"
 
@@ -441,12 +759,14 @@ InModuleScope $ModuleName {
                     "### Security$Eol" +
                     "$Eol" +
                     "## [1.0.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
                     "$Eol" +
                     "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/1.0.0..HEAD$Eol" +
                     "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")
             }
             It "Second Release" {
-                $TestPath="TestDrive:\CHANGELOG.md"
+                $TestPath = "TestDrive:\CHANGELOG.md"
 
                 $SeedData = ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -456,6 +776,7 @@ InModuleScope $ModuleName {
                     "$Eol" +
                     "## [Unreleased]$Eol" +
                     "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
                     "$Eol" +
                     "### Changed$Eol" +
                     "$Eol" +
@@ -500,6 +821,8 @@ InModuleScope $ModuleName {
                     "### Security$Eol" +
                     "$Eol" +
                     "## [1.1.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
                     "$Eol" +
                     "## [1.0.0] - 2000-01-01$Eol" +
                     "### Added$Eol" +
@@ -510,7 +833,7 @@ InModuleScope $ModuleName {
                     "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
             }
             It "Third Release" {
-                $TestPath="TestDrive:\CHANGELOG.md"
+                $TestPath = "TestDrive:\CHANGELOG.md"
 
                 $SeedData = ("# Changelog$Eol" +
                     "All notable changes to this project will be documented in this file.$Eol" +
@@ -520,6 +843,7 @@ InModuleScope $ModuleName {
                     "$Eol" +
                     "## [Unreleased]$Eol" +
                     "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
                     "$Eol" +
                     "### Changed$Eol" +
                     "$Eol" +
@@ -572,6 +896,8 @@ InModuleScope $ModuleName {
                     "### Security$Eol" +
                     "$Eol" +
                     "## [1.2.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
                     "$Eol" +
                     "## [1.1.0] - 2001-01-01$Eol" +
                     "### Added$Eol" +
@@ -590,5 +916,536 @@ InModuleScope $ModuleName {
                     "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
             }
         }
+        Context "-LinkMode Manual" {
+            It "First Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode Manual
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+            }
+            It "Second Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0" -LinkMode Manual
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.1.0]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+            }
+            It "Third Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Change 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.1.0]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0" -LinkMode Manual
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.2.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Change 1$Eol" +
+                    "$Eol" +,
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.2.0]: ENTER-URL-HERE$Eol" +
+                    "[1.1.0]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+            }
+        }
+        Context "-LinkMode None" {
+            It "First Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol")
+            }
+            It "Second Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0" -LinkMode None
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+            }
+            It "Third Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Change 1$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.1.0]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0" -LinkMode None
+
+                $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.2.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "## [1.1.0] - 2001-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "- Change 1$Eol" +
+                    "$Eol" +,
+                    "## [1.0.0] - 2000-01-01$Eol" +
+                    "### Added$Eol" +
+                    "- Initial release$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: ENTER-URL-HERE$Eol" +
+                    "[1.1.0]: ENTER-URL-HERE$Eol" +
+                    "[1.0.0]: ENTER-URL-HERE")
+            }
+        }
+        It "-ReleasePrefix" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+
+            $SeedData = ("# Changelog$Eol" +
+                "All notable changes to this project will be documented in this file.$Eol" +
+                "$Eol" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                "$Eol" +
+                "## [Unreleased]$Eol" +
+                "### Added$Eol" +
+                "- Unreleased Addition 1$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "$Eol" +
+                "### Deprecated$Eol" +
+                "$Eol" +
+                "### Removed$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "$Eol" +
+                "### Security$Eol" +
+                "$Eol")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+            
+            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -ReleasePrefix "TEST"
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath
+
+            $Result | Should -Be ("# Changelog$Eol" +
+                "All notable changes to this project will be documented in this file.$Eol" +
+                "$Eol" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                "$Eol" +
+                "## [Unreleased]$Eol" +
+                "### Added$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "$Eol" +
+                "### Deprecated$Eol" +
+                "$Eol" +
+                "### Removed$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "$Eol" +
+                "### Security$Eol" +
+                "$Eol" +
+                "## [1.0.0] - $Today$Eol" +
+                "### Added$Eol" +
+                "- Unreleased Addition 1$Eol" +
+                "$Eol" +
+                "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/TEST1.0.0..HEAD$Eol" +
+                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/TEST1.0.0")
+        }
+        It "-OutputPath" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+            $TestPath2 = "TestDrive:\CHANGELOG2.md"
+
+            $SeedData = ("# Changelog$Eol" +
+                "All notable changes to this project will be documented in this file.$Eol" +
+                "$Eol" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                "$Eol" +
+                "## [Unreleased]$Eol" +
+                "### Added$Eol" +
+                "- Unreleased Addition 1$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "$Eol" +
+                "### Deprecated$Eol" +
+                "$Eol" +
+                "### Removed$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "$Eol" +
+                "### Security$Eol" +
+                "$Eol")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+            
+            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2
+
+            $Result = Get-ContentWithBlankLinesAsString -Path $TestPath2
+
+            $Result | Should -Be ("# Changelog$Eol" +
+                "All notable changes to this project will be documented in this file.$Eol" +
+                "$Eol" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                "$Eol" +
+                "## [Unreleased]$Eol" +
+                "### Added$Eol" +
+                "$Eol" +
+                "### Changed$Eol" +
+                "$Eol" +
+                "### Deprecated$Eol" +
+                "$Eol" +
+                "### Removed$Eol" +
+                "$Eol" +
+                "### Fixed$Eol" +
+                "$Eol" +
+                "### Security$Eol" +
+                "$Eol" +
+                "## [1.0.0] - $Today$Eol" +
+                "### Added$Eol" +
+                "- Unreleased Addition 1$Eol" +
+                "$Eol" +
+                "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/1.0.0..HEAD$Eol" +
+                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")            
+        }
+    }
+}
+
+Describe "ConvertFrom-Changelog" {
+    It "FixMe" {
+        Throw
     }
 }
