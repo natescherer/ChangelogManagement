@@ -429,20 +429,25 @@ function Convertfrom-Changelog {
     $Output = ""
     if ($NoHeader -eq $false) {
         if ($Format -like "Text*") {
-            $Output += ($ChangelogData.Header -replace "\[","") -replace "\]"," "
+            $Output += (($ChangelogData.Header -replace "\[","") -replace "\]"," ").Trim()
         } else {
-            $Output += $ChangelogData.Header
+            $Output += $ChangelogData.Header.Trim()
         }
     }
     if ($Format -notlike "*Release") {
-        $Output += $ChangelogData.Unreleased.RawData
-        $Output += "$Eol$Eol"
+        if ($Output -ne "") {
+            $Output += "$Eol$Eol"
+        }
+        $Output += $ChangelogData.Unreleased.RawData.Trim()
     }
     foreach ($Release in $ChangelogData.Released) {
-        $Output += $Release.RawData
-        $Output += "$Eol$Eol"
+        if ($Output -ne "") {
+            $Output += "$Eol$Eol"
+        }
+        $Output += $Release.RawData.Trim()
     }
     if ($Format -eq "Release") {
+        $Output += "$Eol$Eol"
         $Output += $ChangelogData.Footer -replace "\[Unreleased\].*$Eol",""
     }
 
