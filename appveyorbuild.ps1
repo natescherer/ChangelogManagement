@@ -49,7 +49,7 @@ if ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
     try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
         $PM = @{
-            Path        = '.\Rubrik'
+            Path        = '.\out'
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = 'Stop'
         }
@@ -78,53 +78,5 @@ if ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
     Catch {
         Write-Warning "Publishing update $NewVersion to GitHub failed."
         throw $_
-    }
-
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-    $AuthHeader = "Basic {0}" -f [System.Convert]::ToBase64String([char[]]"$($env:APPVEYOR_REPO_NAME.split('/')[0])`:$($env:GitHubKey)")
-    $ReleaseHeaders = @{
-        "Authorization" = $AuthHeader
-    }
-    $ReleaseBody = @{
-        "tag_name" = "v$PublishVersion"
-        "name" = "v$PublishVersion"
-        "body" = $PublishChangelog
-    }
-    
-    $ReleaseParams = @{
-        "Headers" = $ReleaseHeaders
-        "Body" = ConvertTo-Json -InputObject $ReleaseBody
-        "Uri" = "https://api.github.com/repos/$PublishRepo/releases"
-        "Method" = "Post"
-    }
-    
-    $ReleaseResult = Invoke-RestMethod @ReleaseParams
-    
-    if ($ReleaseResult.upload_url) {
-        $UploadHeaders = @{
-            "Authorization" = $AuthHeader
-            "Content-Type" = "application/zip"
-        }
-        $UploadParams = @{
-            "Headers" = $UploadHeaders
-            "Uri" = $ReleaseResult.upload_url.split("{")[0] + "?name=$PublishZipName"
-            "Method" = "Post"
-            "InFile" = "out\$PublishZipName"
-        }
-
-        if ($Proxy) {
-            $UploadParams += @{"Proxy" = "http://$Proxy"}
-            $UploadParams += @{"ProxyUseDefaultCredentials" = $true}       
-        }
-
-        $UploadResult = Invoke-RestMethod @UploadParams
-        if ($UploadResult.state -ne "uploaded") {
-            Write-Output $UploadResult
-            throw "There was a problem uploading."
-        }
-    } else {
-        Write-Output $ReleaseResult
-        throw "There was a problem releasing"
     }
 }

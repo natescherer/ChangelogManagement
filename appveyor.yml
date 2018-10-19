@@ -37,6 +37,8 @@ install:
   - ps: Install-Module -Name platyPS -Force
   - ps: Install-Module -Name MarkdownToHtml -Force
 
+#build_script:
+
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
 test_script:
@@ -50,3 +52,18 @@ test_script:
   - git config --global core.autocrlf true
   - git config --global core.safecrlf false
   - ps: . .\appveyorbuild.ps1
+
+before_deploy:
+  -ps: $env:ChangelogData = (($ChangelogData -split "## \[$PublishVersion")[1] -split "`r`n`r`n")[0] -replace "\].*`r`n",""
+
+deploy:
+  tag: "v1.0.0"
+  description: $(ChangelogData)
+  provider: GitHub
+  auth_token: $(GitHubKey)
+  artifact: out/.*\.zip
+  draft: true
+  prerelease: false
+  #on:
+  #  branch: master                 # release from master branch only
+  #  appveyor_repo_tag: true        # deploy on tag push only
