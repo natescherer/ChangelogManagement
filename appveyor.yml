@@ -54,14 +54,16 @@ test_script:
   - ps: . .\appveyorbuild.ps1
 
 before_deploy:
-  -ps: $env:ChangelogData = (($ChangelogData -split "## \[$PublishVersion")[1] -split "`r`n`r`n")[0] -replace "\].*`r`n",""
+  -ps: $env:ChangelogData = (Get-ChangelogData).Released[0].RawData -replace "## \[.*",""
+  -ps: $env:GitHubTag = "v$((Get-ChangelogData).LastVersion)"
 
 deploy:
-  tag: "v1.0.0"
+  tag: $(GitHubTag)
   description: $(ChangelogData)
   provider: GitHub
   auth_token: $(GitHubKey)
-  artifact: out/.*\.zip
+  #artifact: out/.*\.zip
+  artifact: README.md
   draft: true
   prerelease: false
   #on:
