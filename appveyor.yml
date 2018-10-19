@@ -31,13 +31,12 @@ environment:
 
 # Install prereqs for build
 install:
-  - ps: |
-    Install-PackageProvider -Name NuGet -Force | Out-Null
-    Install-Module -Name InvokeBuild -Force
-    Install-Module -Name Pester -Force
-    Install-Module -Name post-git -Force
-    Install-Module -Name platyPS -Force
-    Install-Module -Name MarkdownToHtml -Force
+  - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
+  - ps: Install-Module -Name InvokeBuild -Force
+  - ps: Install-Module -Name Pester -Force
+  - ps: Install-Module -Name post-git -Force
+  - ps: Install-Module -Name platyPS -Force
+  - ps: Install-Module -Name MarkdownToHtml -Force
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
