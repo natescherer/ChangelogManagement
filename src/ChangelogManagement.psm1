@@ -56,9 +56,9 @@ function Get-ChangelogData {
     [System.Collections.ArrayList]$Sections = $ChangelogData -split "## \["
     $Output.Header = $Sections[0]
     $Sections.Remove($Output.Header)
-    if ($Sections[-1] -like "*[Unreleased]:*") {
+    if ($Sections[-1] -match ".*\[Unreleased\]:.*") {
         $Output.Footer = "[Unreleased]:" + ($Sections[-1] -split "\[Unreleased\]:")[1]
-        $Sections[-1] = $( $Sections[-1] -split "\[Unreleased\]:" )[0]
+        $Sections[-1] = ($Sections[-1] -split "\[Unreleased\]:")[0]
     }
 
     # Restore the leading "## [" onto each section that was previously removed by split function, and trim extra
@@ -173,10 +173,8 @@ function Add-ChangelogData {
     $Output = ""
     $Output += $ChangelogData.Header
     $Output += $ChangelogData.Unreleased.RawData -replace "### $Type","### $Type$Eol- $Data"
-    $Output += "$Eol$Eol"
     foreach ($Release in $ChangelogData.Released) {
         $Output += $Release.RawData
-        $Output += "$Eol$Eol"
     }
     $Output += $ChangelogData.Footer
 
@@ -317,6 +315,10 @@ function Update-Changelog {
     $NewRelease = $NewRelease -replace "### Fixed$Eol$Eol",""
     $NewRelease = $NewRelease -replace "### Security$Eol$Eol",""
 
+    If ([string]::IsNullOrWhiteSpace($NewRelease)) {
+        Throw "No changes detected in current release, exiting."
+    }
+
     # Edit $NewRelease to add version number and today's date
     $Today = (Get-Date -Format 'o').Split('T')[0]
     $NewRelease = "## [$ReleaseVersion] - $Today$Eol" + $NewRelease
@@ -349,14 +351,19 @@ function Update-Changelog {
     }
     if ($LinkMode -eq "Manual") {
         if ($ChangelogData.Released -ne "") {
-            $NewFooter = $ChangelogData.Footer -replace "\[Unreleased\].*",("[Unreleased]: ENTER-URL-HERE$Eol" +
-                "[$ReleaseVersion]: ENTER-URL-HERE")
+            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$Eol" +
+                "[$ReleaseVersion]: ENTER-URL-HERE" +
+                ($ChangelogData.Footer -replace "\[Unreleased\].*",""))
+            
         } else {
             $NewFooter = "$Eol[Unreleased]: ENTER-URL-HERE"
             $NewFooter += "$Eol[$ReleaseVersion]: ENTER-URL-HERE"
         }
         Write-Output ("Because you selected LinkMode Manual, you will need to manually update the links at the " +
             "bottom of the output file.")
+    }
+    if ($LinkMode -eq "None") {
+        $NewFooter = $ChangelogData.Footer
     }
 
     # Build & write updated CHANGELOG.md
