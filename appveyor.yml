@@ -55,20 +55,19 @@ test_script:
   - ps: . .\appveyorbuild.ps1
 
 artifacts:
-  - path: src\*.zip
-    name: Package
+  - path: out\*.zip
+    name: ReleasePackage
 
 before_deploy:
   - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-  - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION)"
+  - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
 
 deploy:
   tag: $(GitHubTag)
   description: $(ChangelogData)
   provider: GitHub
   auth_token: $(GitHubKey)
-  #artifact: out/.*\.zip
-  artifact: README.md
+  artifact: ReleasePackage
   draft: true
   prerelease: false
   #on:
