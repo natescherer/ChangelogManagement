@@ -54,8 +54,8 @@ test_script:
   - ps: . .\appveyorbuild.ps1
 
 before_deploy:
-  -ps: $env:ChangelogData = (Get-ChangelogData).Released[0].RawData -replace "## \[.*",""
-  -ps: $env:GitHubTag = "v$((Get-ChangelogData).LastVersion)"
+  - ps: $env:ChangelogData = (Get-ChangelogData).Released[0].RawData -replace "## \[.*",""
+  - ps: $env:GitHubTag = "v$((Get-ChangelogData).LastVersion)"
 
 deploy:
   tag: $(GitHubTag)
