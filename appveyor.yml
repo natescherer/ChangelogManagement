@@ -83,6 +83,7 @@ for:
       - ps: git config --global credential.helper store
       - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
       - ps: Write-Host "Starting Evaluating for Deploy..."
+      - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
       - ps: . .\appveyordeploy.ps1
     deploy:
       tag: $(GitHubTag)
