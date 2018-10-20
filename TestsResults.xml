@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="56" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-10-20" time="15:03:09">
+  <environment nunit-version="2.5.8.0" clr-version="Unknown" user-domain="APPVYR-WIN" machine-name="APPVYR-WIN" platform="Microsoft Windows Server 2016 Datacenter|C:\Windows|\Device\Harddisk0\Partition4" os-version="10.0.14393" user="appveyor" cwd="C:\projects\changelogmanagement" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="1.9925" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\projects\changelogmanagement\test\ChangelogManagement.Tests.ps1" executed="True" result="Success" success="True" time="1.9925" asserts="0" description="C:\projects\changelogmanagement\test\ChangelogManagement.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Module Manifest Tests" executed="True" result="Success" success="True" time="0.5301" asserts="0" description="Module Manifest Tests">
+            <results>
+              <test-case description="Passes Test-ModuleManifest" name="Module Manifest Tests.Passes Test-ModuleManifest" time="0.5301" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Get-ChangelogData" executed="True" result="Success" success="True" time="0.622" asserts="0" description="Get-ChangelogData">
+            <results>
+              <test-suite type="TestFixture" name="Return.Unreleased.Data" executed="True" result="Success" success="True" time="0.0944" asserts="0" description="Return.Unreleased.Data">
+                <results>
+                  <test-case description=".Added" name="Get-ChangelogData.Return.Unreleased.Data..Added" time="0.0269" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Changed" name="Get-ChangelogData.Return.Unreleased.Data..Changed" time="0.0325" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Deprecated" name="Get-ChangelogData.Return.Unreleased.Data..Deprecated" time="0.0092" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Removed" name="Get-ChangelogData.Return.Unreleased.Data..Removed" time="0.0082" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Fixed" name="Get-ChangelogData.Return.Unreleased.Data..Fixed" time="0.0089" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Security" name="Get-ChangelogData.Return.Unreleased.Data..Security" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Return.Released[0].Data" executed="True" result="Success" success="True" time="0.0869" asserts="0" description="Return.Released[0].Data">
+                <results>
+                  <test-case description=".Added" name="Get-ChangelogData.Return.Released[0].Data..Added" time="0.0212" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Changed" name="Get-ChangelogData.Return.Released[0].Data..Changed" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Deprecated" name="Get-ChangelogData.Return.Released[0].Data..Deprecated" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Removed" name="Get-ChangelogData.Return.Released[0].Data..Removed" time="0.032" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Fixed" name="Get-ChangelogData.Return.Released[0].Data..Fixed" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Security" name="Get-ChangelogData.Return.Released[0].Data..Security" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Return.Released[1].Data" executed="True" result="Success" success="True" time="0.0673" asserts="0" description="Return.Released[1].Data">
+                <results>
+                  <test-case description=".Added" name="Get-ChangelogData.Return.Released[1].Data..Added" time="0.0309" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Changed" name="Get-ChangelogData.Return.Released[1].Data..Changed" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Deprecated" name="Get-ChangelogData.Return.Released[1].Data..Deprecated" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Removed" name="Get-ChangelogData.Return.Released[1].Data..Removed" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Fixed" name="Get-ChangelogData.Return.Released[1].Data..Fixed" time="0.0067" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=".Security" name="Get-ChangelogData.Return.Released[1].Data..Security" time="0.0098" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-case description="Return.Header" name="Get-ChangelogData.Return.Header" time="0.2499" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Unreleased.Link" name="Get-ChangelogData.Return.Unreleased.Link" time="0.0212" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Unreleased.RawData" name="Get-ChangelogData.Return.Unreleased.RawData" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Released.RawData" name="Get-ChangelogData.Return.Released.RawData" time="0.0161" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Released.Date" name="Get-ChangelogData.Return.Released.Date" time="0.0235" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Released.Version" name="Get-ChangelogData.Return.Released.Version" time="0.0135" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Released.Link" name="Get-ChangelogData.Return.Released.Link" time="0.0182" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.Footer" name="Get-ChangelogData.Return.Footer" time="0.0136" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Return.LastVersion" name="Get-ChangelogData.Return.LastVersion" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Add-ChangelogData" executed="True" result="Success" success="True" time="0.3204" asserts="0" description="Add-ChangelogData">
+            <results>
+              <test-suite type="TestFixture" name="-Type" executed="True" result="Success" success="True" time="0.2929" asserts="0" description="-Type">
+                <results>
+                  <test-case description="Added" name="Add-ChangelogData.-Type.Added" time="0.0564" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Changed" name="Add-ChangelogData.-Type.Changed" time="0.0147" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Deprecated" name="Add-ChangelogData.-Type.Deprecated" time="0.0146" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Removed" name="Add-ChangelogData.-Type.Removed" time="0.0183" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Fixed" name="Add-ChangelogData.-Type.Fixed" time="0.036" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Security" name="Add-ChangelogData.-Type.Security" time="0.153" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-case description="-OutputPath" name="Add-ChangelogData.-OutputPath" time="0.0275" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="New-Changelog" executed="True" result="Success" success="True" time="0.0452" asserts="0" description="New-Changelog">
+            <results>
+              <test-case description="No Parameters" name="New-Changelog.No Parameters" time="0.0359" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="-NoSemVer" name="New-Changelog.-NoSemVer" time="0.0093" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Update-Changelog" executed="True" result="Success" success="True" time="0.2932" asserts="0" description="Update-Changelog">
+            <results>
+              <test-suite type="TestFixture" name="-LinkMode Automatic" executed="True" result="Success" success="True" time="0.1261" asserts="0" description="-LinkMode Automatic">
+                <results>
+                  <test-case description="First Release" name="Update-Changelog.-LinkMode Automatic.First Release" time="0.0622" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Second Release" name="Update-Changelog.-LinkMode Automatic.Second Release" time="0.0312" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Third Release" name="Update-Changelog.-LinkMode Automatic.Third Release" time="0.0158" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="-LinkBase" name="Update-Changelog.-LinkMode Automatic.-LinkBase" time="0.0169" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="-LinkMode Manual" executed="True" result="Success" success="True" time="0.0633" asserts="0" description="-LinkMode Manual">
+                <results>
+                  <test-case description="First Release" name="Update-Changelog.-LinkMode Manual.First Release" time="0.0298" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Second Release" name="Update-Changelog.-LinkMode Manual.Second Release" time="0.0182" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Third Release" name="Update-Changelog.-LinkMode Manual.Third Release" time="0.0152" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="-LinkMode None" executed="True" result="Success" success="True" time="0.0724" asserts="0" description="-LinkMode None">
+                <results>
+                  <test-case description="First Release" name="Update-Changelog.-LinkMode None.First Release" time="0.0328" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Second Release" name="Update-Changelog.-LinkMode None.Second Release" time="0.013" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Third Release" name="Update-Changelog.-LinkMode None.Third Release" time="0.0266" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-case description="-ReleasePrefix" name="Update-Changelog.-ReleasePrefix" time="0.0175" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="-OutputPath" name="Update-Changelog.-OutputPath" time="0.0139" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="ConvertFrom-Changelog" executed="True" result="Success" success="True" time="0.1816" asserts="0" description="ConvertFrom-Changelog">
+            <results>
+              <test-suite type="TestFixture" name="-Format" executed="True" result="Success" success="True" time="0.0795" asserts="0" description="-Format">
+                <results>
+                  <test-case description="Release" name="ConvertFrom-Changelog.-Format.Release" time="0.0515" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Text" name="ConvertFrom-Changelog.-Format.Text" time="0.0144" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="TextRelease" name="ConvertFrom-Changelog.-Format.TextRelease" time="0.0136" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="-NoHeader" executed="True" result="Success" success="True" time="0.0664" asserts="0" description="-NoHeader">
+                <results>
+                  <test-case description="Release" name="ConvertFrom-Changelog.-NoHeader.Release" time="0.0379" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Text" name="ConvertFrom-Changelog.-NoHeader.Text" time="0.0154" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="TextRelease" name="ConvertFrom-Changelog.-NoHeader.TextRelease" time="0.013" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-case description="-OutputPath" name="ConvertFrom-Changelog.-OutputPath" time="0.0357" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
