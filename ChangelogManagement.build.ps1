@@ -78,13 +78,14 @@ task MarkdownHelpToHtml -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Re
     }
     Copy-Item -Path "README.md" -Destination "docs"
     Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "src\MarkdownToHtmlTemplate" | Out-Null
+ 
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
 }
 
 # Synopsis: Zip up files.
 task Zip -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    Copy-Item -Path "src\*" -Destination "out\$ModuleName"
+    Copy-Item -Path "src\*" -Destination "out\$ModuleName\"
 
     if ($ReleaseVersion) {
         Compress-Archive -Path "out\$ModuleName\*" -DestinationPath "out\$ModuleName-v$ReleaseVersion.zip"
