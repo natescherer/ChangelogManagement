@@ -27,7 +27,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
         Remove-Item .\state.zip
         Remove-Item .\TestsResults.xml
         $env:Path += ";$env:ProgramFiles\Git\cmd"
-        git checkout master --porcelain
+        git checkout master --quiet
         git add --all
         git status
         git commit -s -m "Release via Appveyor: $ReleaseVersion"
