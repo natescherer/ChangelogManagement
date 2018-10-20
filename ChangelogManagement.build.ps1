@@ -22,7 +22,7 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = $BuildRoot.Split("\")[-1]
+    $ModuleName = Split-Path -Path $PSCommandPath -Leaf
     Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
