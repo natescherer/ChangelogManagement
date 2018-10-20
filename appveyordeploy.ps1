@@ -7,15 +7,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MES
     Write-Host "Starting Deploy..."
     try {
         # This is where the module manifest lives
-        $ManifestPath = ".\src\$($env:APPVEYOR_PROJECT_NAME).psd1"
 
-        $NewVersion = $($env:APPVEYOR_BUILD_VERSION.Split('+')[0])
-
-        $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*",""
-        $Description = ((($Description -replace "!\[.*","") -replace "\[","") -replace "\]"," ").Trim()
-
-        $ManifestData = @{'Path' = $ManifestPath;'ModuleVersion' = $NewVersion;'ReleaseNotes' = $env:ChangelogData;'Description' = $Description}
-        Update-ModuleManifest @ManifestData
     }
     catch {
         throw $_

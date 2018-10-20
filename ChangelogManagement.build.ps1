@@ -9,7 +9,10 @@ param (
     [string]$BuildMode,
 
     [parameter(ParameterSetName="Release",Mandatory=$true)]
-    [string]$ReleaseVersion
+    [string]$ReleaseVersion,
+
+    [parameter(ParameterSetName="Release",Mandatory=$false)]
+    [string]$LinkBase
 )
 
 Enter-Build {
@@ -22,12 +25,12 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = $env:APPVEYOR_REPO_NAME.split("/")[1]
+    $ModuleName = (Get-ChildItem -Path src\ -Filter *.psd1).Name.Split(".")[0]
     Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
 # Synopsis: Perform all build tasks.
-task . Clean, GenerateMarkdownHelp, UpdateHelpLinkInReadme, UpdateChangelog, MarkDownHelpToHtml, Zip
+task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateHelpLinkInReadme, UpdateChangelog, MarkDownHelpToHtml, Zip
 
 # Synopsis: Removes files from build, doc, and out.
 task Clean -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
@@ -35,10 +38,25 @@ task Clean -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
     Remove-Item -Path "out/*" -Recurse -ErrorAction SilentlyContinue
 }
 
+# Synopsis: Updates the module manifest file for the new release.
+task UpdateManifest -If {$BuildMode -eq "Release"} {
+    $ManifestPath = ".\src\$ModuleName.psd1"
+
+    $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*",""
+    $Description = ((($Description -replace "!\[.*","") -replace "\[","") -replace "\]"," ").Trim()
+
+    $ManifestData = @{
+        'Path' = $ManifestPath
+        'ModuleVersion' = $ReleaseVersion
+        'ReleaseNotes' = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
+        'Description' = $Description
+    }
+    Update-ModuleManifest @ManifestData
+}
+
 # Synopsis: Generates Markdown help file from comment-based help in script.
 task GenerateMarkdownHelp -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
     New-MarkdownHelp -Module $ModuleName -OutputFolder docs -NoMetadata | Out-Null
-    #Rename-Item -Path "docs\$NameWithExt.md" -NewName "$NameWithoutExt.md"
 }
 
 # Synopsis: Updates the help link in the readme to point to the file in the new version.
@@ -68,7 +86,7 @@ task UpdateHelpLinkInReadme -If {$BuildMode -eq "Release"} {
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog -If {$BuildMode -eq "Release"} {
-    # Update me
+    Update-Changelog -ReleaseVersion $ReleaseVersion -LinkBase $LinkBase
 }
 
 # Synopsis: Converts README.md and anything matching docs*.md to HTML, and puts in out folder.
