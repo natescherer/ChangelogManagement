@@ -10,6 +10,10 @@ environment:
   GitName: "Nate Scherer"
   GitEmail: "376408+natescherer@users.noreply.github.com"
 
+image:
+  - Visual Studio 2017
+  - Ubuntu
+
 # Disable automatic builds
 # Without this, the following error shows up:
 # "Specify a project or solution file. The directory does not contain a project or solution file."
