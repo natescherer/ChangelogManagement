@@ -3,17 +3,19 @@
 ![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/natescherer/ChangelogManagement?svg=true&branch=master)
 
 ChangelogManagement is a PowerShell module designed for easy manipulation of Changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
-Features include:
+
+The primary feature is automatic updating of changelogs at release time as part of build/release scripts via the Update-Changelog cmdlet. (i.e. Automating the process of moving Unreleased changes into a new release tagged with today's date and a version number supplied via a parameter.)
+
+Other features include:
 
 - Creating new changelog files via New-Changelog
 - Adding new changes to changelog files via Add-ChangelogData
 - Getting changelog contents (parsed into a PowerShell object) via Get-ChangelogData
-- Updating changelogs at release time via Update-Changelog
 - Converting changelogs into other formats via Convertfrom-Changelog
 
 ## Getting Started
 
-ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 3+ and PowerShell Core 6+.
+ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 5.0+ and PowerShell Core 6.0+.
 
 ### Prerequisites
 
@@ -52,6 +54,14 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 
 ## Building
 
+If you fork into your own repo, you can build through Appveyor by updating the environment section at the top of [appveyor.yml](appveyor.yml).
+
+Local builds can be done via Invoke-Build with the following modules installed:
+
+- InvokeBuild
+- platyPs
+- MarkdownToHtml
+
 ## Authors
 
 **Nate Scherer** - *Initial work* - [natescherer](https://github.com/natescherer)
@@ -62,4 +72,4 @@ This project is licensed under The MIT License - see [LICENSE](LICENSE) for deta
 
 ## Acknowledgements
 
-[Username](URL) - What you're thanking them for
+[oliverlachlan](https://github.com/olivierlacan/keep-a-changelog) - For creating the Keep a Changelog format
