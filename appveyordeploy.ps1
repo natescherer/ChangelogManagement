@@ -9,7 +9,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
     try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
         $PM = @{
-            Path        = "$PSScriptRoot\src\$env:APPVEYOR_PROJECT_NAME.psm1"
+            Path        = "$PSScriptRoot\out\$env:APPVEYOR_PROJECT_NAME"
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = "Stop"
         }
