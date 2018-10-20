@@ -31,8 +31,8 @@ init:
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
-  - ps: $ErrorActionPreference = "Stop"
-  - pwsh: $ErrorActionPreference = "Stop"
+  #- ps: $ErrorActionPreference = "Stop"
+  #- pwsh: $ErrorActionPreference = "Stop"
 
 for:
   -
