@@ -36,15 +36,12 @@ Installation via Install-Module coming soon
 
 ### Examples
 
-#### EXAMPLE
-
-```
+```PowerShell
 Update-Changelog -ReleaseVersion 1.1.1
-```
+
 
 (Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
-
-#### EXAMPLE
+```
 
 ```PowerShell
 New-Changelog
@@ -52,15 +49,11 @@ New-Changelog
 (Does not generate output, but creates a new changelog at .\CHANGELOG.md)
 ```
 
-#### EXAMPLE
-
 ```PowerShell
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
 
 (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
 ```
-
-#### EXAMPLE
 
 ```PowerShell
 Get-ChangelogData
@@ -97,8 +90,6 @@ Footer      : \[Unreleased\]: https://github.com/user/project/compare/1.0.0..HEA
 LastVersion : 1.0.0
 ```
 
-#### EXAMPLE
-
 ```PowerShell
 Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
 
@@ -108,9 +99,9 @@ Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHAN
 
 ### Documentation
 
-For detailed documentation, [click here on GitHub][HelpMarkdown], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
+For detailed documentation, [click here on GitHub][DocsDir], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
 
-[HelpMarkdown]: ../v1.0.0/doc/
+[DocsDir]: ../v1.0.0/doc/
 
 ## Questions/Comments
 
