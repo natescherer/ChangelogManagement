@@ -22,7 +22,7 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = Split-Path -Path $PSScriptRoot -Leaf
+    $ModuleName = $env:APPVEYOR_REPO_NAME.split("/")[0]
     Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
