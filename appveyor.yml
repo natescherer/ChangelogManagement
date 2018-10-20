@@ -48,7 +48,6 @@ for:
       - ps: Install-Module -Name platyPS -Force
       - ps: Install-Module -Name MarkdownToHtml -Force
       - pwsh: Write-Host "Install PS 6.1 Modules..."
-      - pwsh: Install-PackageProvider -Name NuGet -Force | Out-Null
       - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
       - pwsh: Install-Module -Name InvokeBuild -Force
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
@@ -101,12 +100,12 @@ for:
         - image: Ubuntu1804
     install:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
-      - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope Local
-      - pwsh: Install-Module -Name InvokeBuild -Force -Scope Local
-      - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope Local
-      - pwsh: Install-Module -Name posh-git -Force -Scope Local
-      - pwsh: Install-Module -Name platyPS -Force -Scope Local
-      - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope Local
+      - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope "Local"
+      - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
+      - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
+      - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
+      - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
+      - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
     build_script:
       - pwsh: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
     test_script:
