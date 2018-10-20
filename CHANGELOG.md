@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Initial Release
+- Get-ChangelogData cmdlet
+- Add-ChangelogData cmdlet
+- New-Changelog cmdlet
+- Update-Changelog cmdlet
+- Convertfrom-Changelog cmdlet
 
 ### Changed
 
