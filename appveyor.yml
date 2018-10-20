@@ -62,7 +62,7 @@ for:
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
-      - ps: Set-AppveyorBuildVariable -Name ChangelogData -Value ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
+      - ps: $env:ChangelogData = (((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()
       - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
       - 7z a state.zip *
     test_script:
