@@ -42,7 +42,7 @@ for:
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
       - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
       - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
-      - ps: Update-AppveyorBuild -Version "$(env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - ps: Update-AppveyorBuild -Version "$($env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
       - ps: Install-Module -Name posh-git -Force
@@ -57,7 +57,7 @@ for:
       - pwsh: Install-Module -Name MarkdownToHtml -Force
     build_script:
       - ps: Write-Host "Starting Build..."
-      - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+      - ps: Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"
     test_script:
       - ps: Write-Host "Starting Tests on PS 5.1..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
@@ -80,7 +80,7 @@ for:
       - git config --global core.autocrlf true
       - git config --global core.safecrlf false
       - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-      - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
+      - ps: $env:GitHubTag = "v$($env:ReleaseVersion)"
       - ps: Write-Host "Starting Evaluating for Deploy..."
       - ps: . .\appveyordeploy.ps1
 
@@ -103,14 +103,14 @@ for:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope "Local"
       - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
-      - pwsh: Update-AppveyorBuild -Version "$(env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - pwsh: Update-AppveyorBuild -Version "$($env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
       - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
     build_script:
-      - pwsh: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+      - pwsh: Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"
     test_script:
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
       - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
