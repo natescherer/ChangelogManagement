@@ -66,8 +66,8 @@ task UpdateHelpLinkInReadme -If {$BuildMode -eq "Release"} {
     $UpdateNeeded = $true
 
     foreach ($Line in $ReadmeData) {
-        if ($Line -match "\[DocsDir\]n*") {
-            if ($Line -match "\[DocsDir\]: \.\./v$ReleaseVersion/docs") {
+        if ($Line -match "^\[DocsDir\].*") {
+            if ($Line -match "^\[DocsDir\]: \.\./v$ReleaseVersion/docs") {
                 $UpdateNeeded = $false
             } else {
                 $ReadmeOutput += "[DocsDir]: ../v" + $ReleaseVersion + "/docs/"
