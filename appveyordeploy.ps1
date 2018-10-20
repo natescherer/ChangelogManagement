@@ -27,7 +27,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
         Remove-Item .\state.zip
         Remove-Item .\TestsResults.xml
         $env:Path += ";$env:ProgramFiles\Git\cmd"
-        Import-Module posh-git -ErrorAction Stop
+        #Import-Module posh-git -ErrorAction Stop
         git checkout master
         git add --all
         git status

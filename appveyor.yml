@@ -46,14 +46,14 @@ for:
       - ps: Install-Module -Name ChangelogManagement -Force
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
-      - ps: Install-Module -Name posh-git -Force
+      #- ps: Install-Module -Name posh-git -Force
       - ps: Install-Module -Name platyPS -Force
       - ps: Install-Module -Name MarkdownToHtml -Force
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
       - pwsh: Install-Module -Name ChangelogManagement -Force
       - pwsh: Install-Module -Name InvokeBuild -Force
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
-      - pwsh: Install-Module -Name posh-git -Force
+      #- pwsh: Install-Module -Name posh-git -Force
       - pwsh: Install-Module -Name platyPS -Force
       - pwsh: Install-Module -Name MarkdownToHtml -Force
       - ps: Write-Host "Installing Chocolately Software..."
@@ -106,7 +106,7 @@ for:
       - pwsh: Install-Module -Name ChangelogManagement -Force -Scope "CurrentUser"  
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
-      - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
+      #- pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
       - pwsh: Write-Host "Installing apt-get Software..."
