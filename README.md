@@ -23,7 +23,13 @@ No prerequisites are required beyond having PowerShell installed.
 
 ### Installing
 
-Installation via Install-Module coming soon
+ChangelogManagement is listed in the PowerShell Gallery [here](https://www.powershellgallery.com/packages/ChangelogManagement), which means you can install on any internet-connected computer running PowerShell 5+ by running this command:
+
+```PowerShell
+Install-Module -Name ChangelogManagement
+```
+
+If you'd prefer to install manually, follow these instructions:
 
 1. Download the latest release from [releases](../../releases).
 1. Extract it, then run the following to install
