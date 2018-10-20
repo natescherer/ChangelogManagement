@@ -9,9 +9,9 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
     try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
         $PM = @{
-            Path        = '.\src'
+            Path        = "$(Split-Path -Path $PSScriptRoot -Parent)\src\"
             NuGetApiKey = $env:NuGetApiKey
-            ErrorAction = 'Stop'
+            ErrorAction = "Stop"
         }
         Publish-Module @PM
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to the PowerShell Gallery." -ForegroundColor Cyan
