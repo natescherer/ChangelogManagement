@@ -79,8 +79,8 @@ for:
       - ps: Write-Host "Preparing for Deploy..."
       - ps: git config --global credential.helper store
       - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-      - ps: git config --global user.email $($env:GitName)
-      - ps: git config --global user.name $($env:GitEmail)
+      - ps: git config --global user.name $($env:GitName)
+      - ps: git config --global user.email $($env:GitEmail)
       - ps: git config --global core.autocrlf true
       - ps: git config --global core.safecrlf false
       - ps: Write-Host "Starting Evaluating for Deploy..."
