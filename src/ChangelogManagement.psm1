@@ -350,12 +350,12 @@ function Update-Changelog {
     # Inject links into footer
     if ($LinkMode -eq "Automatic") {
         if ($ChangelogData.Released -ne "") {
-            $UrlBase = ($ChangelogData.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
-            if (($UrlBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
+            $LinkBase = ($ChangelogData.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
+            if (($LinkBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
                 $ReleasePrefix = "v"
             }
-            $NewFooter = ("[Unreleased]: $UrlBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
+            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
+                "[$ReleaseVersion]: $LinkBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
                 ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
         } else {
             $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
@@ -367,7 +367,7 @@ function Update-Changelog {
                 "manual step.")
             }
         }
-        if (($UrlBase -notlike "*github.com*") -and ($UrlBase -notlike "*gitlab.com*")) {
+        if (($LinkBase -notlike "*github.com*") -and ($LinkBase -notlike "*gitlab.com*")) {
             Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +
                 "properly. Interested in having your SCM work with this Automatic LinkMode? Open an issue " +
                 "at https://github.com/natescherer/ChangelogManagement/issues.")
