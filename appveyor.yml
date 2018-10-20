@@ -31,8 +31,8 @@ init:
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
-  #- ps: $ErrorActionPreference = "Stop"
-  #- pwsh: $ErrorActionPreference = "Stop"
+  - ps: $ErrorActionPreference = "Stop"
+  - pwsh: $ErrorActionPreference = "Stop"
 
 for:
   -
@@ -46,14 +46,12 @@ for:
       - ps: Install-Module -Name ChangelogManagement -Force
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
-      #- ps: Install-Module -Name posh-git -Force
       - ps: Install-Module -Name platyPS -Force
       - ps: Install-Module -Name MarkdownToHtml -Force
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
       - pwsh: Install-Module -Name ChangelogManagement -Force
       - pwsh: Install-Module -Name InvokeBuild -Force
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
-      #- pwsh: Install-Module -Name posh-git -Force
       - pwsh: Install-Module -Name platyPS -Force
       - pwsh: Install-Module -Name MarkdownToHtml -Force
       - ps: Write-Host "Installing Chocolately Software..."
@@ -62,7 +60,7 @@ for:
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
-      - ps: $env:ChangelogData = (((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()
+      - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
       - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
       - 7z a state.zip *
     test_script:
