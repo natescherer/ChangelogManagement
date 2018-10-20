@@ -34,9 +34,8 @@ pull_requests:
 install:
   - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
   - ps: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
-  - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
   - ps: Install-Module -Name InvokeBuild -Force
-  - ps: Install-Module -Name Pester -Force
+  - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
   - ps: Install-Module -Name posh-git -Force
   - ps: Install-Module -Name platyPS -Force
   - ps: Install-Module -Name MarkdownToHtml -Force
@@ -64,7 +63,7 @@ artifacts:
 before_deploy:
   - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
   - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
-  - ps: . .\appveyordeploy.ps1
+  - ps: if ($env:APPVEYOR_BUILD_WORKER_IMAGE -like "Visual Studio*") {Install-PackageProvider -Name NuGet -Force | Out-Null; . .\appveyordeploy.ps1}
 
 deploy:
   tag: $(GitHubTag)
@@ -77,3 +76,4 @@ deploy:
   on:
     branch: master
     APPVEYOR_REPO_COMMIT_MESSAGE: .*!Deploy.*
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio.*
