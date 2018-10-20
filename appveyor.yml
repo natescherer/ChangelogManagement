@@ -31,6 +31,8 @@ init:
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
+  - ps: $ErrorActionPreference = "Stop"
+  - pwsh: $ErrorActionPreference = "Stop"
 
 for:
   -
@@ -60,7 +62,7 @@ for:
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
-      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
+      - ps: Set-AppveyorBuildVariable -Name ChangelogData -Value ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
       - 7z a state.zip *
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
