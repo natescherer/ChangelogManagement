@@ -41,10 +41,8 @@ for:
       - ps: Write-Host "Install PS 5.1 Modules..."
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
       - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
-      - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
-      - ps: if (($env:ReleaseVersion -ne $null) -and ((Get-ChangelogData).LastVersion -ne $null) {$env:ReleaseVersion = (Get-ChangelogData).LastVersion}
-      - ps: if (($env:ReleaseVersion -eq $null) -and ((Get-ChangelogData).LastVersion -eq $null) {$env:ReleaseVersion = "0.0.0"}
-      - ps: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
+      - ps: Update-AppveyorBuild -Version "$(env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
       - ps: Install-Module -Name posh-git -Force
@@ -104,10 +102,8 @@ for:
     install:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope "Local"
-      - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
-      - pwsh: if (($env:ReleaseVersion -ne $null) -and ((Get-ChangelogData).LastVersion -ne $null) {$env:ReleaseVersion = (Get-ChangelogData).LastVersion}
-      - pwsh: if (($env:ReleaseVersion -eq $null) -and ((Get-ChangelogData).LastVersion -eq $null) {$env:ReleaseVersion = "0.0.0"}
-      - pwsh: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
+      - pwsh: Update-AppveyorBuild -Version "$(env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
       - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
