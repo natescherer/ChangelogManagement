@@ -3,7 +3,7 @@ Write-Host -Object ''
 
 # Make sure we're using the Master branch and that it's not a pull request
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
-if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*")) {
+if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) {
     Write-Host "Starting Deploy..."
     # Publish the new version to the PowerShell Gallery
     try {
