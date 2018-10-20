@@ -39,7 +39,7 @@ for:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Installing Windows PowerShell Modules..."
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
-      - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+      - ps: Install-Module -Name ChangelogManagement -Force
       - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
       - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - ps: Install-Module -Name InvokeBuild -Force
@@ -48,7 +48,7 @@ for:
       - ps: Install-Module -Name platyPS -Force
       - ps: Install-Module -Name MarkdownToHtml -Force
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+      - pwsh: Install-Module -Name ChangelogManagement -Force
       - pwsh: Install-Module -Name InvokeBuild -Force
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
       - pwsh: Install-Module -Name posh-git -Force
