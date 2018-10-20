@@ -66,11 +66,11 @@ task UpdateHelpLinkInReadme -If {$BuildMode -eq "Release"} {
     $UpdateNeeded = $true
 
     foreach ($Line in $ReadmeData) {
-        if ($Line -like "*``[HelpMarkdown``]:*") {
-            if ($Line -like "*``[HelpMarkdown``]: ../v$ReleaseVersion*") {
+        if ($Line -match "\[DocsDir\]n*") {
+            if ($Line -match "\[DocsDir\]: \.\./v$ReleaseVersion/docs") {
                 $UpdateNeeded = $false
             } else {
-                $ReadmeOutput += "[HelpMarkdown]: ../v" + $ReleaseVersion + "/doc/"
+                $ReadmeOutput += "[DocsDir]: ../v" + $ReleaseVersion + "/docs/"
             }
         } else {
             $ReadmeOutput += $Line
@@ -86,7 +86,7 @@ task UpdateHelpLinkInReadme -If {$BuildMode -eq "Release"} {
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog -If {$BuildMode -eq "Release"} {
-    Update-Changelog -ReleaseVersion $ReleaseVersion -LinkBase $LinkBase
+    Update-Changelog -ReleaseVersion $ReleaseVersion -LinkBase $LinkBase -ReleasePrefix "v"
 }
 
 # Synopsis: Converts README.md and anything matching docs*.md to HTML, and puts in out folder.
