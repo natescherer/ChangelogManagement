@@ -14,11 +14,11 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
             ErrorAction = "Stop"
         }
         #Publish-Module @PM
-        Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to the PowerShell Gallery." -ForegroundColor Cyan
+        Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $ReleaseVersion published to the PowerShell Gallery." -ForegroundColor Cyan
     }
     Catch {
         # Sad panda; it broke
-        Write-Warning "Publishing update $NewVersion to the PowerShell Gallery failed."
+        Write-Warning "Publishing update $ReleaseVersion to the PowerShell Gallery failed."
         throw $_
     }
 
@@ -31,13 +31,13 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
         git checkout master
         git add --all
         git status
-        git commit -s -m "Release via Appveyor: $NewVersion"
-        git tag -a v$($env:ReleaseVersion) -m v$($env:ReleaseVersion)
+        git commit -s -m "Release via Appveyor: $ReleaseVersion"
+        git tag -a v$($ReleaseVersion) -m v$($ReleaseVersion)
         git push origin master
-        Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to GitHub." -ForegroundColor Cyan
+        Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $ReleaseVersion published to GitHub." -ForegroundColor Cyan
     }
     Catch {
-        Write-Warning "Publishing update $NewVersion to GitHub failed."
+        Write-Warning "Publishing update $ReleaseVersion to GitHub failed."
         throw $_
     }
 } else {
