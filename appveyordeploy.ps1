@@ -28,12 +28,12 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
         Remove-Item .\TestsResults.xml
         $env:Path += ";$env:ProgramFiles\Git\cmd"
         #Import-Module posh-git -ErrorAction Stop
-        git checkout master
+        git checkout master --porcelain
         git add --all
         git status
         git commit -s -m "Release via Appveyor: $ReleaseVersion"
         git tag -a v$($ReleaseVersion) -m v$($ReleaseVersion)
-        git push origin master
+        git push origin master --porcelain
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $ReleaseVersion published to GitHub." -ForegroundColor Cyan
     }
     Catch {
