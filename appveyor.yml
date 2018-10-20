@@ -57,7 +57,7 @@ for:
       - pwsh: Install-Module -Name MarkdownToHtml -Force
     build_script:
       - ps: Write-Host "Starting Build..."
-      - ps: Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"
+      - ps: if ($env:ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"} else {Invoke-Build -BuildMode "Snapshot"}
     test_script:
       - ps: Write-Host "Starting Tests on PS 5.1..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
@@ -72,7 +72,7 @@ for:
         name: ReleasePackage
 
     before_deploy:
-      - ps: Write-Host "Starting Tests on PS 5.1..."
+      - ps: Write-Host "Preparing for Deploy..."
       - git config --global credential.helper store
       - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
       - ps: git config --global user.email $($env:GitName)
@@ -94,7 +94,7 @@ for:
       prerelease: false
       on:
         branch: master
-        APPVEYOR_REPO_COMMIT_MESSAGE: !Deploy.*
+        APPVEYOR_REPO_COMMIT_MESSAGE: .*!Deploy.*
   -
     matrix:
       only:
@@ -110,7 +110,7 @@ for:
       - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
     build_script:
-      - pwsh: Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"
+      - pwsh: if ($env:ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"} else {Invoke-Build -BuildMode "Snapshot"}
     test_script:
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
       - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
