@@ -110,7 +110,7 @@ Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHAN
 
 For detailed documentation, [click here on GitHub][HelpMarkdown], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
 
-[HelpMarkdown]: ../v1.1.0/docs
+[HelpMarkdown]: ../v1.0.0/doc/
 
 ## Questions/Comments
 

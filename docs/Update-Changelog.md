@@ -8,7 +8,7 @@ and makes a new, blankUnreleased section.
 
 ```
 Update-Changelog [-ReleaseVersion] <String> [[-Path] <String>] [[-OutputPath] <String>]
- [[-ReleasePrefix] <String>] [[-LinkMode] <String>] [<CommonParameters>]
+ [[-ReleasePrefix] <String>] [[-LinkMode] <String>] [[-LinkBase] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ then makes a new, blank Unreleased section.
 Update-Changelog -ReleaseVersion 1.1.1
 ```
 
-(Does not generate output, but updates changelog at .\CHANGELOG.md, overwriting it with changes)
+(Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
 
 ### EXAMPLE 2
 ```
@@ -114,6 +114,25 @@ Aliases:
 Required: False
 Position: 5
 Default value: Automatic
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -LinkBase
+Mode used for adding links at the bottom of the Changelog for new versions.
+Can either be Automatic
+(adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
+will need manually updated), or None (not adding links).
+Defaults to Automatic.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: Https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
