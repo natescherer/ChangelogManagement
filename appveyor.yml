@@ -14,7 +14,6 @@ image:
   - Visual Studio 2017
   - Ubuntu1804
 
-# Disable automatic builds
 build: off
 
 skip_tags: true
@@ -33,7 +32,6 @@ init:
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
 
-# Install prereqs for build
 for:
   -
     matrix:
@@ -59,10 +57,10 @@ for:
       - ps: Write-Host "Installing Chocolately Software..."
       - ps: choco install pandoc -r --no-progress
     build_script:
-      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
+      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
       - 7z a state.zip *
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
@@ -75,9 +73,9 @@ for:
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
       - path: out\*.zip
-        name: ReleasePackage-Windows
+        name: ReleasePackage
       - path: state.zip
-        name: BuildState-Windows
+        name: BuildState
     before_deploy:
       - ps: Write-Host "Starting Pre-Deploy Config..."
       - ps: git config --global credential.helper store
@@ -89,7 +87,7 @@ for:
       description: $(ChangelogData)
       provider: GitHub
       auth_token: $(GitHubKey)
-      artifact: ReleasePackage-Windows
+      artifact: ReleasePackage
       draft: false
       prerelease: false
       on:
@@ -122,6 +120,6 @@ for:
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
       - path: out\*.zip
-        name: ReleasePackage-Linux
+        name: ReleasePackage
       - path: state.zip
-        name: BuildState-Linux
+        name: BuildState
