@@ -84,6 +84,8 @@ task MarkdownHelpToHtml -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Re
 
 # Synopsis: Zip up files.
 task Zip -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
+    Copy-Item -Path src\* -Destination out
+
     if ($ReleaseVersion) {
         Compress-Archive -Path "out\$ModuleName\*" -DestinationPath "out\$ModuleName-v$ReleaseVersion.zip"
     } else {

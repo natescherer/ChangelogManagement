@@ -38,7 +38,7 @@ install:
   - ps: Install-Module -Name MarkdownToHtml -Force
 
 build_script:
-  - ps: Invoke-Build -ReleaseVersion $env:APPVEYOR_BUILD_VERSION -BuildMode "Release"
+  - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0])" -BuildMode "Release"
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
