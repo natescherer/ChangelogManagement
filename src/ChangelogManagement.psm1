@@ -313,7 +313,14 @@ function Update-Changelog {
         # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
         # will need manually updated), or None (not adding links). Defaults to Automatic.
         [ValidateSet("Automatic","Manual","None")]
-        [string]$LinkMode = "Automatic"
+        [string]$LinkMode = "Automatic",
+
+        [parameter(Mandatory=$false)]
+        # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
+        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
+        # will need manually updated), or None (not adding links). Defaults to Automatic.
+        [ValidateNotNullOrEmpty()]
+        [string]$LinkBase = "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME"
     )
 
     $ChangelogData = Get-ChangelogData -Path $Path
@@ -351,12 +358,14 @@ function Update-Changelog {
                 "[$ReleaseVersion]: $UrlBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
                 ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
         } else {
-            $NewFooter = ("[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/$ReleasePrefix$ReleaseVersion")
+            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
+                "[$ReleaseVersion]: $LinkBase/tree/$ReleasePrefix$ReleaseVersion")
 
-            Write-Output ("Because this is the first release, you will need to manually update the URLs " +
+            if ($LinkBase -eq "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME") {
+                Write-Output ("Because this is the first release, you will need to manually update the URLs " +
                 "at the bottom of the file. Future releases will reuse this information, and won't require this " +
                 "manual step.")
+            }
         }
         if (($UrlBase -notlike "*github.com*") -and ($UrlBase -notlike "*gitlab.com*")) {
             Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +

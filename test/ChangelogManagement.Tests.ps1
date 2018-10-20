@@ -903,6 +903,62 @@ InModuleScope $ModuleName {
                     "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
                     "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
             }
+            It "-LinkBase" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkBase "https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME"
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$Eol" +
+                    "All notable changes to this project will be documented in this file.$Eol" +
+                    "$Eol" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
+                    "$Eol" +
+                    "## [Unreleased]$Eol" +
+                    "### Added$Eol" +
+                    "$Eol" +
+                    "### Changed$Eol" +
+                    "$Eol" +
+                    "### Deprecated$Eol" +
+                    "$Eol" +
+                    "### Removed$Eol" +
+                    "$Eol" +
+                    "### Fixed$Eol" +
+                    "$Eol" +
+                    "### Security$Eol" +
+                    "$Eol" +
+                    "## [1.0.0] - $Today$Eol" +
+                    "### Added$Eol" +
+                    "- Unreleased Addition 1$Eol" +
+                    "$Eol" +
+                    "[Unreleased]: https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME/compare/1.0.0..HEAD$Eol" +
+                    "[1.0.0]: https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME/tree/1.0.0")                
+            }
         }
         Context "-LinkMode Manual" {
             It "First Release" {
