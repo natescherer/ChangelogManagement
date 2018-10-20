@@ -28,10 +28,9 @@ skip_commits:
 
 init:
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
+  - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
   - ps: if ($ReleaseVersion -ne "vNext") {$env:GitHubTag = "v$ReleaseVersion"}
   - ps: if ($ReleaseVersion -ne "vNext") {$env:DeployMode = "true"}
-  - ps: Install-Module -Name ChangelogManagement -Force
-  - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
 
 # Install prereqs for build
 for:
@@ -43,7 +42,7 @@ for:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Installing Windows PowerShell Modules..."
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
-      - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
+      - ps: Install-Module -Name ChangelogManagement -Force
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
       - ps: Install-Module -Name posh-git -Force
@@ -59,6 +58,7 @@ for:
       - ps: Write-Host "Installing Chocolately Software..."
       - ps: choco install pandoc -r --no-progress
     build_script:
+      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
@@ -106,8 +106,6 @@ for:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
       - pwsh: Install-Module -Name ChangelogManagement -Force -Scope "CurrentUser"  
-      - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
-      - pwsh: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
       - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
