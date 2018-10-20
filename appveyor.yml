@@ -20,7 +20,7 @@ build: off
 skip_commits:
   files:
     - README.md
-  message: /updated readme.*|update readme.*s|update docs.*|update version.*|update appveyor.*/
+  message: /updated readme.*|update docs.*|release via appveyor.*/
 
 # There's no need to alter the build number for a Pull Request (PR) since they don't modify anything
 pull_requests:
@@ -52,7 +52,6 @@ test_script:
   - ps: git config --global user.name $($env:GitEmail)
   - git config --global core.autocrlf true
   - git config --global core.safecrlf false
-  - ps: . .\appveyorbuild.ps1
 
 artifacts:
   - path: out\*.zip
@@ -61,6 +60,7 @@ artifacts:
 before_deploy:
   - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
   - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
+  - ps: . .\appveyordeploy.ps1
 
 deploy:
   tag: $(GitHubTag)
@@ -68,8 +68,8 @@ deploy:
   provider: GitHub
   auth_token: $(GitHubKey)
   artifact: ReleasePackage
-  draft: true
+  draft: false
   prerelease: false
-  #on:
-  #  branch: master                 # release from master branch only
-  #  appveyor_repo_tag: true        # deploy on tag push only
+  on:
+    branch: master
+    APPVEYOR_REPO_COMMIT_MESSAGE: .*!Deploy.*
