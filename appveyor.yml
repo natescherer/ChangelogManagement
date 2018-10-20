@@ -41,8 +41,8 @@ for:
       - ps: Write-Host "Install PS 5.1 Modules..."
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
       - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
-      - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
-      - ps: Update-AppveyorBuild -Version "$($env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
+      - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
       - ps: Install-Module -Name posh-git -Force
@@ -57,7 +57,9 @@ for:
       - pwsh: Install-Module -Name MarkdownToHtml -Force
     build_script:
       - ps: Write-Host "Starting Build..."
-      - ps: if ($env:ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"} else {Invoke-Build -BuildMode "Snapshot"}
+      - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
+    after_build:
+      - 7z a state.zip *
     test_script:
       - ps: Write-Host "Starting Tests on PS 5.1..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
@@ -69,21 +71,19 @@ for:
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
       - path: out\*.zip
-        name: ReleasePackage
-
+        name: ReleasePackage-Windows
+      - path: state.zip
+        name: BuildState-Windows
     before_deploy:
       - ps: Write-Host "Preparing for Deploy..."
-      - git config --global credential.helper store
+      - ps: git config --global credential.helper store
       - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
       - ps: git config --global user.email $($env:GitName)
       - ps: git config --global user.name $($env:GitEmail)
-      - git config --global core.autocrlf true
-      - git config --global core.safecrlf false
-      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-      - ps: $env:GitHubTag = "v$($env:ReleaseVersion)"
+      - ps: git config --global core.autocrlf true
+      - ps: git config --global core.safecrlf false
       - ps: Write-Host "Starting Evaluating for Deploy..."
       - ps: . .\appveyordeploy.ps1
-
     deploy:
       tag: $(GitHubTag)
       description: $(ChangelogData)
@@ -102,16 +102,23 @@ for:
     install:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope "Local"
-      - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$env:ReleaseVersion = "vNext"}
-      - pwsh: Update-AppveyorBuild -Version "$($env:ReleaseVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
+      - pwsh: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
       - pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
     build_script:
-      - pwsh: if ($env:ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $env:ReleaseVersion -BuildMode "Release"} else {Invoke-Build -BuildMode "Snapshot"}
+      - pwsh: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
+    after_build:
+      - 7z a state.zip *
     test_script:
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
       - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
+    artifacts:
+      - path: out\*.zip
+        name: ReleasePackage-Linux
+      - path: state.zip
+        name: BuildState-Linux

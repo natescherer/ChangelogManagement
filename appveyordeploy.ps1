@@ -5,14 +5,6 @@ Write-Host -Object ''
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
 if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*")) {
     Write-Host "Starting Deploy..."
-    try {
-        # This is where the module manifest lives
-
-    }
-    catch {
-        throw $_
-    }
-
     # Publish the new version to the PowerShell Gallery
     try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
@@ -38,6 +30,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MES
         git add --all
         git status
         git commit -s -m "Release via Appveyor: $NewVersion"
+        git tag -a v$($env:ReleaseVersion)
         git push origin master
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to GitHub." -ForegroundColor Cyan
     }
