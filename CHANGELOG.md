@@ -6,11 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Get-ChangelogData cmdlet
-- Add-ChangelogData cmdlet
-- New-Changelog cmdlet
-- Update-Changelog cmdlet
-- Convertfrom-Changelog cmdlet
 
 ### Changed
 
@@ -22,3 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.0] - 2018-10-20
+### Added
+- Get-ChangelogData cmdlet
+- Add-ChangelogData cmdlet
+- New-Changelog cmdlet
+- Update-Changelog cmdlet
+- Convertfrom-Changelog cmdlet
+
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v1.0.0..HEAD
+[1.0.0]: https://github.com/natescherer/ChangelogManagement/tree/v1.0.0
