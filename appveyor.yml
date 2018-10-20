@@ -56,7 +56,7 @@ for:
       - pwsh: Install-Module -Name platyPS -Force
       - pwsh: Install-Module -Name MarkdownToHtml -Force
       - ps: Write-Host "Installing Chocolately Software..."
-      - ps: choco install pandoc
+      - ps: choco install pandoc -r
     build_script:
       - ps: Write-Host "Starting Build..."
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
