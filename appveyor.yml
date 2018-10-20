@@ -12,7 +12,7 @@ environment:
 
 image:
   - Visual Studio 2017
-  - Ubuntu
+  - Ubuntu1804
 
 # Disable automatic builds
 # Without this, the following error shows up:
@@ -31,31 +31,53 @@ pull_requests:
   do_not_increment_build_number: true
 
 # Install prereqs for build
-install:
-  - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
-  - ps: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
-  - ps: Install-Module -Name InvokeBuild -Force
-  - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
-  - ps: Install-Module -Name posh-git -Force
-  - ps: Install-Module -Name platyPS -Force
-  - ps: Install-Module -Name MarkdownToHtml -Force
+for:
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2017
+    install:
+      - echo Visual Studio 2017
+      - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+      - ps: Update-AppveyorBuild -Version "$((Get-ChangelogData).LastVersion)+$($env:APPVEYOR_BUILD_NUMBER)"
+      - ps: Install-Module -Name InvokeBuild -Force
+      - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
+      - ps: Install-Module -Name posh-git -Force
+      - ps: Install-Module -Name platyPS -Force
+      - ps: Install-Module -Name MarkdownToHtml -Force
+      - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+      - pwsh: Install-Module -Name InvokeBuild -Force
+      - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
+      - pwsh: Install-Module -Name posh-git -Force
+      - pwsh: Install-Module -Name platyPS -Force
+      - pwsh: Install-Module -Name MarkdownToHtml -Force
+  -
+    matrix:
+      only:
+        - image: Ubuntu1804
+    install:
+      - echo Ubuntu
+      - ps: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force
+      - ps: Install-Module -Name InvokeBuild -Force
+      - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
+      - ps: Install-Module -Name posh-git -Force
+      - ps: Install-Module -Name platyPS -Force
+      - ps: Install-Module -Name MarkdownToHtml -Force
 
 for:
   -
     matrix:
       only:
         - image: Visual Studio 2017
-
     build_script:
-    - echo Visual Studio 2017
-    - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+      - echo Visual Studio 2017
+      - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
   -
     matrix:
       only:
-        - image: Ubuntu
-
+        - image: Ubuntu1804
     build_script:
-    - echo Ubuntu
+      - echo Ubuntu1804
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
