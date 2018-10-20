@@ -13,7 +13,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = "Stop"
         }
-        Publish-Module @PM
+        #Publish-Module @PM
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to the PowerShell Gallery." -ForegroundColor Cyan
     }
     Catch {
@@ -30,7 +30,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
         git add --all
         git status
         git commit -s -m "Release via Appveyor: $NewVersion"
-        git tag -a v$($env:ReleaseVersion)
+        git tag -a v$($env:ReleaseVersion) -m v$($env:ReleaseVersion)
         git push origin master
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $NewVersion published to GitHub." -ForegroundColor Cyan
     }
