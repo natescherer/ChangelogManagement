@@ -103,7 +103,7 @@ for:
     install:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: Import-Module -Name ".\src\$($env:APPVEYOR_PROJECT_NAME).psm1" -Force -Scope "Local"
+      - pwsh: Install-Module -Name ChangelogManagement -Force -Scope "CurrentUser"  
       - pwsh: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
       - pwsh: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
