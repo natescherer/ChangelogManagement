@@ -51,6 +51,41 @@ for:
       - pwsh: Install-Module -Name posh-git -Force
       - pwsh: Install-Module -Name platyPS -Force
       - pwsh: Install-Module -Name MarkdownToHtml -Force
+    build_script:
+      - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+    test_script:
+      - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
+      - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
+      - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
+      - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
+      - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
+      - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
+    artifacts:
+      - path: out\*.zip
+        name: ReleasePackage
+
+    before_deploy:
+      - git config --global credential.helper store
+      - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
+      - ps: git config --global user.email $($env:GitName)
+      - ps: git config --global user.name $($env:GitEmail)
+      - git config --global core.autocrlf true
+      - git config --global core.safecrlf false
+      - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
+      - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
+      - ps: if ($env:APPVEYOR_BUILD_WORKER_IMAGE -like "Visual Studio*") {Install-PackageProvider -Name NuGet -Force | Out-Null; . .\appveyordeploy.ps1}
+
+    deploy:
+      tag: $(GitHubTag)
+      description: $(ChangelogData)
+      provider: GitHub
+      auth_token: $(GitHubKey)
+      artifact: ReleasePackage
+      draft: false
+      prerelease: false
+      on:
+        branch: master
+        APPVEYOR_REPO_COMMIT_MESSAGE: .*!Deploy.*
   -
     matrix:
       only:
@@ -63,56 +98,12 @@ for:
       - ps: Install-Module -Name posh-git -Force
       - ps: Install-Module -Name platyPS -Force
       - ps: Install-Module -Name MarkdownToHtml -Force
-
-for:
-  -
-    matrix:
-      only:
-        - image: Visual Studio 2017
     build_script:
-      - echo Visual Studio 2017
       - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
-  -
-    matrix:
-      only:
-        - image: Ubuntu1804
-    build_script:
-      - echo Ubuntu1804
+    test_script:
+      - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
+      - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
+      - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
-test_script:
-  - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
-  - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
-  - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
-  - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
-  - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
-  - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
-
-artifacts:
-  - path: out\*.zip
-    name: ReleasePackage
-
-before_deploy:
-  - git config --global credential.helper store
-  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-  - ps: git config --global user.email $($env:GitName)
-  - ps: git config --global user.name $($env:GitEmail)
-  - git config --global core.autocrlf true
-  - git config --global core.safecrlf false
-  - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-  - ps: $env:GitHubTag = "v$($env:APPVEYOR_BUILD_VERSION.Split('+')[0])"
-  - ps: if ($env:APPVEYOR_BUILD_WORKER_IMAGE -like "Visual Studio*") {Install-PackageProvider -Name NuGet -Force | Out-Null; . .\appveyordeploy.ps1}
-
-deploy:
-  tag: $(GitHubTag)
-  description: $(ChangelogData)
-  provider: GitHub
-  auth_token: $(GitHubKey)
-  artifact: ReleasePackage
-  draft: false
-  prerelease: false
-  on:
-    branch: master
-    APPVEYOR_REPO_COMMIT_MESSAGE: .*!Deploy.*
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio.*
