@@ -90,7 +90,7 @@ for:
       description: $(ChangelogData)
       provider: GitHub
       auth_token: $(GitHubKey)
-      artifact: ReleasePackage
+      artifact: ReleasePackage-Windows
       draft: false
       prerelease: false
       on:
