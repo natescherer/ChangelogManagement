@@ -9,7 +9,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
     try {
         # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch
         $PM = @{
-            Path        = "$(Split-Path -Path $PSScriptRoot -Parent)\src\"
+            Path        = "$PSScriptRoot\src\"
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = "Stop"
         }
