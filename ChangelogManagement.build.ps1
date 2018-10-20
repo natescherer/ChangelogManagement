@@ -22,7 +22,7 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = Split-Path -Path $PSCommandPath -Leaf
+    $ModuleName = Split-Path -Path $PSScriptRoot -Leaf
     Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
