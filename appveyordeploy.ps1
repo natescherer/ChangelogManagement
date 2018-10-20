@@ -3,7 +3,7 @@ Write-Host -Object ''
 
 # Make sure we're using the Master branch and that it's not a pull request
 # Environmental Variables Guide: https://www.appveyor.com/docs/environment-variables/
-if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "*!Deploy*")) {
+if (($env:APPVEYOR_REPO_BRANCH -eq 'master') -and ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*")) {
     Write-Host "Starting Deploy..."
     try {
         # This is where the module manifest lives
