@@ -24,6 +24,8 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
 
     # Publish the new version back to master on GitHub
     Try {
+        Remove-Item .\state.zip
+        Remove-Item .\TestResults.xml
         $env:Path += ";$env:ProgramFiles\Git\cmd"
         Import-Module posh-git -ErrorAction Stop
         git checkout master
