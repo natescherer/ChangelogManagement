@@ -29,8 +29,6 @@ init:
   - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
   - ps: if ($ReleaseVersion -ne "vNext") {$env:GitHubTag = "v$ReleaseVersion"}
   - ps: if ($ReleaseVersion -ne "vNext") {$env:DeployMode = "true"}
-  - ps: git config --global credential.helper store
-  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
@@ -81,6 +79,9 @@ for:
       - path: state.zip
         name: BuildState-Windows
     before_deploy:
+      - ps: Write-Host "Starting Pre-Deploy Config..."
+      - ps: git config --global credential.helper store
+      - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
       - ps: Write-Host "Starting Evaluating for Deploy..."
       - ps: . .\appveyordeploy.ps1
     deploy:
