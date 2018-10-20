@@ -22,7 +22,7 @@ Enter-Build {
         }
     } 
 
-    $ModuleName = $env:APPVEYOR_REPO_NAME.split("/")[0]
+    $ModuleName = $env:APPVEYOR_REPO_NAME.split("/")[1]
     Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
 }
 
