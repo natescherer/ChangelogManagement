@@ -37,6 +37,7 @@ Installation via Install-Module coming soon
 ### Examples
 
 #### EXAMPLE
+
 ```
 Update-Changelog -ReleaseVersion 1.1.1
 ```
@@ -44,23 +45,26 @@ Update-Changelog -ReleaseVersion 1.1.1
 (Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
 
 #### EXAMPLE
-```
+
+```PowerShell
 New-Changelog
-```
 
 (Does not generate output, but creates a new changelog at .\CHANGELOG.md)
+```
 
 #### EXAMPLE
-```
+
+```PowerShell
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-```
 
 (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+```
 
 #### EXAMPLE
-```
+
+```PowerShell
 Get-ChangelogData
-```
+
 
 Header      : # Changelog
       All notable changes to this project will be documented in this file.
@@ -91,13 +95,16 @@ Released    : {@{RawData=## \[1.0.0\] - 2018-10-19
 Footer      : \[Unreleased\]: https://github.com/user/project/compare/1.0.0..HEAD
             \[1.0.0\]: https://github.com/user/project/tree/1.0.0
 LastVersion : 1.0.0
+```
 
 #### EXAMPLE
-```
+
+```PowerShell
 Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-```
+
 
 (Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed)
+```
 
 ### Documentation
 
