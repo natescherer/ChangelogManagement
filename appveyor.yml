@@ -63,6 +63,7 @@ for:
       - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
     after_build:
       - ps: Set-AppveyorBuildVariable -Name ChangelogData -Value ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
+      - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
       - 7z a state.zip *
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
@@ -83,7 +84,6 @@ for:
       - ps: git config --global credential.helper store
       - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
       - ps: Write-Host "Starting Evaluating for Deploy..."
-      - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
       - ps: . .\appveyordeploy.ps1
     deploy:
       tag: $(GitHubTag)
