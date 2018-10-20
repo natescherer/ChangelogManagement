@@ -27,7 +27,11 @@ skip_commits:
   message: /updated readme.*|update docs.*|release via appveyor.*/
 
 init:
-  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:DeployMode = "true"}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
+  - ps: if ($ReleaseVersion -ne "vNext") {$env:GitHubTag = "v$ReleaseVersion"}
+  - ps: if ($ReleaseVersion -ne "vNext") {$env:DeployMode = "true"}
+  - ps: Install-Module -Name ChangelogManagement -Force
+  - ps: $env:ChangelogData = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
 
 # Install prereqs for build
 for:
@@ -39,8 +43,6 @@ for:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Installing Windows PowerShell Modules..."
       - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
-      - ps: Install-Module -Name ChangelogManagement -Force
-      - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
       - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
       - ps: Install-Module -Name InvokeBuild -Force
       - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
