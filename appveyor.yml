@@ -41,23 +41,21 @@ install:
   - ps: Install-Module -Name MarkdownToHtml -Force
 
 for:
--
-  matrix:
-    only:
-      - image: Visual Studio 2017
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2017
 
-  build_script:
-  - echo Visual Studio 2017
-  - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+    build_script:
+    - echo Visual Studio 2017
+    - ps: Invoke-Build -ReleaseVersion $($env:APPVEYOR_BUILD_VERSION.Split('+')[0]) -BuildMode "Release"
+  -
+    matrix:
+      only:
+        - image: Ubuntu
 
-for:
--
-  matrix:
-    only:
-      - image: Ubuntu
-
-  build_script:
-  - echo Ubuntu
+    build_script:
+    - echo Ubuntu
 
 # Invoke Pester to run all of the unit tests, then save the results into XML in order to populate the AppVeyor tests section
 # If any of the tests fail, consider the pipeline failed
