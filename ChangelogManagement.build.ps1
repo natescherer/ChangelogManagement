@@ -56,7 +56,7 @@ task UpdateManifest -If {$BuildMode -eq "Release"} {
 
 # Synopsis: Generates Markdown help file from comment-based help in script.
 task GenerateMarkdownHelp -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    New-MarkdownHelp -Module $ModuleName -OutputFolder docs -NoMetadata | Out-Null
+    New-MarkdownHelp -Module $ModuleName -OutputFolder docs -Destination "out\$ModuleName\docs" -Template "src\MarkdownToHtmlTemplate" | Out-Null
 }
 
 # Synopsis: Updates the help link in the readme to point to the file in the new version.
