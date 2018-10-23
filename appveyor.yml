@@ -104,7 +104,6 @@ for:
       - pwsh: Install-Module -Name ChangelogManagement -Force -Scope "CurrentUser"  
       - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
-      #- pwsh: Install-Module -Name posh-git -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
       - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
       - pwsh: Write-Host "Installing apt-get Software..."
