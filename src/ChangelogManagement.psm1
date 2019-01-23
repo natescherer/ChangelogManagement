@@ -303,12 +303,7 @@ function Update-Changelog {
         # The path to the output changelog file, if it is different than than the source path
         [string]$OutputPath = $Path,
 
-        [parameter(Mandatory=$false)]
-        # Prefix used before version number in source control compare links (i.e. the "v" in v1.0.0). Defaults to
-        # "v" for GitHub and "" for other platforms. Only applies if LinkMode is Automatic.
-        [string]$ReleasePrefix = "",
-
-        [parameter(Mandatory=$false)]
+        [parameter(Mandatory=$true)]
         # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
         # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
         # will need manually updated), or None (not adding links). Defaults to Automatic.
@@ -316,12 +311,17 @@ function Update-Changelog {
         [string]$LinkMode = "Automatic",
 
         [parameter(Mandatory=$false)]
-        # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-        # will need manually updated), or None (not adding links). Defaults to Automatic.
+        # Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic. This
+        # is a hashtable that defines the three possible types of links needed: FirstRelease, NormalRelease, 
+        # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous 
+        # versions with {PREV}.
         [ValidateNotNullOrEmpty()]
-        [string]$LinkBase = "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME"
+        [hashtable]$LinkPattern
     )
+
+    if (($LinkMode -eq "Automatic") -and !($LinkPattern)) {
+        throw "-LinkPattern must be used when -LinkMode is set to Automatic"
+    }
 
     $ChangelogData = Get-ChangelogData -Path $Path
 
@@ -350,27 +350,12 @@ function Update-Changelog {
     # Inject links into footer
     if ($LinkMode -eq "Automatic") {
         if ($ChangelogData.Released -ne "") {
-            $LinkBase = ($ChangelogData.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
-            if (($LinkBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
-                $ReleasePrefix = "v"
-            }
-            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $LinkBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$Eol" +
+                "[$ReleaseVersion]: " + (($LinkPattern['NormalRelease'] -replace "{CUR}", $ReleaseVersion) -replace "{PREV}", $ChangelogData.LastVersion) + "$Eol" +
                 ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
         } else {
-            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $LinkBase/tree/$ReleasePrefix$ReleaseVersion")
-
-            if ($LinkBase -eq "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME") {
-                Write-Output ("Because this is the first release, you will need to manually update the URLs " +
-                "at the bottom of the file. Future releases will reuse this information, and won't require this " +
-                "manual step.")
-            }
-        }
-        if (($LinkBase -notlike "*github.com*") -and ($LinkBase -notlike "*gitlab.com*")) {
-            Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +
-                "properly. Interested in having your SCM work with this Automatic LinkMode? Open an issue " +
-                "at https://github.com/natescherer/ChangelogManagement/issues.")
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$Eol" +
+                "[$ReleaseVersion]: " + ($LinkPattern['FirstRelease'] -replace "{CUR}", $ReleaseVersion))
         }
     }
     if ($LinkMode -eq "Manual") {
