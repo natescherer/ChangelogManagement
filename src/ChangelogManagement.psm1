@@ -16,36 +16,7 @@ function Get-ChangelogData {
 
     .EXAMPLE
         Get-ChangelogData
-        
-        Header      : # Changelog
-              All notable changes to this project will be documented in this file.
-
-              The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-              and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-
-        Unreleased  : @{RawData=## [Unreleased]
-                    ### Added
-
-                    ### Changed
-
-                    ### Deprecated
-
-                    ### Removed
-
-                    ### Fixed
-
-                    ### Security
-
-                    ; Link=https://github.com/user/project/compare/1.0.0..HEAD; Data=}
-        Released    : {@{RawData=## [1.0.0] - 2018-10-19
-                    ### Added
-                    - Initial release
-
-                    ; Date=10/19/2018 12:00:00 AM; Version=1.0.0; Link=https://github.com/user/project/tree/1.0.0; Data=}}
-        Footer      : [Unreleased]: https://github.com/user/project/compare/1.0.0..HEAD
-                    [1.0.0]: https://github.com/user/project/tree/1.0.0
-        LastVersion : 1.0.0
+        Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -151,11 +122,11 @@ function Add-ChangelogData {
 
     .EXAMPLE
         Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-        (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+        Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
 
     .EXAMPLE
         Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
-        (Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
+        Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -214,11 +185,11 @@ function New-Changelog {
 
     .EXAMPLE
         New-Changelog
-        (Does not generate output, but creates a new changelog at .\CHANGELOG.md)
+        Does not generate output, but creates a new changelog at .\CHANGELOG.md
 
     .EXAMPLE
         New-Changelog -Path project\CHANGELOG.md -NoSemVer
-        (Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+        Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -276,12 +247,12 @@ function Update-Changelog {
         This cmdlet does not generate output except in the event of an error or notice
 
     .EXAMPLE
-        Update-Changelog -ReleaseVersion 1.1.1
-        (Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
+        Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern @{FirstRelease="https://github.com/testuser/testrepo/tree/v{CUR}";NormalRelease="https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"}
+        Does not generate output, but:
+        1. Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+        2. Updates links according to LinkPattern.
+        3. Creates a new, blank Unreleased section
 
-    .EXAMPLE
-        Update-Changelog -ReleaseVersion 1.1.1 -Path project\CHANGELOG.md -OutputPath TempChangelog.md
-        (Does not generate output, but updates changelog at project\CHANGELOG.md, writing changes to .\TempChangelog.md)
     .LINK
         https://github.com/natescherer/ChangelogManagement
     #>
@@ -414,11 +385,11 @@ function Convertfrom-Changelog {
 
     .EXAMPLE
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-        (Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed)
+        Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 
     .EXAMPLE
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Text -OutputPath CHANGELOG.txt
-        (Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed)
+        .Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
