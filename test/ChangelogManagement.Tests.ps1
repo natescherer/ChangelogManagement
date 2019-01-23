@@ -723,7 +723,17 @@ InModuleScope $ModuleName {
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0"
+                $UCSplat = @{
+                    Path = $TestPath
+                    ReleaseVersion = "1.0.0"
+                    LinkMode = "Automatic"
+                    LinkPattern   = @{
+                        FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
+                        NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
+                        Unreleased    = "https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"
+                    }
+                }
+                Update-Changelog @UCSplat
 
                 $Result = Get-Content -Path $TestPath -Raw
 
@@ -750,8 +760,8 @@ InModuleScope $ModuleName {
                     "### Added$Eol" +
                     "- Unreleased Addition 1$Eol" +
                     "$Eol" +
-                    "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/1.0.0..HEAD$Eol" +
-                    "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$Eol" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
             }
             It "Second Release" {
                 $TestPath = "TestDrive:\CHANGELOG.md"
@@ -785,7 +795,18 @@ InModuleScope $ModuleName {
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-                Update-Changelog -Path $TestPath -ReleaseVersion "1.1.0"
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.1.0"
+                    LinkMode       = "Automatic"
+                    LinkPattern   = @{
+                        FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
+                        NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
+                        Unreleased    = "https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"
+                    }
+                }
+
+                Update-Changelog @UCSplat
 
                 $Result = Get-Content -Path $TestPath -Raw
 
@@ -860,7 +881,18 @@ InModuleScope $ModuleName {
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-                Update-Changelog -Path $TestPath -ReleaseVersion "1.2.0"
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.2.0"
+                    LinkMode       = "Automatic"
+                    LinkPattern   = @{
+                        FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
+                        NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
+                        Unreleased    = "https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"
+                    }
+                }
+
+                Update-Changelog @UCSplat
 
                 $Result = Get-Content -Path $TestPath -Raw
 
@@ -902,62 +934,6 @@ InModuleScope $ModuleName {
                     "[1.2.0]: https://github.com/testuser/testrepo/compare/v1.1.0..v1.2.0$Eol" +
                     "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$Eol" +
                     "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
-            }
-            It "-LinkBase" {
-                $TestPath = "TestDrive:\CHANGELOG.md"
-
-                $SeedData = ("# Changelog$Eol" +
-                    "All notable changes to this project will be documented in this file.$Eol" +
-                    "$Eol" +
-                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
-                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
-                    "$Eol" +
-                    "## [Unreleased]$Eol" +
-                    "### Added$Eol" +
-                    "- Unreleased Addition 1$Eol" +
-                    "$Eol" +
-                    "### Changed$Eol" +
-                    "$Eol" +
-                    "### Deprecated$Eol" +
-                    "$Eol" +
-                    "### Removed$Eol" +
-                    "$Eol" +
-                    "### Fixed$Eol" +
-                    "$Eol" +
-                    "### Security$Eol" +
-                    "$Eol")
-
-                Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkBase "https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME"
-
-                $Result = Get-Content -Path $TestPath -Raw
-
-                $Result | Should -Be ("# Changelog$Eol" +
-                    "All notable changes to this project will be documented in this file.$Eol" +
-                    "$Eol" +
-                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
-                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
-                    "$Eol" +
-                    "## [Unreleased]$Eol" +
-                    "### Added$Eol" +
-                    "$Eol" +
-                    "### Changed$Eol" +
-                    "$Eol" +
-                    "### Deprecated$Eol" +
-                    "$Eol" +
-                    "### Removed$Eol" +
-                    "$Eol" +
-                    "### Fixed$Eol" +
-                    "$Eol" +
-                    "### Security$Eol" +
-                    "$Eol" +
-                    "## [1.0.0] - $Today$Eol" +
-                    "### Added$Eol" +
-                    "- Unreleased Addition 1$Eol" +
-                    "$Eol" +
-                    "[Unreleased]: https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME/compare/1.0.0..HEAD$Eol" +
-                    "[1.0.0]: https://NEW-DOMAIN.com/NEW-USERNAME/NEW-REPONAME/tree/1.0.0")                
             }
         }
         Context "-LinkMode Manual" {
@@ -1372,62 +1348,6 @@ InModuleScope $ModuleName {
                     "[1.0.0]: ENTER-URL-HERE")
             }
         }
-        It "-ReleasePrefix" {
-            $TestPath = "TestDrive:\CHANGELOG.md"
-
-            $SeedData = ("# Changelog$Eol" +
-                "All notable changes to this project will be documented in this file.$Eol" +
-                "$Eol" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
-                "$Eol" +
-                "## [Unreleased]$Eol" +
-                "### Added$Eol" +
-                "- Unreleased Addition 1$Eol" +
-                "$Eol" +
-                "### Changed$Eol" +
-                "$Eol" +
-                "### Deprecated$Eol" +
-                "$Eol" +
-                "### Removed$Eol" +
-                "$Eol" +
-                "### Fixed$Eol" +
-                "$Eol" +
-                "### Security$Eol" +
-                "$Eol")
-
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -ReleasePrefix "TEST"
-
-            $Result = Get-Content -Path $TestPath -Raw
-
-            $Result | Should -Be ("# Changelog$Eol" +
-                "All notable changes to this project will be documented in this file.$Eol" +
-                "$Eol" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
-                "$Eol" +
-                "## [Unreleased]$Eol" +
-                "### Added$Eol" +
-                "$Eol" +
-                "### Changed$Eol" +
-                "$Eol" +
-                "### Deprecated$Eol" +
-                "$Eol" +
-                "### Removed$Eol" +
-                "$Eol" +
-                "### Fixed$Eol" +
-                "$Eol" +
-                "### Security$Eol" +
-                "$Eol" +
-                "## [1.0.0] - $Today$Eol" +
-                "### Added$Eol" +
-                "- Unreleased Addition 1$Eol" +
-                "$Eol" +
-                "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/TEST1.0.0..HEAD$Eol" +
-                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/TEST1.0.0")
-        }
         It "-OutputPath" {
             $TestPath = "TestDrive:\CHANGELOG.md"
             $TestPath2 = "TestDrive:\CHANGELOG2.md"
@@ -1455,7 +1375,7 @@ InModuleScope $ModuleName {
 
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2
+            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2 -LinkMode None
 
             $Result = Get-Content -Path $TestPath2 -Raw
 
@@ -1481,9 +1401,7 @@ InModuleScope $ModuleName {
                 "## [1.0.0] - $Today$Eol" +
                 "### Added$Eol" +
                 "- Unreleased Addition 1$Eol" +
-                "$Eol" +
-                "[Unreleased]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/compare/1.0.0..HEAD$Eol" +
-                "[1.0.0]: https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME/tree/1.0.0")
+                "$Eol")
         }
     }
 

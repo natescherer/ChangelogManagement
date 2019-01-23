@@ -16,36 +16,7 @@ function Get-ChangelogData {
 
     .EXAMPLE
         Get-ChangelogData
-        
-        Header      : # Changelog
-              All notable changes to this project will be documented in this file.
-
-              The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-              and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-
-        Unreleased  : @{RawData=## [Unreleased]
-                    ### Added
-
-                    ### Changed
-
-                    ### Deprecated
-
-                    ### Removed
-
-                    ### Fixed
-
-                    ### Security
-
-                    ; Link=https://github.com/user/project/compare/1.0.0..HEAD; Data=}
-        Released    : {@{RawData=## [1.0.0] - 2018-10-19
-                    ### Added
-                    - Initial release
-
-                    ; Date=10/19/2018 12:00:00 AM; Version=1.0.0; Link=https://github.com/user/project/tree/1.0.0; Data=}}
-        Footer      : [Unreleased]: https://github.com/user/project/compare/1.0.0..HEAD
-                    [1.0.0]: https://github.com/user/project/tree/1.0.0
-        LastVersion : 1.0.0
+        Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -151,11 +122,11 @@ function Add-ChangelogData {
 
     .EXAMPLE
         Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-        (Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+        Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
 
     .EXAMPLE
         Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
-        (Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
+        Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -214,11 +185,11 @@ function New-Changelog {
 
     .EXAMPLE
         New-Changelog
-        (Does not generate output, but creates a new changelog at .\CHANGELOG.md)
+        Does not generate output, but creates a new changelog at .\CHANGELOG.md
 
     .EXAMPLE
         New-Changelog -Path project\CHANGELOG.md -NoSemVer
-        (Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+        Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -276,12 +247,12 @@ function Update-Changelog {
         This cmdlet does not generate output except in the event of an error or notice
 
     .EXAMPLE
-        Update-Changelog -ReleaseVersion 1.1.1
-        (Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
+        Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern @{FirstRelease="https://github.com/testuser/testrepo/tree/v{CUR}";NormalRelease="https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"}
+        Does not generate output, but:
+        1. Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+        2. Updates links according to LinkPattern.
+        3. Creates a new, blank Unreleased section
 
-    .EXAMPLE
-        Update-Changelog -ReleaseVersion 1.1.1 -Path project\CHANGELOG.md -OutputPath TempChangelog.md
-        (Does not generate output, but updates changelog at project\CHANGELOG.md, writing changes to .\TempChangelog.md)
     .LINK
         https://github.com/natescherer/ChangelogManagement
     #>
@@ -303,25 +274,25 @@ function Update-Changelog {
         # The path to the output changelog file, if it is different than than the source path
         [string]$OutputPath = $Path,
 
-        [parameter(Mandatory=$false)]
-        # Prefix used before version number in source control compare links (i.e. the "v" in v1.0.0). Defaults to
-        # "v" for GitHub and "" for other platforms. Only applies if LinkMode is Automatic.
-        [string]$ReleasePrefix = "",
-
-        [parameter(Mandatory=$false)]
+        [parameter(Mandatory=$true)]
         # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-        # will need manually updated), or None (not adding links). Defaults to Automatic.
+        # (adding based pattern provided via -LinkPattern), Manual (adding placeholders which
+        # will need manually updated), or None (not adding links).
         [ValidateSet("Automatic","Manual","None")]
-        [string]$LinkMode = "Automatic",
+        [string]$LinkMode,
 
         [parameter(Mandatory=$false)]
-        # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-        # will need manually updated), or None (not adding links). Defaults to Automatic.
+        # Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic. This
+        # is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
+        # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous 
+        # versions with {PREV}.
         [ValidateNotNullOrEmpty()]
-        [string]$LinkBase = "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME"
+        [hashtable]$LinkPattern
     )
+
+    if (($LinkMode -eq "Automatic") -and !($LinkPattern)) {
+        throw "-LinkPattern must be used when -LinkMode is set to Automatic"
+    }
 
     $ChangelogData = Get-ChangelogData -Path $Path
 
@@ -350,27 +321,12 @@ function Update-Changelog {
     # Inject links into footer
     if ($LinkMode -eq "Automatic") {
         if ($ChangelogData.Released -ne "") {
-            $LinkBase = ($ChangelogData.Footer.TrimStart("[Unreleased]: ") -split "/compare")[0]
-            if (($LinkBase -like "*github.com*") -and ($ReleasePrefix -eq "")) {
-                $ReleasePrefix = "v"
-            }
-            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $LinkBase/compare/$ReleasePrefix$($ChangelogData.LastVersion)..$ReleasePrefix$ReleaseVersion$Eol" +
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$Eol" +
+                "[$ReleaseVersion]: " + (($LinkPattern['NormalRelease'] -replace "{CUR}", $ReleaseVersion) -replace "{PREV}", $ChangelogData.LastVersion) + "$Eol" +
                 ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*","").TrimStart($Eol))
         } else {
-            $NewFooter = ("[Unreleased]: $LinkBase/compare/$ReleasePrefix$ReleaseVersion..HEAD$Eol" +
-                "[$ReleaseVersion]: $LinkBase/tree/$ReleasePrefix$ReleaseVersion")
-
-            if ($LinkBase -eq "https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME") {
-                Write-Output ("Because this is the first release, you will need to manually update the URLs " +
-                "at the bottom of the file. Future releases will reuse this information, and won't require this " +
-                "manual step.")
-            }
-        }
-        if (($LinkBase -notlike "*github.com*") -and ($LinkBase -notlike "*gitlab.com*")) {
-            Write-Output ("Repository URLs do not appear to be GitHub or GitLab. Please verify links work " +
-                "properly. Interested in having your SCM work with this Automatic LinkMode? Open an issue " +
-                "at https://github.com/natescherer/ChangelogManagement/issues.")
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$Eol" +
+                "[$ReleaseVersion]: " + ($LinkPattern['FirstRelease'] -replace "{CUR}", $ReleaseVersion))
         }
     }
     if ($LinkMode -eq "Manual") {
@@ -429,11 +385,11 @@ function Convertfrom-Changelog {
 
     .EXAMPLE
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-        (Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed)
+        Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 
     .EXAMPLE
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Text -OutputPath CHANGELOG.txt
-        (Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed)
+        .Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed.
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
