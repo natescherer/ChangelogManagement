@@ -305,14 +305,14 @@ function Update-Changelog {
 
         [parameter(Mandatory=$true)]
         # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-        # will need manually updated), or None (not adding links). Defaults to Automatic.
+        # (adding based pattern provided via -LinkPattern), Manual (adding placeholders which
+        # will need manually updated), or None (not adding links).
         [ValidateSet("Automatic","Manual","None")]
-        [string]$LinkMode = "Automatic",
+        [string]$LinkMode,
 
         [parameter(Mandatory=$false)]
         # Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic. This
-        # is a hashtable that defines the three possible types of links needed: FirstRelease, NormalRelease, 
+        # is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
         # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous 
         # versions with {PREV}.
         [ValidateNotNullOrEmpty()]
