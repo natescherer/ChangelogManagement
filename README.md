@@ -2,9 +2,9 @@
 
 ![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/natescherer/ChangelogManagement?svg=true&branch=master)
 
-ChangelogManagement is a PowerShell module designed for easy manipulation of Changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
+ChangelogManagement is a PowerShell module for working with of Changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
-The primary feature is automatic updating of changelogs at release time as part of build/release scripts via the Update-Changelog cmdlet. (i.e. Automating the process of moving Unreleased changes into a new release tagged with today's date and a version number supplied via a parameter.)
+The primary feature is automatic updating of changelogs at release time in a CI/CD workflow via Update-Changelog cmdlet.
 
 Other features include:
 
@@ -43,10 +43,15 @@ If you'd prefer to install manually, follow these instructions:
 ### Examples
 
 ```PowerShell
-Update-Changelog -ReleaseVersion 1.1.1
+LinkPattern   = @{
+    FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
+    NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
+    Unreleased    = "https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"
+}
+Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern $LinkPattern
 
 
-(Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
+(Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion, today's date, and updating links according to LinkPattern.)
 ```
 
 ```PowerShell
