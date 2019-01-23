@@ -42,7 +42,7 @@ If you'd prefer to install manually, follow these instructions:
 
 ### Examples
 
-```PowerShell
+```
 LinkPattern   = @{
     FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
     NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
@@ -50,62 +50,34 @@ LinkPattern   = @{
 }
 Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern $LinkPattern
 
-
-(Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion, today's date, and updating links according to LinkPattern.)
+Does not generate output, but:
+1. Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+2. Updates links according to LinkPattern.
+3. Creates a new, blank Unreleased section.
 ```
 
-```PowerShell
+```
 New-Changelog
 
-(Does not generate output, but creates a new changelog at .\CHANGELOG.md)
+Does not generate output, but creates a new changelog at .\CHANGELOG.md.
 ```
 
-```PowerShell
+```
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
 
-(Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
 ```
 
-```PowerShell
+```
 Get-ChangelogData
 
-
-Header      : # Changelog
-      All notable changes to this project will be documented in this file.
-
-      The format is based on \[Keep a Changelog\](https://keepachangelog.com/en/1.0.0/),
-      and this project adheres to \[Semantic Versioning\](https://semver.org/spec/v2.0.0.html).
-
-
-Unreleased  : @{RawData=## \[Unreleased\]
-            ### Added
-
-            ### Changed
-
-            ### Deprecated
-
-            ### Removed
-
-            ### Fixed
-
-            ### Security
-
-            ; Link=https://github.com/user/project/compare/1.0.0..HEAD; Data=}
-Released    : {@{RawData=## \[1.0.0\] - 2018-10-19
-            ### Added
-            - Initial release
-
-            ; Date=10/19/2018 12:00:00 AM; Version=1.0.0; Link=https://github.com/user/project/tree/1.0.0; Data=}}
-Footer      : \[Unreleased\]: https://github.com/user/project/compare/1.0.0..HEAD
-            \[1.0.0\]: https://github.com/user/project/tree/1.0.0
-LastVersion : 1.0.0
+Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 ```
 
-```PowerShell
+```
 Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
 
-
-(Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed)
+Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 ```
 
 ### Documentation
