@@ -42,43 +42,43 @@ If you'd prefer to install manually, follow these instructions:
 
 ### Examples
 
-```
+``` PowerShell
 LinkPattern   = @{
     FirstRelease  = "https://github.com/testuser/testrepo/tree/v{CUR}"
     NormalRelease = "https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}"
     Unreleased    = "https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"
 }
 Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern $LinkPattern
-
-Does not generate output, but:
-1. Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
-2. Updates links according to LinkPattern.
-3. Creates a new, blank Unreleased section.
 ```
 
-```
+- Does not generate output, but:
+  - Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+  - Updates links according to LinkPattern.
+  - Creates a new, blank Unreleased section.
+
+``` PowerShell
 New-Changelog
-
-Does not generate output, but creates a new changelog at .\CHANGELOG.md.
 ```
 
-```
+- Does not generate output, but creates a new changelog at .\CHANGELOG.md.
+
+``` PowerShell
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-
-Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
 ```
 
-```
+- Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
+
+``` PowerShell
 Get-ChangelogData
-
-Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 ```
 
-```
+- Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
+
+``` PowerShell
 Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-
-Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 ```
+
+- Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 
 ### Documentation
 
