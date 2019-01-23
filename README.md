@@ -2,14 +2,14 @@
 
 ![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/natescherer/ChangelogManagement?svg=true&branch=master)
 
-ChangelogManagement is a PowerShell module for working with of Changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
+ChangelogManagement is a PowerShell module to read and manipulate changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
-The primary feature is automatic updating of changelogs at release time in a CI/CD workflow via Update-Changelog cmdlet.
+The primary feature is automatic updating of changelogs at release time in a CI/CD workflow via Update-Changelog.
 
 Other features include:
 
 - Creating new changelog files via New-Changelog
-- Adding new changes to changelog files via Add-ChangelogData
+- Adding data to changelog files via Add-ChangelogData
 - Getting changelog contents (parsed into a PowerShell object) via Get-ChangelogData
 - Converting changelogs into other formats via Convertfrom-Changelog
 
@@ -124,13 +124,9 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 
 ## Building
 
-If you fork into your own repo, you can build through Appveyor by updating the environment section at the top of [appveyor.yml](appveyor.yml).
+If you fork into your own repository, you can build through Appveyor by updating the environment section at the top of [appveyor.yml](appveyor.yml).
 
-Local builds can be done via Invoke-Build with the following modules installed:
-
-- InvokeBuild
-- platyPs
-- MarkdownToHtml
+Local builds can be done via Invoke-Build.
 
 ## Authors
 
