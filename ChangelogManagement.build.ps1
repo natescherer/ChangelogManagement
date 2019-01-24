@@ -4,14 +4,7 @@
 [CmdletBinding()]
 param (
     [parameter(Mandatory=$true)]
-    [ValidateSet("Alpha","Final")]
-    [string]$BuildMode,
-
-    [parameter(Mandatory=$true)]
-    [string]$Version,
-
-    [parameter(Mandatory=$false)]
-    [string]$PrereleaseStringSuffix
+    [string]$Version
 )
 $NL = [System.Environment]::NewLine
 
@@ -36,10 +29,6 @@ $MarkdownToHtmlTemplate = (
 Enter-Build {
     $global:ModuleName = Get-ProjectName
     $global:ModulePath = "$PSScriptRoot\src\$ModuleName.psm1"
-
-    if ($BuildMode -eq "Alpha") {
-        $Version = $Version + "-alpha" + $PrereleaseStringSuffix
-    }
 }
 
 # Synopsis: Perform all build tasks.
