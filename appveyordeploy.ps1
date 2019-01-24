@@ -13,7 +13,7 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
             NuGetApiKey = $env:NuGetApiKey
             ErrorAction = "Stop"
         }
-        #Publish-Module @PM
+        Publish-Module @PM
         Write-Host "$($env:APPVEYOR_PROJECT_NAME) PowerShell Module version $ReleaseVersion published to the PowerShell Gallery." -ForegroundColor Cyan
     }
     Catch {
