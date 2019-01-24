@@ -1,113 +1,101 @@
-# Requires -Modules InvokeBuild, platyPs, MarkdownToHtml
+#Requires -Modules InvokeBuild, platyPs, MarkdownToHtml, ChangelogManagement, BuildHelpers
 
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingCmdletAliases", "", Justification="This erroneously triggers on Invoke-Build scripts.")]
-[CmdletBinding(DefaultParameterSetName="Snapshot")]
+[CmdletBinding()]
 param (
-    [parameter(ParameterSetName="Snapshot",Mandatory=$true)]
-    [parameter(ParameterSetName="Release",Mandatory=$true)]
-    [ValidateSet("Snapshot","Release")]
+    [parameter(Mandatory=$true)]
+    [ValidateSet("Alpha","Final")]
     [string]$BuildMode,
 
-    [parameter(ParameterSetName="Release",Mandatory=$true)]
-    [string]$ReleaseVersion,
+    [parameter(Mandatory=$true)]
+    [string]$Version,
 
-    [parameter(ParameterSetName="Release",Mandatory=$false)]
-    [string]$LinkBase
+    [parameter(Mandatory=$false)]
+    [string]$PrereleaseStringSuffix
+)
+$NL = [System.Environment]::NewLine
+
+$MarkdownToHtmlTemplate = (
+    '<!DOCTYPE html>' + $NL +
+    '<html>' + $NL +
+    '<head>' + $NL +
+    "`t" +'<meta charset="utf-8" />' + $NL +
+    "`t" +'<title>[title]</title>' + $NL +
+    "`t" +'<style>' + $NL +
+    "`t" +'.markdown-body{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;line-height:1.5;color:#24292e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";font-size:16px;line-height:1.5;word-wrap:break-word}.markdown-body .pl-c{color:#6a737d}.markdown-body .pl-c1,.markdown-body .pl-s .pl-v{color:#005cc5}.markdown-body .pl-e,.markdown-body .pl-en{color:#6f42c1}.markdown-body .pl-smi,.markdown-body .pl-s .pl-s1{color:#24292e}.markdown-body .pl-ent{color:#22863a}.markdown-body .pl-k{color:#d73a49}.markdown-body .pl-s,.markdown-body .pl-pds,.markdown-body .pl-s .pl-pse .pl-s1,.markdown-body .pl-sr,.markdown-body .pl-sr .pl-cce,.markdown-body .pl-sr .pl-sre,.markdown-body .pl-sr .pl-sra{color:#032f62}.markdown-body .pl-v,.markdown-body .pl-smw{color:#e36209}.markdown-body .pl-bu{color:#b31d28}.markdown-body .pl-ii{color:#fafbfc;background-color:#b31d28}.markdown-body .pl-c2{color:#fafbfc;background-color:#d73a49}.markdown-body .pl-c2::before{content:"^M"}.markdown-body .pl-sr .pl-cce{font-weight:700;color:#22863a}.markdown-body .pl-ml{color:#735c0f}.markdown-body .pl-mh,.markdown-body .pl-mh .pl-en,.markdown-body .pl-ms{font-weight:700;color:#005cc5}.markdown-body .pl-mi{font-style:italic;color:#24292e}.markdown-body .pl-mb{font-weight:700;color:#24292e}.markdown-body .pl-md{color:#b31d28;background-color:#ffeef0}.markdown-body .pl-mi1{color:#22863a;background-color:#f0fff4}.markdown-body .pl-mc{color:#e36209;background-color:#ffebda}.markdown-body .pl-mi2{color:#f6f8fa;background-color:#005cc5}.markdown-body .pl-mdr{font-weight:700;color:#6f42c1}.markdown-body .pl-ba{color:#586069}.markdown-body .pl-sg{color:#959da5}.markdown-body .pl-corl{text-decoration:underline;color:#032f62}.markdown-body .octicon{display:inline-block;vertical-align:text-top;fill:currentColor}.markdown-body a{background-color:transparent}.markdown-body a:active,.markdown-body a:hover{outline-width:0}.markdown-body strong{font-weight:inherit;font-weight:bolder}.markdown-body h1{font-size:2em;margin:.67em 0}.markdown-body img{border-style:none}.markdown-body code,.markdown-body kbd,.markdown-body pre{font-family:monospace,monospace;font-size:1em}.markdown-body hr{box-sizing:content-box;height:0;overflow:visible}.markdown-body input{font:inherit;margin:0;overflow:visible}.markdown-body [type="checkbox"]{box-sizing:border-box;padding:0}.markdown-body *{box-sizing:border-box}.markdown-body input{font-family:inherit;font-size:inherit;line-height:inherit}.markdown-body a{color:#0366d6;text-decoration:none}.markdown-body a:hover{text-decoration:underline}.markdown-body strong{font-weight:600}.markdown-body hr{height:0;margin:15px 0;overflow:hidden;background:transparent;border:0;border-bottom:1px solid #dfe2e5}.markdown-body hr::before{display:table;content:""}.markdown-body hr::after{display:table;clear:both;content:""}.markdown-body table{border-spacing:0;border-collapse:collapse}.markdown-body td,.markdown-body th{padding:0}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:0;margin-bottom:0}.markdown-body h1{font-size:32px;font-weight:600}.markdown-body h2{font-size:24px;font-weight:600}.markdown-body h3{font-size:20px;font-weight:600}.markdown-body h4{font-size:16px;font-weight:600}.markdown-body h5{font-size:14px;font-weight:600}.markdown-body h6{font-size:12px;font-weight:600}.markdown-body p{margin-top:0;margin-bottom:10px}.markdown-body blockquote{margin:0}.markdown-body ul,.markdown-body ol{padding-left:0;margin-top:0;margin-bottom:0}.markdown-body ol ol,.markdown-body ul ol{list-style-type:lower-roman}.markdown-body ul ul ol,.markdown-body ul ol ol,.markdown-body ol ul ol,.markdown-body ol ol ol{list-style-type:lower-alpha}.markdown-body dd{margin-left:0}.markdown-body code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;font-size:12px}.markdown-body pre{margin-top:0;margin-bottom:0;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;font-size:12px}.markdown-body .octicon{vertical-align:text-bottom}.markdown-body .pl-0{padding-left:0!important}.markdown-body .pl-1{padding-left:4px!important}.markdown-body .pl-2{padding-left:8px!important}.markdown-body .pl-3{padding-left:16px!important}.markdown-body .pl-4{padding-left:24px!important}.markdown-body .pl-5{padding-left:32px!important}.markdown-body .pl-6{padding-left:40px!important}.markdown-body::before{display:table;content:""}.markdown-body::after{display:table;clear:both;content:""}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .anchor{float:left;padding-right:4px;margin-left:-20px;line-height:1}.markdown-body .anchor:focus{outline:none}.markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre{margin-top:0;margin-bottom:16px}.markdown-body hr{height:.25em;padding:0;margin:24px 0;background-color:#e1e4e8;border:0}.markdown-body blockquote{padding:0 1em;color:#6a737d;border-left:.25em solid #dfe2e5}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd{display:inline-block;padding:3px 5px;font-size:11px;line-height:10px;color:#444d56;vertical-align:middle;background-color:#fafbfc;border:solid 1px #c6cbd1;border-bottom-color:#959da5;border-radius:3px;box-shadow:inset 0 -1px 0 #959da5}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#1b1f23;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1{padding-bottom:.3em;font-size:2em;border-bottom:1px solid #eaecef}.markdown-body h2{padding-bottom:.3em;font-size:1.5em;border-bottom:1px solid #eaecef}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#6a737d}.markdown-body ul,.markdown-body ol{padding-left:2em}.markdown-body ul ul,.markdown-body ul ol,.markdown-body ol ol,.markdown-body ol ul{margin-top:0;margin-bottom:0}.markdown-body li{word-wrap:break-all}.markdown-body li>p{margin-top:16px}.markdown-body li+li{margin-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:600}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body table{display:block;width:100%;overflow:auto}.markdown-body table th{font-weight:600}.markdown-body table th,.markdown-body table td{padding:6px 13px;border:1px solid #dfe2e5}.markdown-body table tr{background-color:#fff;border-top:1px solid #c6cbd1}.markdown-body table tr:nth-child(2n){background-color:#f6f8fa}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body code{padding:.2em .4em;margin:0;font-size:85%;background-color:rgba(27,31,35,0.05);border-radius:3px}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:transparent;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f6f8fa;border-radius:3px}.markdown-body pre code{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body .full-commit .btn-outline:not(:disabled):hover{color:#005cc5;border-color:#005cc5}.markdown-body kbd{display:inline-block;padding:3px 5px;font:11px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;line-height:10px;color:#444d56;vertical-align:middle;background-color:#fafbfc;border:solid 1px #d1d5da;border-bottom-color:#c6cbd1;border-radius:3px;box-shadow:inset 0 -1px 0 #c6cbd1}.markdown-body :checked+.radio-label{position:relative;z-index:1;border-color:#0366d6}.markdown-body .task-list-item{list-style-type:none}.markdown-body .task-list-item+.task-list-item{margin-top:3px}.markdown-body .task-list-item input{margin:0 .2em .25em -1.6em;vertical-align:middle}.markdown-body hr{border-bottom-color:#eee}.markdown-body{box-sizing:border-box;min-width:200px;max-width:980px;margin:0 auto;padding:45px}@media (max-width: 767px){.markdown-body{padding:15px}}' + $NL +
+    "`t" +'</style>' + $NL +
+    '</head>' + $NL +
+    '<body>' + $NL +
+    "`t" +'<article class="markdown-body">' + $NL +
+    "`t" +'[content]' + $NL +
+    '</article>' + $NL +
+    '</body>' + $NL +
+    '</html>'
 )
 
 Enter-Build {
-    switch ($BuildMode) {
-        "Snapshot" {}
-        "Release" {
-            if (!$ReleaseVersion) {
-                throw "ReleaseVersion must be specified in Release BuildMode"
-            }
-        }
-    } 
+    $global:ModuleName = Get-ProjectName
+    $global:ModulePath = "$PSScriptRoot\src\$ModuleName.psm1"
 
-    $ModuleName = (Get-ChildItem -Path src\ -Filter *.psd1).Name.Split(".")[0]
-    Write-Build Green "Assuming `$ModuleName value of $ModuleName based on project folder name."
+    if ($BuildMode -eq "Alpha") {
+        $Version = $Version + "-alpha" + $PrereleaseStringSuffix
+    }
 }
 
 # Synopsis: Perform all build tasks.
-task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateHelpLinkInReadme, UpdateChangelog, MarkDownHelpToHtml, Zip
+task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateChangelog, MarkDownHelpToHtml
 
-# Synopsis: Removes files from build, doc, and out.
-task Clean -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    Remove-Item -Path "docs/*" -Recurse -ErrorAction SilentlyContinue
-    Remove-Item -Path "out/*" -Recurse -ErrorAction SilentlyContinue
+# Synopsis: Removes files from docs and out.
+task Clean {
+    Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
+    Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
 }
 
 # Synopsis: Updates the module manifest file for the new release.
-task UpdateManifest -If {$BuildMode -eq "Release"} {
-    $ManifestPath = ".\src\$ModuleName.psd1"
-
-    $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*",""
-    $Description = ((($Description -replace "!\[.*","") -replace "\[","") -replace "\]"," ").Trim()
+task UpdateManifest {
+    $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", ""
 
     $ManifestData = @{
-        'Path' = $ManifestPath
-        'ModuleVersion' = $ReleaseVersion
-        'ReleaseNotes' = ((Get-ChangelogData).Released[0].RawData -replace "## \[.*","").Trim()
-        'Description' = $Description
+        Path = $ModulePath
+        ReleaseNotes = (Get-ChangelogData).Released[0].RawData
+        Description = $Description
+        ModuleVersion = $Version
+        AliasesToExport = ""
+        VariablesToExport = ""
+        CmdletsToExport = ""
     }
     Update-ModuleManifest @ManifestData
+
+    Set-ModuleFunction
 }
 
 # Synopsis: Generates Markdown help file from comment-based help in script.
-task GenerateMarkdownHelp -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    New-MarkdownHelp -Module $ModuleName -OutputFolder docs
-}
+task GenerateMarkdownHelp {
+    Get-Module -Name $ModuleName -All | Remove-Module -Force -ErrorAction Ignore
+    Import-Module -Name $ModulePath -Force -ErrorAction Stop
 
-# Synopsis: Updates the help link in the readme to point to the file in the new version.
-task UpdateHelpLinkInReadme -If {$BuildMode -eq "Release"} {
-    $ReadmeData = Get-Content -Path "README.md"
-    $ReadmeOutput = @()
-    $UpdateNeeded = $true
-
-    foreach ($Line in $ReadmeData) {
-        if ($Line -match "^\[DocsDir\].*") {
-            if ($Line -match "^\[DocsDir\]: \.\./v$ReleaseVersion/docs") {
-                $UpdateNeeded = $false
-            } else {
-                $ReadmeOutput += "[DocsDir]: ../v" + $ReleaseVersion + "/docs/"
-            }
-        } else {
-            $ReadmeOutput += $Line
-        }
-    }
-
-    if ($UpdateNeeded) {
-        Set-Content -Value $ReadmeOutput -Path "README.md"
-    } else {
-        Write-Build Yellow "README.md already updated."
-    }
+    New-MarkdownHelp -Module $ModuleName -OutputFolder docs | Out-Null
 }
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
-task UpdateChangelog -If {$BuildMode -eq "Release"} {
-    Update-Changelog -ReleaseVersion $ReleaseVersion -LinkBase $LinkBase -ReleasePrefix "v"
+task UpdateChangelog {
+    Update-Changelog -ReleaseVersion $Version -LinkBase $LinkBase -ReleasePrefix "v"
 }
 
-# Synopsis: Converts README.md and anything matching docs*.md to HTML, and puts in out folder.
-task MarkdownHelpToHtml -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    if (!(Test-Path -Path "docs\CHANGELOG.md")) {
-        Copy-Item -Path "CHANGELOG.md" -Destination "docs\"
-    }
-    Copy-Item -Path "README.md" -Destination "docs"
-    Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "src\MarkdownToHtmlTemplate" | Out-Null
- 
+# Synopsis: Creates HTML help files for inclusion in releases.
+task GenerateHtmlHelp {
+    Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
+    Copy-Item -Path "README.md" -Destination "docs\"
+
+    New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory
+    Set-Content -Value $MarkdownToHtmlTemplate -Path "$env:temp\MarkdownToHtml\md-template.html" -NoNewLine
+
+    Convert-MarkdownToHTML -Path "docs" -Destination "out\docs" -Template "$env:temp\MarkdownToHtml" | Out-Null
+
+    Remove-Item -Path "$env:temp\MarkdownToHtml" -Recurse -Force
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
-}
 
-# Synopsis: Zip up files.
-task Zip -If {($BuildMode -eq "Snapshot") -or ($BuildMode -eq "Release")} {
-    Copy-Item -Path "src\*" -Destination "out\$ModuleName\"
-
-    if ($ReleaseVersion) {
-        Compress-Archive -Path "out\$ModuleName\*" -DestinationPath "out\$ModuleName-v$ReleaseVersion.zip"
-    } else {
-        Compress-Archive -Path "out\$ModuleName\*" -DestinationPath "out\$ModuleName-snapshot$( Get-Date -Format yyMMdd ).zip"
-    }
+    Move-Item -Path "out\docs\README.html" -Destination "out\"
+    Move-Item -Path "out\docs\CHANGELOG.html" -Destination "out\"
 }
