@@ -47,11 +47,23 @@ task UpdateManifest {
 
     $SafeVersion = $Version.Split("-")[0]
 
+    $FunctionsToExport = @()
+    $ModuleData = Get-Content $ModulePath
+    foreach ($Line in $ModuleData) {
+        if ($Line -like "Export-ModuleMember*") {
+            $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","").Split(",")
+            foreach ($Function in $LineFunctions) {
+                $FunctionsToExport += $Function
+            }
+        }
+    }
+
     $ManifestData = @{
         Path = $ModulePath
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
         Description = $Description
         ModuleVersion = $SafeVersion
+        FunctionsToExport = $FunctionsToExport
     }
 
     if ($Version -like "*-*") {
@@ -62,8 +74,6 @@ task UpdateManifest {
 
     (Get-Content $ManifestPath) -replace "^CmdletsToExport.*", "CmdletsToExport = @()" | Set-Content $ManifestPath
     (Get-Content $ManifestPath) -replace "^AliasesToExport.*", "AliasesToExport = @()" | Set-Content $ManifestPath
-
-    Set-ModuleFunction
 }
 
 # Synopsis: Generates Markdown help file from comment-based help in script.
