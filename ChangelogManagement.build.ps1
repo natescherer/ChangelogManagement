@@ -35,13 +35,16 @@ Enter-Build {
 # Synopsis: Perform all build tasks.
 task . Init, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp, CopySource
 
-# Synopsis: Removes files from docs and out, makes out\$ModuleName if needed.
+# Synopsis: Removes files from docs and out, makes out\$ModuleName if needed, runs Set-BuildEnvironment for BuildHelpers commands.
 task Init {
     Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
+
     if (!(Test-Path -Path "out\$ModuleName")) {
         New-Item -Path "out\$ModuleName" -ItemType Directory
     }
+
+    Set-BuildEnvironment
 }
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
