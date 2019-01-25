@@ -51,9 +51,9 @@ task UpdateManifest {
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
         Description = $Description
         ModuleVersion = $SafeVersion
-        AliasesToExport = ""
-        VariablesToExport = ""
-        CmdletsToExport = ""
+        AliasesToExport = @()
+        VariablesToExport = @()
+        CmdletsToExport = @()
     }
 
     if ($Version -like "*-*") {
