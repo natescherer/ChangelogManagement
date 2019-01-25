@@ -37,6 +37,7 @@ init:
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:GitHubTag = "v$ReleaseVersion"}
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:DeployMode = "true"}
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -notlike "!Deploy*") {$ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:APPVEYOR_BUILD_NUMBER}
+  - ps: Update-AppveyorBuild -Version $ReleaseVersion
 
 for:
   -
