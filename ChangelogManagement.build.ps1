@@ -41,7 +41,7 @@ task Init {
     Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
 
     if (!(Test-Path -Path "out\$ModuleName")) {
-        New-Item -Path "out\$ModuleName" -ItemType Directory
+        New-Item -Path "out\$ModuleName" -ItemType Directory | Out-Null
     }
 
     Set-BuildEnvironment
