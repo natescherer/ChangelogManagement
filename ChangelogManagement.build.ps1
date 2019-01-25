@@ -53,17 +53,6 @@ task UpdateManifest {
 
     $SafeVersion = ($Version -split "-")[0]
 
-    $FunctionsToExport = @()
-    $ModuleData = Get-Content $ModulePath
-    foreach ($Line in $ModuleData) {
-        if ($Line -like "Export-ModuleMember*") {
-            $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","") -split ","
-            foreach ($Function in $LineFunctions) {
-                $FunctionsToExport += $Function
-            }
-        }
-    }
-
     $ManifestData = @{
         Path = $ManifestPath
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
@@ -77,6 +66,8 @@ task UpdateManifest {
     }
 
     Update-ModuleManifest @ManifestData
+
+    Set-ModuleFunction
 
     $ManifestData = Get-Content $ManifestPath
     $ManifestData = $ManifestData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
