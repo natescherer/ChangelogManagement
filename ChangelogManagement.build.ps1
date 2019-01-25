@@ -44,15 +44,22 @@ task Clean {
 task UpdateManifest {
     $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", ""
 
+    $SafeVersion = $Version.Split("-")[0]
+
     $ManifestData = @{
         Path = $ModulePath
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
         Description = $Description
-        ModuleVersion = $Version
+        ModuleVersion = $SafeVersion
         AliasesToExport = ""
         VariablesToExport = ""
         CmdletsToExport = ""
     }
+
+    if ($Version -like "*-*") {
+        $ManifestData += @{Prerelease = $Version.Split("-")[1]}
+    }
+
     Update-ModuleManifest @ManifestData
 
     Set-ModuleFunction
