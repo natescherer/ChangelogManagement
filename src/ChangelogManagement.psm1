@@ -454,8 +454,4 @@ function Convertfrom-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
-Export-ModuleMember -Function Get-ChangelogData
-Export-ModuleMember -Function Add-ChangelogData
-Export-ModuleMember -Function New-Changelog
-Export-ModuleMember -Function Update-Changelog
-Export-ModuleMember -Function Convertfrom-Changelog
+Export-ModuleMember -Function Get-ChangelogData, Add-ChangelogData, New-Changelog, Update-Changelog, Convertfrom-Changelog
