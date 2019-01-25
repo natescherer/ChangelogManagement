@@ -29,6 +29,7 @@ $MarkdownToHtmlTemplate = (
 Enter-Build {
     $global:ModuleName = Get-ProjectName
     $global:ModulePath = "$PSScriptRoot\src\$ModuleName.psm1"
+    $global:ManifestPath = "$PSScriptRoot\src\$ModuleName.psd1"
 }
 
 # Synopsis: Perform all build tasks.
@@ -51,9 +52,6 @@ task UpdateManifest {
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
         Description = $Description
         ModuleVersion = $SafeVersion
-        AliasesToExport = @()
-        VariablesToExport = @()
-        CmdletsToExport = @()
     }
 
     if ($Version -like "*-*") {
@@ -61,6 +59,9 @@ task UpdateManifest {
     }
 
     Update-ModuleManifest @ManifestData
+
+    (Get-Content $ManifestPath) -replace "^CmdletsToExport.*", "CmdletsToExport = @()" | Set-Content $ManifestPath
+    (Get-Content $ManifestPath) -replace "^AliasesToExport.*", "AliasesToExport = @()" | Set-Content $ManifestPath
 
     Set-ModuleFunction
 }
