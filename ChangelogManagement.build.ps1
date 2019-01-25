@@ -33,12 +33,15 @@ Enter-Build {
 }
 
 # Synopsis: Perform all build tasks.
-task . Clean, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp
+task . Init, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp, CopySource
 
-# Synopsis: Removes files from docs and out.
-task Clean {
+# Synopsis: Removes files from docs and out, makes out\$ModuleName if needed.
+task Init {
     Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
+    if (!(Test-Path -Path "out\$ModuleName")) {
+        New-Item -Path "out\$ModuleName" -ItemType Directory
+    }
 }
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
@@ -91,12 +94,17 @@ task GenerateHtmlHelp {
     New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory
     Set-Content -Value $MarkdownToHtmlTemplate -Path "$env:temp\MarkdownToHtml\md-template.html" -NoNewLine
 
-    Convert-MarkdownToHTML -Path "docs" -Destination "out\docs" -Template "$env:temp\MarkdownToHtml" | Out-Null
+    Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "$env:temp\MarkdownToHtml" | Out-Null
 
     Remove-Item -Path "$env:temp\MarkdownToHtml" -Recurse -Force
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
 
-    Move-Item -Path "out\docs\README.html" -Destination "out\"
-    Move-Item -Path "out\docs\CHANGELOG.html" -Destination "out\"
+    Move-Item -Path "out\$ModuleName\docs\README.html" -Destination "out\$ModuleName"
+    Move-Item -Path "out\$ModuleName\docs\CHANGELOG.html" -Destination "out\$ModuleName"
+}
+
+# Synopsis: Copies source files into out\$ModuleName.
+task CopySource {
+    Copy-Item -Path "src\*" -Destination "out\$ModuleName\"
 }
