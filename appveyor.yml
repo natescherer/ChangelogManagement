@@ -47,7 +47,7 @@ for:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
       - pwsh: $ErrorActionPreference = "Stop"
-      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
+      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser
     build_script:
       - ps: Write-Host "Starting Build..."
       - ps: Invoke-Build -Version $ReleaseVersion
