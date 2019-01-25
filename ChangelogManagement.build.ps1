@@ -32,7 +32,7 @@ Enter-Build {
 }
 
 # Synopsis: Perform all build tasks.
-task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateChangelog, MarkDownHelpToHtml
+task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateChangelog, GenerateHtmlHelp
 
 # Synopsis: Removes files from docs and out.
 task Clean {
