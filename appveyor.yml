@@ -3,12 +3,13 @@
 #                YAML Validator: https://ci.appveyor.com/tools/validate-yaml
 
 environment:
-  NuGetApiKey:
-    secure: pzzBHe3dds15o5jYQLKlsuxO3JbV9rkccb1PwKigFP2vfp9vC579E8KSGhR1GQAA
-  GitHubKey:
-    secure: mhTvr/vsjuMnWB6+KlvCZ7fDxj7riYN6PdXZFGlogv9OL0G2M3K/7OjxiggarWvi
   GitName: "Nate Scherer"
   GitEmail: "376408+natescherer@users.noreply.github.com"
+  GitHubKey:
+    secure: mhTvr/vsjuMnWB6+KlvCZ7fDxj7riYN6PdXZFGlogv9OL0G2M3K/7OjxiggarWvi
+  NuGetApiKey:
+    secure: pzzBHe3dds15o5jYQLKlsuxO3JbV9rkccb1PwKigFP2vfp9vC579E8KSGhR1GQAA
+  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers
 
 image:
   - Visual Studio 2017
@@ -24,15 +25,18 @@ skip_commits:
   message: /updated readme.*|update docs.*|Release via Appveyor.*/
 
 init:
-  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]} else {$ReleaseVersion = "vNext"}
-  - ps: Update-AppveyorBuild -Version "$ReleaseVersion+$($env:APPVEYOR_BUILD_NUMBER)"
-  - ps: if ($ReleaseVersion -ne "vNext") {$env:GitHubTag = "v$ReleaseVersion"}
-  - ps: if ($ReleaseVersion -ne "vNext") {$env:DeployMode = "true"}
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
+  - ps: git config --global credential.helper store
+  - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
   - ps: $ErrorActionPreference = "Stop"
-  - pwsh: $ErrorActionPreference = "Stop"
+  - ps: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
+  - ps: $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:APPVEYOR_PROJECT_NAME
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:GitHubTag = "v$ReleaseVersion"}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:DeployMode = "true"}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -notlike "!Deploy*") {$ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:APPVEYOR_BUILD_NUMBER}
 
 for:
   -
@@ -41,32 +45,22 @@ for:
         - image: Visual Studio 2017
     install:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
-      - ps: Write-Host "Installing Windows PowerShell Modules..."
-      - ps: Install-PackageProvider -Name NuGet -Force | Out-Null
-      - ps: Install-Module -Name ChangelogManagement -Force
-      - ps: Install-Module -Name InvokeBuild -Force
-      - ps: Install-Module -Name Pester -Force -SkipPublisherCheck
-      - ps: Install-Module -Name platyPS -Force
-      - ps: Install-Module -Name MarkdownToHtml -Force
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: Install-Module -Name ChangelogManagement -Force
-      - pwsh: Install-Module -Name InvokeBuild -Force
-      - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck
-      - pwsh: Install-Module -Name platyPS -Force
-      - pwsh: Install-Module -Name MarkdownToHtml -Force
+      - pwsh: $ErrorActionPreference = "Stop"
+      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
     build_script:
       - ps: Write-Host "Starting Build..."
-      - ps: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
+      - ps: Invoke-Build -Version $ReleaseVersion
     after_build:
       - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
-      - ps: Write-Host "ChangelogData is '$env:ChangelogData'"
-      - 7z a state.zip *
+      - ps: Compress-Archive -Path ".\*" -DestinationPath ".\state.zip"
+      - ps: Compress-Archive -Path "out\$env:APPVEYOR_PROJECT_NAME\*" -DestinationPath "out\$env:APPVEYOR_PROJECT_NAME-v$ReleaseVersion.zip"
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
       - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
       - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
-      - ps: Write-Host "Starting Tests on PowerShell Core..."
+      - pwsh: Write-Host "Starting Tests on PowerShell Core..."
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
       - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
@@ -76,10 +70,7 @@ for:
       - path: state.zip
         name: BuildState
     before_deploy:
-      - ps: Write-Host "Starting Pre-Deploy Config..."
-      - ps: git config --global credential.helper store
-      - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
-      - ps: Write-Host "Starting Evaluating for Deploy..."
+      - ps: Write-Host "Starting Deployment Evaluation..."
       - ps: . .\appveyordeploy.ps1
     deploy:
       tag: $(GitHubTag)
@@ -99,16 +90,12 @@ for:
     install:
       - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
       - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: Install-Module -Name ChangelogManagement -Force -Scope "CurrentUser"  
-      - pwsh: Install-Module -Name InvokeBuild -Force -Scope "CurrentUser"
-      - pwsh: Install-Module -Name Pester -Force -SkipPublisherCheck -Scope  "CurrentUser"
-      - pwsh: Install-Module -Name platyPS -Force -Scope "CurrentUser"
-      - pwsh: Install-Module -Name MarkdownToHtml -Force -Scope "CurrentUser"
+      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
     build_script:
       - pwsh: Write-Host "Starting Build..."
-      - pwsh: if ($ReleaseVersion -ne "vNext") {Invoke-Build -ReleaseVersion $ReleaseVersion -BuildMode "Release" -LinkBase "https://github.com/$($env:APPVEYOR_REPO_NAME)"} else {Invoke-Build -BuildMode "Snapshot"}
+      - pwsh: Invoke-Build -Version $ReleaseVersion
     after_build:
-      - 7z a state.zip *
+      - pwsh: Compress-Archive -Path ".\*" -DestinationPath ".\state.zip"
     test_script:
       - pwsh: Write-Host "Starting Tests on Powershell Core..."
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
