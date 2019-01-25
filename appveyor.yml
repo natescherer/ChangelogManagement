@@ -88,9 +88,7 @@ for:
       only:
         - image: Ubuntu1804
     install:
-      - pwsh: Write-Host Ubuntu -ForegroundColor Yellow
-      - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
+      - pwsh: Write-Host Ubuntu1804 -ForegroundColor Yellow
     build_script:
       - pwsh: Write-Host "Starting Build..."
       - pwsh: Invoke-Build -Version $ReleaseVersion
