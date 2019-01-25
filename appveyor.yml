@@ -33,16 +33,10 @@ init:
   - ps: $ErrorActionPreference = "Stop"
   - ps: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser
   - ps: $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:APPVEYOR_PROJECT_NAME
-  - ps: |
-      if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {
-        $ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
-        $env:GitHubTag = "v$ReleaseVersion"
-        $env:DeployMode = "true"
-      }
-  - ps: |
-      if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -notlike "!Deploy*") {
-        $ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:APPVEYOR_BUILD_NUMBER
-      }
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:GitHubTag = "v$ReleaseVersion"}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:DeployMode = "true"}
+  - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -notlike "!Deploy*") {$ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:APPVEYOR_BUILD_NUMBER}
 
 for:
   -
