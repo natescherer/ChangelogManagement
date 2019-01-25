@@ -9,7 +9,7 @@ environment:
     secure: mhTvr/vsjuMnWB6+KlvCZ7fDxj7riYN6PdXZFGlogv9OL0G2M3K/7OjxiggarWvi
   NuGetApiKey:
     secure: pzzBHe3dds15o5jYQLKlsuxO3JbV9rkccb1PwKigFP2vfp9vC579E8KSGhR1GQAA
-  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers
+  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
 
 image:
   - Visual Studio 2017
