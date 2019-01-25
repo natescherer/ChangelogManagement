@@ -31,7 +31,7 @@ init:
   - ps: git config --global credential.helper store
   - ps: Add-Content "$HOME\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
   - ps: $ErrorActionPreference = "Stop"
-  - ps: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck
+  - ps: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -Scope CurrentUser
   - ps: $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:APPVEYOR_PROJECT_NAME
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:GitHubTag = "v$ReleaseVersion"}
