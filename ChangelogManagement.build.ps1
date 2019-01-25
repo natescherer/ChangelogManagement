@@ -50,13 +50,13 @@ task UpdateChangelog {
 task UpdateManifest {
     $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", ""
 
-    $SafeVersion = $Version.Split("-")[0]
+    $SafeVersion = ($Version -split "-")[0]
 
     $FunctionsToExport = @()
     $ModuleData = Get-Content $ModulePath
     foreach ($Line in $ModuleData) {
         if ($Line -like "Export-ModuleMember*") {
-            $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","").Split(",")
+            $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","") -split ","
             foreach ($Function in $LineFunctions) {
                 $FunctionsToExport += $Function
             }
@@ -72,7 +72,7 @@ task UpdateManifest {
     }
 
     if ($Version -like "*-*") {
-        $ManifestData += @{Prerelease = $Version.Split("-")[1]}
+        $ManifestData += @{Prerelease = ($Version -split "-")[1]}
     }
 
     Update-ModuleManifest @ManifestData
