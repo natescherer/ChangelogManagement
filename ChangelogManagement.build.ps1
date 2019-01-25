@@ -72,8 +72,10 @@ task UpdateManifest {
 
     Update-ModuleManifest @ManifestData
 
-    (Get-Content $ManifestPath) -replace "^CmdletsToExport.*", "CmdletsToExport = @()" | Set-Content $ManifestPath
-    (Get-Content $ManifestPath) -replace "^AliasesToExport.*", "AliasesToExport = @()" | Set-Content $ManifestPath
+    $ManifestData = Get-Content $ManifestPath
+    $ManifestData = $ManifestData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
+    $ManifestData = $ManifestData -replace "^AliasesToExport.*", "AliasesToExport = @()"
+    Set-Content -Path $ManifestPath -Value $ManifestData
 }
 
 # Synopsis: Generates Markdown help file from comment-based help in script.
