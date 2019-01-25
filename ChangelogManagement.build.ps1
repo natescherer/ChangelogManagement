@@ -43,7 +43,7 @@ task Clean {
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog {
-    Update-Changelog -ReleaseVersion $Version -LinkBase $LinkBase -ReleasePrefix "v"
+    Update-Changelog -ReleaseVersion $Version -LinkBase "https://github.com/natescherer/ChangelogManagement" -ReleasePrefix "v"
 }
 
 # Synopsis: Updates the module manifest file for the new release.
