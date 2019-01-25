@@ -55,7 +55,8 @@ for:
     after_build:
       - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
       - ps: Compress-Archive -Path ".\*" -DestinationPath ".\state.zip"
-      - ps: Compress-Archive -Path "out\$env:APPVEYOR_PROJECT_NAME\*" -DestinationPath "out\$env:APPVEYOR_PROJECT_NAME-v$ReleaseVersion.zip"
+      - ps: $env:ReleasePackageFile = "$($env:temp)\$($env:APPVEYOR_PROJECT_NAME)-v$($ReleaseVersion).zip"
+      - ps: Compress-Archive -Path "out\$env:APPVEYOR_PROJECT_NAME" -DestinationPath $env:ReleasePackageFile
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
@@ -66,7 +67,7 @@ for:
       - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
-      - path: out\*.zip
+      - path: $(ReleasePackageFile)
         name: ReleasePackage
       - path: state.zip
         name: BuildState
