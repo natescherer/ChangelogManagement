@@ -33,12 +33,17 @@ Enter-Build {
 }
 
 # Synopsis: Perform all build tasks.
-task . Clean, UpdateManifest, GenerateMarkdownHelp, UpdateChangelog, GenerateHtmlHelp
+task . Clean, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp
 
 # Synopsis: Removes files from docs and out.
 task Clean {
     Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
+}
+
+# Synopsis: Updates the CHANGELOG.md file for the new release.
+task UpdateChangelog {
+    Update-Changelog -ReleaseVersion $Version -LinkBase $LinkBase -ReleasePrefix "v"
 }
 
 # Synopsis: Updates the module manifest file for the new release.
@@ -84,11 +89,6 @@ task GenerateMarkdownHelp {
     Import-Module -Name $ModulePath -Force -ErrorAction Stop
 
     New-MarkdownHelp -Module $ModuleName -OutputFolder docs | Out-Null
-}
-
-# Synopsis: Updates the CHANGELOG.md file for the new release.
-task UpdateChangelog {
-    Update-Changelog -ReleaseVersion $Version -LinkBase $LinkBase -ReleasePrefix "v"
 }
 
 # Synopsis: Creates HTML help files for inclusion in releases.
