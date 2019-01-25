@@ -49,55 +49,38 @@ task UpdateChangelog {
 
 # Synopsis: Updates the module manifest file for the new release.
 task UpdateManifest {
-    Write-Host 1
     $Description = ((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", ""
 
-    Write-Host 2
     $SafeVersion = ($Version -split "-")[0]
 
-    Write-Host 3
     $FunctionsToExport = @()
-    Write-Host 4
     $ModuleData = Get-Content $ModulePath
-    Write-Host 5
     foreach ($Line in $ModuleData) {
-        Write-Host 6
         if ($Line -like "Export-ModuleMember*") {
-            Write-Host 7
             $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","") -split ","
-            Write-Host 8
             foreach ($Function in $LineFunctions) {
-                Write-Host 9
                 $FunctionsToExport += $Function
             }
         }
     }
 
-    Write-Host 10
     $ManifestData = @{
-        Path = $ModulePath
+        Path = $ManifestPath
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
         Description = $Description
         ModuleVersion = $SafeVersion
         FunctionsToExport = $FunctionsToExport
     }
 
-    Write-Host 11
     if ($Version -like "*-*") {
-        Write-Host 12
         $ManifestData += @{Prerelease = ($Version -split "-")[1]}
     }
 
-    Write-Host 13
     Update-ModuleManifest @ManifestData
 
-    Write-Host 14
     $ManifestData = Get-Content $ManifestPath
-    Write-Host 15
     $ManifestData = $ManifestData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
-    Write-Host 16
     $ManifestData = $ManifestData -replace "^AliasesToExport.*", "AliasesToExport = @()"
-    Write-Host 17
     Set-Content -Path $ManifestPath -Value $ManifestData
 }
 
