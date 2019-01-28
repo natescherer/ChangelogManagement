@@ -1,3 +1,10 @@
+---
+external help file: ChangelogManagement-help.xml
+Module Name: ChangelogManagement
+online version: https://github.com/natescherer/ChangelogManagement
+schema: 2.0.0
+---
+
 # Update-Changelog
 
 ## SYNOPSIS
@@ -7,8 +14,8 @@ and makes a new, blankUnreleased section.
 ## SYNTAX
 
 ```
-Update-Changelog [-ReleaseVersion] <String> [[-Path] <String>] [[-OutputPath] <String>]
- [[-ReleasePrefix] <String>] [[-LinkMode] <String>] [[-LinkBase] <String>] [<CommonParameters>]
+Update-Changelog [-ReleaseVersion] <String> [[-Path] <String>] [[-OutputPath] <String>] [-LinkMode] <String>
+ [[-LinkPattern] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -21,17 +28,16 @@ then makes a new, blank Unreleased section.
 
 ### EXAMPLE 1
 ```
-Update-Changelog -ReleaseVersion 1.1.1
+Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern @{FirstRelease="https://github.com/testuser/testrepo/tree/v{CUR}";NormalRelease="https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"}
 ```
 
-(Does not generate output, but creates a new release in .\CHANGELOG.md from all existing Unreleased changes, tagging it with ReleaseVersion and today's date.)
-
-### EXAMPLE 2
-```
-Update-Changelog -ReleaseVersion 1.1.1 -Path project\CHANGELOG.md -OutputPath TempChangelog.md
-```
-
-(Does not generate output, but updates changelog at project\CHANGELOG.md, writing changes to .\TempChangelog.md)
+Does not generate output, but:
+1.
+Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+2.
+Updates links according to LinkPattern.
+3.
+Creates a new, blank Unreleased section
 
 ## PARAMETERS
 
@@ -80,59 +86,40 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ReleasePrefix
-Prefix used before version number in source control compare links (i.e.
-the "v" in v1.0.0).
-Defaults to
-"v" for GitHub and "" for other platforms.
-Only applies if LinkMode is Automatic.
+### -LinkMode
+Mode used for adding links at the bottom of the Changelog for new versions.
+Can either be Automatic
+(adding based pattern provided via -LinkPattern), Manual (adding placeholders which
+will need manually updated), or None (not adding links).
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LinkMode
-Mode used for adding links at the bottom of the Changelog for new versions.
-Can either be Automatic
-(adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-will need manually updated), or None (not adding links).
-Defaults to Automatic.
+### -LinkPattern
+Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic.
+This
+is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
+and Unreleased.
+The current version in the patterns should be replaced with {CUR} and the previous 
+versions with {PREV}.
 
 ```yaml
-Type: String
+Type: Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 5
-Default value: Automatic
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LinkBase
-Mode used for adding links at the bottom of the Changelog for new versions.
-Can either be Automatic
-(adding based on existing links with GitHub/GitLab type compares), Manual (adding placeholders which
-will need manually updated), or None (not adding links).
-Defaults to Automatic.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value: Https://REPLACE-DOMAIN.com/REPLACE-USERNAME/REPLACE-REPONAME
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

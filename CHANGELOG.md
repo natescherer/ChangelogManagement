@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Update-Changelog -LinkMode Automatic now uses a -LinkPattern parameter (replacing -LinkBase and -ReleasePrefix) which can support any VCS
 
 ### Deprecated
 
@@ -18,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [2.0.0] - 2019-01-28
+### Changed
+- Update-Changelog -LinkMode Automatic now uses a -LinkPattern parameter (replacing -LinkBase and -ReleasePrefix) which can support any VCS
+
 ## [1.0.0] - 2018-10-20
 ### Added
 - Get-ChangelogData cmdlet
@@ -26,5 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v1.0.0..HEAD
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v2.0.0..HEAD
+[2.0.0]: https://github.com/natescherer/ChangelogManagement/compare/v1.0.0..v2.0.0
 [1.0.0]: https://github.com/natescherer/ChangelogManagement/tree/v1.0.0

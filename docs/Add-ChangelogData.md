@@ -1,3 +1,10 @@
+---
+external help file: ChangelogManagement-help.xml
+Module Name: ChangelogManagement
+online version: https://github.com/natescherer/ChangelogManagement
+schema: 2.0.0
+---
+
 # Add-ChangelogData
 
 ## SYNOPSIS
@@ -21,14 +28,14 @@ changelog in Keep a Changelog 1.0.0 format.
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
 ```
 
-(Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md)
+Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
 
 ### EXAMPLE 2
 ```
 Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
 ```
 
-(Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md)
+Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md.
 
 ## PARAMETERS
 

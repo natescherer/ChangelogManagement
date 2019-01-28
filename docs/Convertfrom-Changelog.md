@@ -1,7 +1,14 @@
+---
+external help file: ChangelogManagement-help.xml
+Module Name: ChangelogManagement
+online version: https://github.com/natescherer/ChangelogManagement
+schema: 2.0.0
+---
+
 # Convertfrom-Changelog
 
 ## SYNOPSIS
-Takes a changelog in Keep a Changelog 1.0.0 format and converts it to another format.
+{{Fill in the Synopsis}}
 
 ## SYNTAX
 
@@ -11,79 +18,37 @@ Convertfrom-Changelog [[-Path] <String>] [[-OutputPath] <String>] [-Format] <Str
 ```
 
 ## DESCRIPTION
-This cmdlet converts a changelog file using Keep a Changelog 1.0.0 format into one of several other formats.
-Valid formats are Release (same as input, but with the Unreleased section removed), Text
-(markdown and links removed), and TextRelease (Unreleased section, markdown, and links removed).
+{{Fill in the Description}}
 
 ## EXAMPLES
 
-### EXAMPLE 1
-```
-Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-```
-
-(Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed)
-
-### EXAMPLE 2
-```
-Convertfrom-Changelog -Path .\CHANGELOG.md -Format Text -OutputPath CHANGELOG.txt
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
 
-(Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed)
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Path
-Path to the changelog.
-Defaults to ".\CHANGELOG.md".
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: CHANGELOG.md
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -OutputPath
-The path to the output changelog file, if it is different than than the source path
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: $Path
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Format
-Format to convert changelog into.
-Valid values are Release (same as input, but with the Unreleased
-section removed), Text (markdown and links removed), and TextRelease (Unreleased section, markdown, and
-links removed).
+{{Fill Format Description}}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
+Accepted values: Release, Text, TextRelease
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -NoHeader
-Exclude header from output
+{{Fill NoHeader Description}}
 
 ```yaml
 Type: SwitchParameter
@@ -92,7 +57,37 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: False
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -OutputPath
+{{Fill OutputPath Description}}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Path
+{{Fill Path Description}}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -103,13 +98,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### This cmdlet does not accept pipeline input
+### None
+
 ## OUTPUTS
 
-### This cmdlet does not generate output
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
-
-[https://github.com/natescherer/ChangelogManagement](https://github.com/natescherer/ChangelogManagement)
-

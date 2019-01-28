@@ -1,3 +1,10 @@
+---
+external help file: ChangelogManagement-help.xml
+Module Name: ChangelogManagement
+online version: https://github.com/natescherer/ChangelogManagement
+schema: 2.0.0
+---
+
 # New-Changelog
 
 ## SYNOPSIS
@@ -19,14 +26,14 @@ This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
 New-Changelog
 ```
 
-(Does not generate output, but creates a new changelog at .\CHANGELOG.md)
+Does not generate output, but creates a new changelog at .\CHANGELOG.md
 
 ### EXAMPLE 2
 ```
 New-Changelog -Path project\CHANGELOG.md -NoSemVer
 ```
 
-(Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header)
+Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header.
 
 ## PARAMETERS
 

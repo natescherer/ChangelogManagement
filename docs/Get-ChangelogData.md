@@ -1,3 +1,10 @@
+---
+external help file: ChangelogManagement-help.xml
+Module Name: ChangelogManagement
+online version: https://github.com/natescherer/ChangelogManagement
+schema: 2.0.0
+---
+
 # Get-ChangelogData
 
 ## SYNOPSIS
@@ -19,35 +26,7 @@ This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 for
 Get-ChangelogData
 ```
 
-Header      : # Changelog
-      All notable changes to this project will be documented in this file.
-
-      The format is based on \[Keep a Changelog\](https://keepachangelog.com/en/1.0.0/),
-      and this project adheres to \[Semantic Versioning\](https://semver.org/spec/v2.0.0.html).
-
-
-Unreleased  : @{RawData=## \[Unreleased\]
-            ### Added
-
-            ### Changed
-
-            ### Deprecated
-
-            ### Removed
-
-            ### Fixed
-
-            ### Security
-
-            ; Link=https://github.com/user/project/compare/1.0.0..HEAD; Data=}
-Released    : {@{RawData=## \[1.0.0\] - 2018-10-19
-            ### Added
-            - Initial release
-
-            ; Date=10/19/2018 12:00:00 AM; Version=1.0.0; Link=https://github.com/user/project/tree/1.0.0; Data=}}
-Footer      : \[Unreleased\]: https://github.com/user/project/compare/1.0.0..HEAD
-            \[1.0.0\]: https://github.com/user/project/tree/1.0.0
-LastVersion : 1.0.0
+Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 
 ## PARAMETERS
 
