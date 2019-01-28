@@ -57,6 +57,21 @@ task Init {
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog {
     $SafeVersion = ($Version -split "-")[0]
+
+    $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$Eol", ""
+    $NewRelease = $NewRelease -replace "### Added$Eol$Eol", ""
+    $NewRelease = $NewRelease -replace "### Changed$Eol$Eol", ""
+    $NewRelease = $NewRelease -replace "### Deprecated$Eol$Eol", ""
+    $NewRelease = $NewRelease -replace "### Removed$Eol$Eol", ""
+    $NewRelease = $NewRelease -replace "### Fixed$Eol$Eol", ""
+    $NewRelease = $NewRelease -replace "### Security$Eol$Eol", ""
+
+    If ([string]::IsNullOrWhiteSpace($NewRelease)) {
+        Add-ChangelogData -Type "Added" -Data "Dummy Data"
+        $env:DeployMode = "false"
+        Write-Host -Object "No changes listed in Changelog. Inserting dummy data and blocking deployment." -ForegroundColor Red
+    }
+
     Update-Changelog -ReleaseVersion $SafeVersion -LinkMode "Automatic" -LinkPattern $LinkPattern
 }
 
