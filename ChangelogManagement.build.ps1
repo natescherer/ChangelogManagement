@@ -78,6 +78,9 @@ task UpdateManifest {
         Description = $Description
         ModuleVersion = $SafeVersion
         FunctionsToExport = $FunctionsToExport
+        LicenseUri = "https://github.com/$env:APPVEYOR_REPO_NAME/blob/master/LICENSE"
+        ProjectUri = "https://github.com/$env:APPVEYOR_REPO_NAME"
+        HelpInfoUri = "https://github.com/$env:APPVEYOR_REPO_NAME"
     }
 
     if ($Version -like "*-*") {
