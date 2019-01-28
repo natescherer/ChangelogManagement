@@ -109,7 +109,11 @@ task GenerateMarkdownHelp {
 
 # Synopsis: Creates HTML help files for inclusion in releases.
 task GenerateHtmlHelp {
-    Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
+    if (!$IsLinux) {
+        Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
+    } else {
+        Copy-Item -Path .\CHANGELOG.md -Destination "out\$ModuleName\docs"
+    }
     Copy-Item -Path "README.md" -Destination "docs\"
 
     New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory | Out-Null
