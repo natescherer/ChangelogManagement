@@ -70,6 +70,8 @@ task UpdateManifest {
         }	
     }
 
+    Write-Host $(Get-ChangelogData)
+
     $ManifestData = @{
         Path = $ManifestPath
         ReleaseNotes = (Get-ChangelogData).Released[0].RawData
