@@ -116,7 +116,7 @@ task GenerateHtmlHelp {
     if (!$IsLinux) {
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
     } else {
-        Copy-Item -Path .\CHANGELOG.md -Destination "\docs"
+        Copy-Item -Path "CHANGELOG.md" -Destination "docs\"
     }
     Copy-Item -Path "README.md" -Destination "docs\"
 
