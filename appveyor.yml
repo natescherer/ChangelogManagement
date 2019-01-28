@@ -41,6 +41,8 @@ init:
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:DeployMode = "true"}
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -notlike "!Deploy*") {$ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:APPVEYOR_BUILD_NUMBER}
   - ps: Update-AppveyorBuild -Version $ReleaseVersion
+  - ps: $GitHubBase = "https://github.com/" + $env:APPVEYOR_REPO_NAME
+  - ps: $LinkPattern = @{FirstRelease="$GitHubBase/tree/v{CUR}";NormalRelease="$GitHubBase/compare/v{PREV}..v{CUR}";Unreleased="$GitHubBase/compare/v{CUR}..HEAD"}
 
 for:
   -
@@ -50,8 +52,6 @@ for:
     build_script:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Starting Build..."
-      - ps: $GitHubBase = "https://github.com/" + $env:APPVEYOR_REPO_NAME
-      - ps: $LinkPattern = @{FirstRelease="$GitHubBase/tree/v{CUR}";NormalRelease="$GitHubBase/compare/v{PREV}..v{CUR}";Unreleased="$GitHubBase/compare/v{CUR}..HEAD"}
       - ps: Invoke-Build -Version $ReleaseVersion -LinkPattern $LinkPattern
     after_build:
       - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
@@ -93,7 +93,7 @@ for:
     build_script:
       - pwsh: Write-Host Ubuntu1804 -ForegroundColor Yellow
       - pwsh: Write-Host "Starting Build..."
-      - pwsh: Invoke-Build -Version $ReleaseVersion
+      - pwsh: Invoke-Build -Version $ReleaseVersion -LinkPattern $LinkPattern
     after_build:
       - pwsh: Compress-Archive -Path ".\*" -DestinationPath ".\state.zip"
     test_script:
