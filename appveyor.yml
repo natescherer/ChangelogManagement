@@ -66,11 +66,11 @@ for:
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
       - ps: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestsResults.xml" -PassThru
-      - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", "out\TestsResults.xml")
+      - ps: Invoke-RestMethod -Uri "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)" -Method Post -InFile "out\TestsResults.xml"
       - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
       - pwsh: Write-Host "Starting Tests on PowerShell Core..."
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestsResults.xml" -PassThru
-      - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", "out\TestsResults.xml")
+      - pwsh: Invoke-RestMethod -Uri "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)" -Method Post -InFile "out\TestsResults.xml"
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
       - path: $(ReleasePackageFile)
@@ -106,7 +106,7 @@ for:
     test_script:
       - pwsh: Write-Host "Starting Tests on Powershell Core..."
       - pwsh: $res = Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestsResults.xml" -PassThru
-      - pwsh: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", "out\TestsResults.xml")
+      - pwsh: Invoke-RestMethod -Uri "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)" -Method Post -InFile "out\TestsResults.xml"
       - pwsh: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
     artifacts:
       - path: $(ReleasePackageFile)
