@@ -123,6 +123,8 @@ task GenerateHtmlHelp {
     New-Item -Path "$TempDir\MarkdownToHtml" -Type Directory | Out-Null
     Set-Content -Value $MarkdownToHtmlTemplate -Path "$TempDir\MarkdownToHtml\md-template.html" -NoNewLine
 
+    New-Item -Path "$PSScriptRoot\out\$ModuleName\docs" -Type Directory | Out-Null
+
     Convert-MarkdownToHTML -Path "docs" -Destination "$PSScriptRoot\out\$ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
 
     Remove-Item -Path "$TempDir\MarkdownToHtml" -Recurse -Force
