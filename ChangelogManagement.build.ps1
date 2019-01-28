@@ -50,8 +50,6 @@ task Init {
     if (!(Test-Path -Path "out\$ModuleName")) {
         New-Item -Path "out\$ModuleName" -ItemType Directory | Out-Null
     }
-
-    Set-BuildEnvironment
 }
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
