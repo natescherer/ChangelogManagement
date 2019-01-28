@@ -24,8 +24,6 @@ if (($env:APPVEYOR_REPO_BRANCH -eq "master") -and ($env:DeployMode -eq "true")) 
 
     # Publish the new version back to master on GitHub
     Try {
-        Remove-Item .\state.zip
-        Remove-Item .\TestsResults.xml
         $env:Path += ";$env:ProgramFiles\Git\cmd"
         git checkout master --quiet
         git add --all
