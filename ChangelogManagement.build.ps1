@@ -7,7 +7,7 @@ param (
     [string]$Version,
 
     [parameter(Mandatory=$true)]
-    [string]$LinkPattern
+    [hashtable]$LinkPattern
 )
 $NL = [System.Environment]::NewLine
 if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
