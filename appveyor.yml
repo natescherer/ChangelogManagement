@@ -31,8 +31,10 @@ init:
   - ps: git config --global credential.helper store
   - ps: Add-Content "$HOME\.git-credentials" "https://$($env:GitHubKey):x-oauth-basic@github.com`n"
   - ps: $ErrorActionPreference = "Stop"
-  - ps: if (!$IsLinux) {Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck}
-  - ps: if ($IsLinux) {Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser}
+  - pwsh: $ErrorActionPreference = "Stop"
+  - ps: if ($PSVersionTable.PSVersion.Major -eq 5) {Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck}
+  - pwsh: if ($IsWindows) {Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber}
+  - pwsh: if ($IsLinux) {Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser}
   - ps: $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:APPVEYOR_PROJECT_NAME
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$ReleaseVersion = $env:APPVEYOR_REPO_COMMIT_MESSAGE.split(" ")[1]}
   - ps: if ($env:APPVEYOR_REPO_COMMIT_MESSAGE -like "!Deploy*") {$env:GitHubTag = "v$ReleaseVersion"}
@@ -45,12 +47,8 @@ for:
     matrix:
       only:
         - image: Visual Studio 2017
-    install:
-      - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
-      - pwsh: Write-Host "Installing PowerShell Core Modules..."
-      - pwsh: $ErrorActionPreference = "Stop"
-      - pwsh: Install-Module -Name $($env:PowerShellModules.split(",")) -Force -SkipPublisherCheck -AllowClobber
     build_script:
+      - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Starting Build..."
       - ps: Invoke-Build -Version $ReleaseVersion
     after_build:
@@ -90,9 +88,8 @@ for:
     matrix:
       only:
         - image: Ubuntu1804
-    install:
-      - pwsh: Write-Host Ubuntu1804 -ForegroundColor Yellow
     build_script:
+      - pwsh: Write-Host Ubuntu1804 -ForegroundColor Yellow
       - pwsh: Write-Host "Starting Build..."
       - pwsh: Invoke-Build -Version $ReleaseVersion
     after_build:
