@@ -116,14 +116,12 @@ task GenerateHtmlHelp {
     if (!$IsLinux) {
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
     } else {
-        Copy-Item -Path .\CHANGELOG.md -Destination "out\$ModuleName\docs"
+        Copy-Item -Path .\CHANGELOG.md -Destination "\docs"
     }
     Copy-Item -Path "README.md" -Destination "docs\"
 
     New-Item -Path "$TempDir\MarkdownToHtml" -Type Directory | Out-Null
     Set-Content -Value $MarkdownToHtmlTemplate -Path "$TempDir\MarkdownToHtml\md-template.html" -NoNewLine
-
-    New-Item -Path "$PSScriptRoot\out\$ModuleName\docs" -Type Directory | Out-Null
 
     Convert-MarkdownToHTML -Path "docs" -Destination "$PSScriptRoot\out\$ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
 
