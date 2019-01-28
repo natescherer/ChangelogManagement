@@ -7,6 +7,10 @@ param (
     [string]$Version
 )
 $NL = [System.Environment]::NewLine
+if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
+if ($IsWindows) {$TempDir = $env:TEMP}
+if ($IsLinux) {$TempDir = "/tmp"}
+if ($IsMacOS) {$TempDir = $env:TMPDIR}
 
 $MarkdownToHtmlTemplate = (
     '<!DOCTYPE html>' + $NL +
@@ -116,12 +120,12 @@ task GenerateHtmlHelp {
     }
     Copy-Item -Path "README.md" -Destination "docs\"
 
-    New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory | Out-Null
-    Set-Content -Value $MarkdownToHtmlTemplate -Path "$env:temp\MarkdownToHtml\md-template.html" -NoNewLine
+    New-Item -Path "$TempDir\MarkdownToHtml" -Type Directory | Out-Null
+    Set-Content -Value $MarkdownToHtmlTemplate -Path "$TempDir\MarkdownToHtml\md-template.html" -NoNewLine
 
-    Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "$env:temp\MarkdownToHtml" | Out-Null
+    Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
 
-    Remove-Item -Path "$env:temp\MarkdownToHtml" -Recurse -Force
+    Remove-Item -Path "$\MarkdownToHtml" -Recurse -Force
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
 
