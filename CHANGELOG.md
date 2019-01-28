@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Update-Changelog's Automatic LinkMode now uses a -LinkPattern parameter (replacing -LinkBase and -ReleasePrefix) which can support any VCS
+- Update-Changelog -LinkMode Automatic now uses a -LinkPattern parameter (replacing -LinkBase and -ReleasePrefix) which can support any VCS
 
 ### Deprecated
 
