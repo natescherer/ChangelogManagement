@@ -125,7 +125,7 @@ task GenerateHtmlHelp {
 
     Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
 
-    Remove-Item -Path "$\MarkdownToHtml" -Recurse -Force
+    Remove-Item -Path "$TempDir\MarkdownToHtml" -Recurse -Force
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
 
