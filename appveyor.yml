@@ -13,7 +13,7 @@ environment:
 
 image:
   - Visual Studio 2017
-  - Ubuntu1804
+  #- Ubuntu1804
 
 build: off
 
