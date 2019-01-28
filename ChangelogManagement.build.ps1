@@ -100,6 +100,7 @@ task UpdateManifest {
     $ManifestData = Get-Content $ManifestPath
     $ManifestData = $ManifestData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
     $ManifestData = $ManifestData -replace "^AliasesToExport.*", "AliasesToExport = @()"
+    $ManifestData = $ManifestData -replace "^VariablesToExport.*", "VariablesToExport = @()"
     Set-Content -Path $ManifestPath -Value $ManifestData
 }
 
