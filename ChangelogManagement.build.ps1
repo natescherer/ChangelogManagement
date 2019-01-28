@@ -70,11 +70,15 @@ task UpdateManifest {
         }	
     }
 
-    Write-Host $(Get-ChangelogData)
+    if (!$IsLinux) {
+        $ReleaseNotes = (Get-ChangelogData).Released[0].RawData
+    } else {
+        $ReleaseNotes = "This is a shim to make Ubuntu builds pass temporarily!"
+    }
 
     $ManifestData = @{
         Path = $ManifestPath
-        ReleaseNotes = (Get-ChangelogData).Released[0].RawData
+        ReleaseNotes = $ReleaseNotes
         Description = $Description
         ModuleVersion = $SafeVersion
         FunctionsToExport = $FunctionsToExport
