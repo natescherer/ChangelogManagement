@@ -25,6 +25,10 @@ skip_commits:
   message: /updated readme.*|update docs.*|Release via Appveyor.*/
 
 init:
+  - ps: if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
+  - ps: if ($IsWindows) {$TempDir = $env:TEMP}
+  - ps: if ($IsLinux) {$TempDir = "/tmp"}
+  - ps: if ($IsMacOS) {$TempDir = $env:TMPDIR}
   - ps: git config --global user.name $($env:GitName)
   - ps: git config --global user.email $($env:GitEmail)
   - ps: git config --global core.autocrlf true
@@ -56,7 +60,8 @@ for:
       - ps: Invoke-Build -Version $ReleaseVersion -LinkPattern $LinkPattern
     after_build:
       - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
-      - ps: Compress-Archive -Path ".\*" -DestinationPath "out\state.zip"
+      - ps: Compress-Archive -Path ".\*" -DestinationPath "$TempDir\state.zip"
+      - ps: Move-Item -Path "$TempDir\state.zip" -Destination "out\"
       - ps: Compress-Archive -Path "out\$env:APPVEYOR_PROJECT_NAME" -DestinationPath $env:ReleasePackageFile
     test_script:
       - ps: Write-Host "Starting Tests on Windows Powershell..."
@@ -95,7 +100,8 @@ for:
       - pwsh: Write-Host "Starting Build..."
       - pwsh: Invoke-Build -Version $ReleaseVersion -LinkPattern $LinkPattern
     after_build:
-      - pwsh: Compress-Archive -Path ".\*" -DestinationPath "out\state.zip"
+      - pwsh: Compress-Archive -Path ".\*" -DestinationPath "$TempDir\state.zip"
+      - pwsh: Move-Item -Path "$TempDir\state.zip" -Destination "out\"
       - pwsh: Compress-Archive -Path "out\$env:APPVEYOR_PROJECT_NAME" -DestinationPath $env:ReleasePackageFile
     test_script:
       - pwsh: Write-Host "Starting Tests on Powershell Core..."
