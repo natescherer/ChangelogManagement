@@ -75,7 +75,7 @@ task UpdateManifest {
     }
 
     if (!$IsLinux) {
-        $ReleaseNotes = ((Get-ChangelogData).Released[0].RawData -replace "## .*", "").Trim()
+        $ReleaseNotes = ((Get-ChangelogData).Released[0].RawData -replace "^## .*", "").Trim()
     } else {
         $ReleaseNotes = "This is a shim to make Ubuntu builds pass temporarily!"
     }
