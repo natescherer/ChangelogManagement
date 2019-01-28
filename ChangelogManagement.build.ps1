@@ -4,7 +4,10 @@
 [CmdletBinding()]
 param (
     [parameter(Mandatory=$true)]
-    [string]$Version
+    [string]$Version,
+
+    [parameter(Mandatory=$true)]
+    [string]$LinkPattern
 )
 $NL = [System.Environment]::NewLine
 if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
@@ -54,7 +57,7 @@ task Init {
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog {
     $SafeVersion = ($Version -split "-")[0]
-    Update-Changelog -ReleaseVersion $SafeVersion -LinkBase "https://github.com/natescherer/ChangelogManagement" -ReleasePrefix "v"
+    Update-Changelog -ReleaseVersion $SafeVersion -LinkMode "Automatic" -LinkPattern $LinkPattern
 }
 
 # Synopsis: Updates the module manifest file for the new release.
@@ -74,11 +77,7 @@ task UpdateManifest {
         }	
     }
 
-    if (!$IsLinux) {
-        $ReleaseNotes = ((Get-ChangelogData).Released[0].RawData -replace "^## .*", "").Trim()
-    } else {
-        $ReleaseNotes = "This is a shim to make Ubuntu builds pass temporarily!"
-    }
+    $ReleaseNotes = ((Get-ChangelogData).Released[0].RawData -replace "^## .*", "").Trim()
 
     $ManifestData = @{
         Path = $ManifestPath
@@ -114,11 +113,8 @@ task GenerateMarkdownHelp {
 
 # Synopsis: Creates HTML help files for inclusion in releases.
 task GenerateHtmlHelp {
-    if (!$IsLinux) {
-        Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
-    } else {
-        Copy-Item -Path "CHANGELOG.md" -Destination "docs\"
-    }
+    Convertfrom-Changelog -Path "CHANGELOG.md" -Format "Release" -OutputPath "docs\CHANGELOG.md"
+
     Copy-Item -Path "README.md" -Destination "docs\"
 
     New-Item -Path "$TempDir\MarkdownToHtml" -Type Directory | Out-Null

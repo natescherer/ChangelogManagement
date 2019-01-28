@@ -50,7 +50,9 @@ for:
     build_script:
       - ps: Write-Host "Visual Studio 2017" -ForegroundColor Yellow
       - ps: Write-Host "Starting Build..."
-      - ps: Invoke-Build -Version $ReleaseVersion
+      - ps: $GitHubBase = "https://github.com/" + $env:APPVEYOR_REPO_NAME
+      - ps: $LinkPattern = @{FirstRelease="$GitHubBase/tree/v{CUR}";NormalRelease="$GitHubBase/compare/v{PREV}..v{CUR}";Unreleased="$GitHubBase/compare/v{CUR}..HEAD"}
+      - ps: Invoke-Build -Version $ReleaseVersion -LinkPattern $LinkPattern
     after_build:
       - ps: $env:ChangelogData = ((((Get-ChangelogData).Released[0].RawData -replace "## \[.*","") -replace "###","").Trim()) -replace [System.Environment]::NewLine,"\n"
       - ps: Compress-Archive -Path ".\*" -DestinationPath ".\state.zip"
