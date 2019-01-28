@@ -103,7 +103,7 @@ task GenerateHtmlHelp {
     Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
     Copy-Item -Path "README.md" -Destination "docs\"
 
-    New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory
+    New-Item -Path "$env:temp\MarkdownToHtml" -Type Directory | Out-Null
     Set-Content -Value $MarkdownToHtmlTemplate -Path "$env:temp\MarkdownToHtml\md-template.html" -NoNewLine
 
     Convert-MarkdownToHTML -Path "docs" -Destination "out\$ModuleName\docs" -Template "$env:temp\MarkdownToHtml" | Out-Null
