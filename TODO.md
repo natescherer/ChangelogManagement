@@ -9,3 +9,4 @@
 ## New Functionality
 
 - macOS Builds
+- Migrate to PsDeploy vs built-in Appveyor
