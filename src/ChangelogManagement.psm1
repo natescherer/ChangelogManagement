@@ -296,11 +296,6 @@ function Update-Changelog {
 
     $ChangelogData = Get-ChangelogData -Path $Path
 
-    # Make sure $ReleaseVersion is newer than the last version in the changelog
-    if ([System.Version]$ReleaseVersion -le [System.Version]$ChangelogData.LastVersion) {
-        throw "$ReleaseVersion is not greater than the previous version in the changelog ($ChangelogData.LastVersion)."
-    }
-
     # Create $NewRelease by removing empty sections from $ChangelogData.Unreleased
     $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$Eol",""
     $NewRelease = $NewRelease -replace "### Added$Eol$Eol",""
