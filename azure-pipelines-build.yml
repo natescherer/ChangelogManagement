@@ -22,7 +22,7 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }
+      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }}
   - task: PowerShell@2
     displayName: Invoke-Pester
     inputs:
