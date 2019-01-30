@@ -18,10 +18,14 @@ jobs:
         $PSVersionTable
         [System.Environment]::OSVersion.Platform
   - task: PowerShell@2
+    displayName: Install-Module
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }
+  - task: PowerShell@2
     displayName: Invoke-Pester
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: |
-        $PSVersionTable
-        [System.Environment]::OSVersion.Platform
+      script: Invoke-Pester

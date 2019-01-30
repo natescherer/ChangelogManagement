@@ -1,3 +1,8 @@
+variables:
+  - group: BuildSecrets
+  - name: PowerShellModules
+    value: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
+
 jobs:
 - template: azure-pipelines-build.yml
   parameters:
