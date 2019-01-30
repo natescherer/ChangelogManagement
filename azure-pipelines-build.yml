@@ -17,6 +17,12 @@ jobs:
       script: |
         $PSVersionTable
         [System.Environment]::OSVersion.Platform
+- task: PowerShell@2
+    displayName: ErrorActionPreference
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: $ErrorActionPreference = "Stop"
   - task: PowerShell@2
     displayName: Install-Module
     inputs:
