@@ -9,6 +9,7 @@ jobs:
   pool: 
     vmImage: ${{ parameters.vmImage }}
   steps:
+
   - task: PowerShell@2
     displayName: Environment Details
     inputs:
@@ -16,19 +17,23 @@ jobs:
       targetType: inline
       script: |
         $PSVersionTable
-        [System.Environment]::OSVersion.Platform
-- task: PowerShell@2
+        Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
+        Write-Host "Build.SourceVersionMessage$env:Build_SourceVersionMessage"
+
+  - task: PowerShell@2
     displayName: ErrorActionPreference
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: $ErrorActionPreference = "Stop"
+
   - task: PowerShell@2
     displayName: Install-Module
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }}
+
   - task: PowerShell@2
     displayName: Invoke-Pester
     inputs:
