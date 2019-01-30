@@ -20,6 +20,6 @@ jobs:
 
 - template: azure-pipelines-build.yml
   parameters:
-    name: windows_w_powershell_Core
+    name: windows_w_powershell_core
     vmImage: 'vs2017-win2016'
     pwsh: true
