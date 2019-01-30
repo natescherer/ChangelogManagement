@@ -1,0 +1,13 @@
+parameters:
+  name: ''
+  vmImage: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  - powershell: |
+      Install-Module -Name Pester -Force -SkipPublisherCheck
+      Invoke-Pester
+    displayName: Invoke-Pester

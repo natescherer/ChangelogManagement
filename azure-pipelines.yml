@@ -1,18 +1,15 @@
-strategy:
-  matrix:
-    Windows:
-      imageName: vs2017-win2016
-    Ubuntu:
-      imageName: ubuntu-16.04
-    macOS:
-      imageName: macOS-10.13
+jobs:
+- template: azure-pipelines-build.yml
+  parameters:
+    name: Linux
+    vmImage: 'ubuntu-16.04'
 
+- template: azure-pipelines-build.yml
+  parameters:
+    name: macOS
+    vmImage: 'macOS-10.13'
 
-pool:
-  vmImage: $(imageName)
-
-steps:
-- powershell: |
-    Install-Module -Name Pester -Force -SkipPublisherCheck
-    Invoke-Pester
-  displayName: Invoke-Pester
+- template: azure-pipelines-build.yml
+  parameters:
+    name: Windows
+    vmImage: 'vs2017-win2016'
