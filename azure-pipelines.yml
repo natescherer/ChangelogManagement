@@ -1,3 +1,10 @@
+trigger:
+  paths:
+    exclude:
+      - docs/*
+      - *.md
+      - .gitignore
+
 variables:
   - group: BuildSecrets
   - name: PowerShellModules
