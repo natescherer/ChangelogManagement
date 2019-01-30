@@ -6,12 +6,7 @@ strategy:
       imageName: 'macos-10.13'
     windows:
       imageName: 'vs2017-win2016'
-
-variables:
-  GitName: Nate Scherer
-  GitEmail: 376408+natescherer@users.noreply.github.com
-  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
-
+      
 pool:
   vmImage: $(imageName)
 
