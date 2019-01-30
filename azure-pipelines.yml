@@ -1,12 +1,13 @@
 strategy:
   matrix:
-    linux:
-      imageName: 'ubuntu-16.04'
-    mac:
-      imageName: 'macos-10.13'
-    windows:
-      imageName: 'vs2017-win2016'
-      
+    Windows:
+      imageName: vs2017-win2016
+    Ubuntu:
+      imageName: ubuntu-16.04
+    macOS:
+      imageName: macOS-10.13
+
+
 pool:
   vmImage: $(imageName)
 
