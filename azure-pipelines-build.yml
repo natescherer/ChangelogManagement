@@ -18,8 +18,8 @@ jobs:
       script: |
         $PSVersionTable
         Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
-        Write-Host "Build.QueuedBy $env:Build_QueuedBy"
-        Write-Host "Build.SourceVersionMessage $env:Build_SourceVersionMessage"
+        Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
+        Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
 
   - task: PowerShell@2
     displayName: ErrorActionPreference
