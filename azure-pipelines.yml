@@ -4,13 +4,22 @@ jobs:
     name: Linux
     vmImage: 'ubuntu-16.04'
     moduleInstallOptions: -Scope CurrentUser
+    pwsh: true
 
 - template: azure-pipelines-build.yml
   parameters:
     name: macOS
     vmImage: 'macOS-10.13'
+    pwsh: true
 
 - template: azure-pipelines-build.yml
   parameters:
-    name: Windows
+    name: Windows (Windows Powershell)
     vmImage: 'vs2017-win2016'
+    pwsh: false
+
+- template: azure-pipelines-build.yml
+  parameters:
+    name: Windows (Powershell Core)
+    vmImage: 'vs2017-win2016'
+    pwsh: true

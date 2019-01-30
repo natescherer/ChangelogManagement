@@ -2,17 +2,26 @@ parameters:
   name: ''
   vmImage: ''
   moduleInstallOptions: ''
+  pwsh: false
 
 jobs:
 - job: ${{ parameters.name }}
   pool: 
     vmImage: ${{ parameters.vmImage }}
   steps:
-  - powershell: |
-      $PSVersionTable
-      [System.Environment]::OSVersion.Platform
+  - task: PowerShell@2
     displayName: Environment Details
-  - powershell: |
-      Install-Module -Name Pester -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }}
-      Invoke-Pester
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        $PSVersionTable
+        [System.Environment]::OSVersion.Platform
+  - task: PowerShell@2
     displayName: Invoke-Pester
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        $PSVersionTable
+        [System.Environment]::OSVersion.Platform
