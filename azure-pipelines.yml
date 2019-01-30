@@ -2,7 +2,7 @@ trigger:
   paths:
     exclude:
       - docs/*
-      - *.md
+      - '*.md'
       - .gitignore
 
 variables:
