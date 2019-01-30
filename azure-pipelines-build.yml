@@ -8,6 +8,6 @@ jobs:
     vmImage: ${{ parameters.vmImage }}
   steps:
   - powershell: |
-      Install-Module -Name Pester -Force -SkipPublisherCheck
+      Install-Module -Name Pester -Force -SkipPublisherCheck ${{ parameters.moduleInstallOptions }}
       Invoke-Pester
     displayName: Invoke-Pester
