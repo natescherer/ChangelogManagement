@@ -22,7 +22,7 @@ pool:
 
 steps:
 - powershell:
-  type: inline
-  script: |
-    Install-Module -ModuleName Pester  -Force -SkipPublisherCheck
-    Invoke-Pester
+    targetType: inline
+    script: |
+      Install-Module -ModuleName Pester  -Force -SkipPublisherCheck
+      Invoke-Pester
