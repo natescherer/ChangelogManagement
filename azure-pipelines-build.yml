@@ -2,7 +2,7 @@ parameters:
   name: ''
   vmImage: ''
   moduleInstallOptions: ''
-  pwsh: false
+  pwsh: true
 
 jobs:
 - job: ${{ parameters.name }}
