@@ -21,8 +21,7 @@ pool:
   vmImage: $(imageName)
 
 steps:
-  - powershell:
-    targetType: inline
-    script: |
-      Install-Module -ModuleName Pester  -Force -SkipPublisherCheck
-      Invoke-Pester
+- powershell: |
+    Install-Module -ModuleName Pester  -Force -SkipPublisherCheck
+    Invoke-Pester
+  displayName: Invoke-Pester
