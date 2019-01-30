@@ -1,9 +1,7 @@
 trigger:
-  paths:
+  branches:
     exclude:
-      - docs/*
-      - '*.md'
-      - .gitignore
+      - release/*
 
 variables:
   - group: BuildSecrets
