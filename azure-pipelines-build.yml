@@ -3,6 +3,7 @@ parameters:
   vmImage: ''
   moduleInstallOptions: ''
   pwsh: true
+  tempDir: ''
 
 jobs:
 - job: ${{ parameters.name }}
@@ -20,6 +21,7 @@ jobs:
         Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
         Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
         Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
+        Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
 
   - task: PowerShell@2
     displayName: ErrorActionPreference
@@ -34,6 +36,42 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
+
+  - task: PowerShell@2
+    displayName: Invoke-Build
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
+          $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:BUILD_REPOSITORY_NAME
+          $ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
+        }
+        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+
+  - task: PowerShell@2
+    displayName: Prepare Artifacts
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        $env:ReleasePackageFile = "out\$($env:BUILD_REPOSITORY_NAME)-v$($ReleaseVersion).zip"
+        Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
+        Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination "out\"
+        Compress-Archive -Path "out\$env:BUILD_REPOSITORY_NAME" -DestinationPath $env:ReleasePackageFile
+
+  - task: PublishPipelineArtifact@0
+    displayName: Publish BuildState
+    inputs:
+      artifactName: 'BuildState'
+      targetPath: 'out/state.zip'
+
+  - task: PublishPipelineArtifact@0
+    displayName: Publish ReleasePackage
+    inputs:
+      artifactName: 'ReleasePackage'
+      targetPath: $(ReleasePackageFile)
 
   - task: PowerShell@2
     displayName: Invoke-Pester
