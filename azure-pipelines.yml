@@ -1,5 +1,9 @@
 trigger:
   branches:
+    include:
+      - master
+      - feature/*
+      - bugfix/*
     exclude:
       - release/*
 
