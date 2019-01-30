@@ -3,17 +3,26 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- master
+strategy:
+  matrix:
+    linux:
+      imageName: ubuntu-16.04
+    mac:
+      imageName: macos-10.13
+    windows:
+      imageName: vs2017-win2016
+
+variables:
+  GitName: Nate Scherer
+  GitEmail: 376408+natescherer@users.noreply.github.com
+  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: $(imageName)
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- powershell:
+  type: inline
+  script: |
+    Install-Module -ModuleName Pester  -Force -SkipPublisherCheck
+    Invoke-Pester
