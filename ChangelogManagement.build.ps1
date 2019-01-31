@@ -7,7 +7,10 @@ param (
     [string]$Version,
 
     [parameter(Mandatory=$true)]
-    [hashtable]$LinkPattern
+    [hashtable]$LinkPattern,
+
+    [parameter(Mandatory=$false)]
+    [string]$ZipDestination = ".\out"
 )
 $NL = [System.Environment]::NewLine
 if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
@@ -40,7 +43,7 @@ Enter-Build {
 }
 
 # Synopsis: Perform all build tasks.
-task . Init, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp, CopySource
+task . Init, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp, CopySource, Zip
 
 # Synopsis: Removes files from docs and out, makes out\$ModuleName if needed, runs Set-BuildEnvironment for BuildHelpers commands.
 task Init {
@@ -146,4 +149,9 @@ task GenerateHtmlHelp {
 # Synopsis: Copies source files into out\$ModuleName.
 task CopySource {
     Copy-Item -Path "src\*" -Destination "out\$ModuleName\"
+}
+
+# Synopsis: Compresses module for release.
+task Zip {
+    Compress-Archive -Path "out\$ModuleName" -DestinationPath "$ZipDestination\$ModuleName-v$Version.zip"
 }
