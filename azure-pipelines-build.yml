@@ -30,7 +30,7 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[0]
+        $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[1]
         Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
 
   - task: PowerShell@2
