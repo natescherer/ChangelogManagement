@@ -22,13 +22,15 @@ jobs:
         Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
         Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
         Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
+        Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
 
   - task: PowerShell@2
-    displayName: ErrorActionPreference
+    displayName: Set Variables
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: $ErrorActionPreference = "Stop"
+      script: |
+        $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[0]
 
   - task: PowerShell@2
     displayName: Install-Module
@@ -43,12 +45,12 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$env:RELEASEVERSION = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
         if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
-          $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:BUILD_REPOSITORY_NAME
-          $ReleaseVersion = $NextVer.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
+          $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:PROJECTNAME
+          $env:RELEASEVERSION = $NextVer.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
         }
-        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+        Invoke-Build -Version $env:RELEASEVERSION -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
     displayName: Prepare Artifacts
@@ -56,10 +58,10 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $env:ReleasePackageFile = "out\$($env:BUILD_REPOSITORY_NAME)-v$($ReleaseVersion).zip"
+        $env:RELEASEPACKAGEFILE = "out\$env:PROJECTNAME-v$env:RELEASEVERSION.zip"
         Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
         Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination "out\"
-        Compress-Archive -Path "out\$env:BUILD_REPOSITORY_NAME" -DestinationPath $env:ReleasePackageFile
+        Compress-Archive -Path "out\$env:PROJECTNAME" -DestinationPath $env:RELEASEPACKAGEFILE
 
   - task: PublishPipelineArtifact@0
     displayName: Publish BuildState
