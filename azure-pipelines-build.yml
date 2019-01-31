@@ -25,6 +25,13 @@ jobs:
         Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
 
   - task: PowerShell@2
+    displayName: Install-Module
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
+
+  - task: PowerShell@2
     displayName: Set Variables
     inputs:
       pwsh: ${{ parameters.pwsh }}
@@ -34,13 +41,6 @@ jobs:
         Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
         $env:NEXTVER = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
         Write-Host "`$env:NEXTVER is $env:NEXTVER"
-
-  - task: PowerShell@2
-    displayName: Install-Module
-    inputs:
-      pwsh: ${{ parameters.pwsh }}
-      targetType: inline
-      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
 
   - task: PowerShell@2
     displayName: Invoke-Build
