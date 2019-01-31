@@ -40,11 +40,9 @@ jobs:
         $ProjectNameLocal = $env:BUILD_REPOSITORY_NAME.split("/")[1]
         Write-Host "`$ProjectNameLocal is $ProjectNameLocal"
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectNameLocal"
-        Write-Host "projectName set to $(projectName)"
         $NextVerLocal = Get-NextNugetPackageVersion -Name $(projectName)
         Write-Host "`$NextVerLocal is $NextVerLocal"
         Write-Host "##vso[task.setvariable variable=nextVer]$NextVerLocal"
-        Write-Host "nextVer set to $(nextVer)"
 
   - task: PowerShell@2
     displayName: Invoke-Build
