@@ -64,16 +64,18 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $env:RELEASEPACKAGEFILE = "out\$env:PROJECTNAME-v$(releaseVersion).zip"
+        $ReleasePackageFileLocal = "out\$env:PROJECTNAME-v$env:RELEASEVERSION).zip"
+        Write-Host "##vso[task.setvariable variable=releasePackageFile]$ReleasePackageFileLocal"
         Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
         Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination "out\"
-        Compress-Archive -Path "out\$env:PROJECTNAME" -DestinationPath $env:RELEASEPACKAGEFILE
+        Compress-Archive -Path "out\$env:PROJECTNAME" -DestinationPath $ReleasePackageFileLocal
+        Get-ChildItem -Recurse
 
   - task: PublishPipelineArtifact@0
     displayName: Publish BuildState
     inputs:
       artifactName: 'BuildState'
-      targetPath: 'out/state.zip'
+      targetPath: '$(Build.Repository.LocalPath)/out/state.zip'
 
   - task: PublishPipelineArtifact@0
     displayName: Publish ReleasePackage
