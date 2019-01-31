@@ -50,13 +50,14 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$env:RELEASEVERSION = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersionLocal = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
         if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
           Write-Host "nextVer is $(nextVer)"
           Write-Host "`$env:BUILD_BUILDNUMBER is $env:BUILD_BUILDNUMBER"
-          $env:RELEASEVERSION = $(nextVer) + "-alpha" + $env:BUILD_BUILDNUMBER
+          $ReleaseVersionLocal = $(nextVer) + "-alpha" + $env:BUILD_BUILDNUMBER
+          Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersionLocal"
         }
-        Invoke-Build -Version $env:RELEASEVERSION -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+        Invoke-Build -Version $(releaseVersion) -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
     displayName: Prepare Artifacts
@@ -64,7 +65,7 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $env:RELEASEPACKAGEFILE = "out\$env:PROJECTNAME-v$env:RELEASEVERSION.zip"
+        $env:RELEASEPACKAGEFILE = "out\$env:PROJECTNAME-v$(releaseVersion).zip"
         Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
         Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination "out\"
         Compress-Archive -Path "out\$env:PROJECTNAME" -DestinationPath $env:RELEASEPACKAGEFILE
