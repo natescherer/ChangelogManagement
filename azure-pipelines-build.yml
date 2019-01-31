@@ -52,8 +52,6 @@ jobs:
       script: |
         if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersionLocal = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
         if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
-          Write-Host "nextVer is $(nextVer)"
-          Write-Host "`$env:BUILD_BUILDNUMBER is $env:BUILD_BUILDNUMBER"
           $ReleaseVersionLocal = $(nextVer) + "-alpha" + $env:BUILD_BUILDNUMBER
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersionLocal"
         }
