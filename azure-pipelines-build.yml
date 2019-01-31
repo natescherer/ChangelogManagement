@@ -40,7 +40,7 @@ jobs:
         $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[1]
         Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
         $env:NEXTVER = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
-        Write-Host "`$env:NEXTVER is $env:NEXTVER"
+        Write-Host "`$env:NEXTVER set to $env:NEXTVER"
 
   - task: PowerShell@2
     displayName: Invoke-Build
@@ -49,7 +49,11 @@ jobs:
       targetType: inline
       script: |
         if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$env:RELEASEVERSION = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {$env:RELEASEVERSION = $env:NEXTVER.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
+          Write-Host "`$env:NEXTVER is $env:NEXTVER"
+          Write-Host "$env:BUILD_BUILDNUMBER is $env:BUILD_BUILDNUMBER"
+          $env:RELEASEVERSION = $env:NEXTVER.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
+          }
         Invoke-Build -Version $env:RELEASEVERSION -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
