@@ -32,6 +32,8 @@ jobs:
       script: |
         $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[1]
         Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
+        $env:NEXTVER = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
+        Write-Host "`$env:NEXTVER is $env:NEXTVER"
 
   - task: PowerShell@2
     displayName: Install-Module
@@ -47,11 +49,7 @@ jobs:
       targetType: inline
       script: |
         if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$env:RELEASEVERSION = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
-          $NextVer = Get-NextNugetPackageVersion -PackageSourceUrl https://www.powershellgallery.com/api/v2/ -Name $env:PROJECTNAME
-          Write-Host "`$NextVer is $NextVer"
-          $env:RELEASEVERSION = $NextVer.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
-        }
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {$env:RELEASEVERSION = $NextVer.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER}
         Invoke-Build -Version $env:RELEASEVERSION -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
