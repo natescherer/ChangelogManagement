@@ -37,11 +37,11 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $ProjectName = $env:BUILD_REPOSITORY_NAME.split("/")[1]
-        Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
-        Write-Host "`$env:PROJECT set to $env:PROJECTNAME"
-        $NextVer = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
-        Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
+        $ProjectNameLocal = $env:BUILD_REPOSITORY_NAME.split("/")[1]
+        Write-Host "##vso[task.setvariable variable=projectName]$ProjectNameLocal"
+        Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
+        $NextVerLocal = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
+        Write-Host "##vso[task.setvariable variable=nextVer]$NextVerLocal"
         Write-Host "`$env:NEXTVER set to $env:NEXTVER"
 
   - task: PowerShell@2
