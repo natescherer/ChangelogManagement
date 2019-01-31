@@ -56,7 +56,7 @@ jobs:
           Write-Host "`$ReleaseVersionLocal is $ReleaseVersionLocal"
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersionLocal"
         }
-        Invoke-Build -Version $ReleaseVersionLocal -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+        Invoke-Build -Version $ReleaseVersionLocal -LinkPattern (Invoke-Expression $env:LINKPATTERN) -ZipDestination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
 
   - task: PowerShell@2
     displayName: Prepare Artifacts
@@ -64,24 +64,14 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $ReleasePackageFileLocal = "out\$env:PROJECTNAME-v$env:RELEASEVERSION).zip"
-        Write-Host "##vso[task.setvariable variable=releasePackageFile]$ReleasePackageFileLocal"
         Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
-        Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination "out\"
-        Compress-Archive -Path "out\$env:PROJECTNAME" -DestinationPath $ReleasePackageFileLocal
-        Get-ChildItem -Recurse
+        Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
 
   - task: PublishPipelineArtifact@0
-    displayName: Publish BuildState
+    displayName: Publish Artifcats
     inputs:
-      artifactName: 'BuildState'
-      targetPath: '$(Build.Repository.LocalPath)/out/state.zip'
-
-  - task: PublishPipelineArtifact@0
-    displayName: Publish ReleasePackage
-    inputs:
-      artifactName: 'ReleasePackage'
-      targetPath: $(ReleasePackageFile)
+      artifactName: 'BuildArtifacts'
+      targetPath: '$(Build.ArtifactStagingDirectory)'
 
   - task: PowerShell@2
     displayName: Invoke-Pester
