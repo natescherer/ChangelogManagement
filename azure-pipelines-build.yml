@@ -38,11 +38,10 @@ jobs:
       targetType: inline
       script: |
         $ProjectNameLocal = $env:BUILD_REPOSITORY_NAME.split("/")[1]
-        Write-Host "`$ProjectNameLocal is $ProjectNameLocal"
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectNameLocal"
         $NextVerLocal = Get-NextNugetPackageVersion -Name $ProjectNameLocal
-        Write-Host "`$NextVerLocal is $NextVerLocal"
         Write-Host "##vso[task.setvariable variable=nextVer]$NextVerLocal"
+        Write-Host "##vso[task.setvariable variable=psEdition]$PSVersionTable.PSEdition"
 
   - task: PowerShell@2
     displayName: Invoke-Build
@@ -70,7 +69,7 @@ jobs:
   - task: PublishPipelineArtifact@0
     displayName: Publish Artifcats
     inputs:
-      artifactName: 'BuildArtifacts-$(Agent.OS)'
+      artifactName: 'BuildArtifacts-$(Agent.OS)_$(psEdition)'
       targetPath: '$(Build.ArtifactStagingDirectory)'
 
   - task: PowerShell@2
