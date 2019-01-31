@@ -57,7 +57,7 @@ jobs:
           $ReleaseVersionLocal = $(nextVer) + "-alpha" + $env:BUILD_BUILDNUMBER
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersionLocal"
         }
-        Invoke-Build -Version $(releaseVersion) -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+        Invoke-Build -Version $ReleaseVersionLocal -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
     displayName: Prepare Artifacts
