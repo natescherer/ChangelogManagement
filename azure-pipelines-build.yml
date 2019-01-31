@@ -37,9 +37,11 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $env:PROJECTNAME = $env:BUILD_REPOSITORY_NAME.split("/")[1]
-        Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
-        $env:NEXTVER = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
+        $ProjectName = $env:BUILD_REPOSITORY_NAME.split("/")[1]
+        Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
+        Write-Host "`$env:PROJECT set to $env:PROJECTNAME"
+        $NextVer = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
+        Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
         Write-Host "`$env:NEXTVER set to $env:NEXTVER"
 
   - task: PowerShell@2
@@ -51,9 +53,9 @@ jobs:
         if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$env:RELEASEVERSION = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
         if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
           Write-Host "`$env:NEXTVER is $env:NEXTVER"
-          Write-Host "$env:BUILD_BUILDNUMBER is $env:BUILD_BUILDNUMBER"
+          Write-Host "`$env:BUILD_BUILDNUMBER is $env:BUILD_BUILDNUMBER"
           $env:RELEASEVERSION = $env:NEXTVER.ToString() + "-alpha" + $env:BUILD_BUILDNUMBER
-          }
+        }
         Invoke-Build -Version $env:RELEASEVERSION -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PowerShell@2
