@@ -1,3 +1,5 @@
+name: $(BuildId)
+
 trigger:
   branches:
     include:
