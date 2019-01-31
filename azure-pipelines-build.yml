@@ -70,7 +70,7 @@ jobs:
   - task: PublishPipelineArtifact@0
     displayName: Publish Artifcats
     inputs:
-      artifactName: 'BuildArtifacts'
+      artifactName: 'BuildArtifacts-$(Agent.OS)'
       targetPath: '$(Build.ArtifactStagingDirectory)'
 
   - task: PowerShell@2
