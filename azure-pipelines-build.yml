@@ -39,11 +39,11 @@ jobs:
       script: |
         $ProjectNameLocal = $env:BUILD_REPOSITORY_NAME.split("/")[1]
         Write-Host "`$ProjectNameLocal is $ProjectNameLocal"
-        Write-Host "##vso[task.setvariable variable=PROJECTNAME;]$ProjectNameLocal"
+        Write-Host "##vso[task.setvariable variable=PROJECTNAME;isOutput=true;]$ProjectNameLocal"
         Write-Host "`$env:PROJECTNAME set to $env:PROJECTNAME"
         $NextVerLocal = Get-NextNugetPackageVersion -Name $env:PROJECTNAME
         Write-Host "`$NextVerLocal is $NextVerLocal"
-        Write-Host "##vso[task.setvariable variable=NEXTVER;]$NextVerLocal"
+        Write-Host "##vso[task.setvariable variable=NEXTVER;isOutput=true;]$NextVerLocal"
         Write-Host "`$env:NEXTVER set to $env:NEXTVER"
 
   - task: PowerShell@2
