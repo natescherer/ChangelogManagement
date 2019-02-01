@@ -18,6 +18,7 @@ jobs:
       targetType: inline
       script: |
         $PSVersionTable
+        Write-Host "tempDir = ${{ parameters.tempDir }}"
         Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
         Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
         Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
@@ -78,12 +79,13 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "${{ parameters.tempDir }}\TestsResults.xml"
+      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "${{ parameters.tempDir }}\TestResults.xml"
 
   - task: PublishTestResults@2
+    displayName: Publish Test Results
     inputs:
       testResultsFormat: 'NUnit'
-      testResultsFiles: 'TestsResults.xml' 
+      testResultsFiles: 'TestResults.xml' 
       searchFolder: '${{ parameters.tempDir }}'
       failTaskOnFailedTests: true
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
