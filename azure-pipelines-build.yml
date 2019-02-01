@@ -32,18 +32,18 @@ jobs:
       targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
 
-  - task: PowerShell@2
+  - task: PowerShell@
     displayName: Set Variables
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $ProjectNameLocal = $env:BUILD_REPOSITORY_NAME.split("/")[1]
-        Write-Host "##vso[task.setvariable variable=projectName]$ProjectNameLocal"
-        $NextVerLocal = Get-NextNugetPackageVersion -Name $ProjectNameLocal
-        Write-Host "##vso[task.setvariable variable=nextVer]$NextVerLocal"
-        $PSEditionLocal = $PSVersionTable.PSEdition
-        Write-Host "##vso[task.setvariable variable=psEdition]$PSEditionLocal"
+        $ProjectName = $env:BUILD_REPOSITORY_NAME.split("/")[1]
+        Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
+        $NextVer = Get-NextNugetPackageVersion -Name $ProjectName
+        Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
+        $PSEdition = $PSVersionTable.PSEdition
+        Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
 
   - task: PowerShell@2
     displayName: Invoke-Build
@@ -51,13 +51,13 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersionLocal = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
         if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
-          $ReleaseVersionLocal = $env:NEXTVER + "-alpha" + $env:BUILD_BUILDNUMBER
-          Write-Host "`$ReleaseVersionLocal is $ReleaseVersionLocal"
-          Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersionLocal"
+          $ReleaseVersion = $env:NEXTVER + "-alpha" + $env:BUILD_BUILDNUMBER
+          Write-Host "`$ReleaseVersion is $ReleaseVersion"
+          Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
         }
-        Invoke-Build -Version $ReleaseVersionLocal -LinkPattern (Invoke-Expression $env:LINKPATTERN) -ZipDestination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
+        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN) -ZipDestination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
 
   - task: PowerShell@2
     displayName: Prepare Artifacts
