@@ -81,13 +81,6 @@ jobs:
       targetType: inline
       script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml"
 
-  - task: PowerShell@2
-    displayName: Get-ChildItem
-    inputs:
-      pwsh: ${{ parameters.pwsh }}
-      targetType: inline
-      script: Get-ChildItem -Recurse
-
   - task: PublishTestResults@2
     displayName: Publish Test Results
     inputs:
