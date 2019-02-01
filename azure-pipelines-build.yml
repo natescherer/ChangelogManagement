@@ -42,7 +42,6 @@ jobs:
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
         $NextVer = Get-NextNugetPackageVersion -Name $ProjectName
         Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
-        $PSEdition = $PSVersionTable.PSEdition
         Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
 
   - task: PowerShell@2
