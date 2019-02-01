@@ -32,7 +32,7 @@ jobs:
       targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
 
-  - task: PowerShell@
+  - task: PowerShell@2
     displayName: Set Variables
     inputs:
       pwsh: ${{ parameters.pwsh }}
