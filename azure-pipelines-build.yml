@@ -30,6 +30,16 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
+      script: |
+        if ($IsWindows -and ((Test-Path -Path "C:\Program Files\PowerShell\6") -eq $false)) {
+          choco install powershell-core
+        }
+
+  - task: PowerShell@2
+    displayName: Install-Module
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
 
   - task: PowerShell@2
