@@ -26,7 +26,7 @@ jobs:
         Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
 
   - task: PowerShell@2
-    displayName: Install-Module
+    displayName: Ensure PowerShell Core is Installed
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
@@ -78,7 +78,7 @@ jobs:
         Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
 
   - task: PublishPipelineArtifact@0
-    displayName: Publish Artifcats
+    displayName: Publish Artifacts
     inputs:
       artifactName: 'BuildArtifacts-$(Agent.OS)_$(psEdition)'
       targetPath: '$(Build.ArtifactStagingDirectory)'
