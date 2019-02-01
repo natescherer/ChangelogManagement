@@ -79,13 +79,13 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "${{ parameters.tempDir }}\TestResults.xml"
+      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml"
 
   - task: PublishTestResults@2
     displayName: Publish Test Results
     inputs:
       testResultsFormat: 'NUnit'
       testResultsFiles: 'TestResults.xml' 
-      searchFolder: '${{ parameters.tempDir }}'
+      searchFolder: 'out\'
       failTaskOnFailedTests: true
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
