@@ -66,22 +66,13 @@ jobs:
           Write-Host "`$ReleaseVersion is $ReleaseVersion"
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
         }
-        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN) -ZipDestination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
-
-  - task: PowerShell@2
-    displayName: Prepare Artifacts
-    inputs:
-      pwsh: ${{ parameters.pwsh }}
-      targetType: inline
-      script: |
-        Compress-Archive -Path ".\*" -DestinationPath "${{ parameters.tempDir }}\state.zip"
-        Move-Item -Path "${{ parameters.tempDir }}\state.zip" -Destination $env:BUILD_ARTIFACTSTAGINGDIRECTORY
+        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
   - task: PublishPipelineArtifact@0
     displayName: Publish Artifacts
     inputs:
-      artifactName: 'BuildArtifacts-$(Agent.OS)_$(psEdition)'
-      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'Build-$(Agent.OS)_$(psEdition)'
+      targetPath: '$(Build.Repository.LocalPath)'
 
   - task: PowerShell@2
     displayName: Invoke-Pester
@@ -94,6 +85,6 @@ jobs:
     displayName: Publish Test Results
     inputs:
       testResultsFormat: 'NUnit'
-      testResultsFiles: '**/TestResults.xml' 
+      testResultsFiles: '**/TestResults.xml'
       failTaskOnFailedTests: true
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
