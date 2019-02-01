@@ -1,0 +1,90 @@
+parameters:
+  name: ''
+  vmImage: ''
+  moduleInstallOptions: ''
+  pwsh: true
+  tempDir: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+
+  - task: PowerShell@2
+    displayName: Environment Details
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        $PSVersionTable
+        Write-Host "tempDir = ${{ parameters.tempDir }}"
+        Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
+        Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
+        Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
+        Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
+        Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
+
+  - task: PowerShell@2
+    displayName: Ensure PowerShell Core is Installed
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        if ($IsWindows -and ((Test-Path -Path "C:\Program Files\PowerShell\6") -eq $false)) {
+          choco install powershell-core
+        }
+
+  - task: PowerShell@2
+    displayName: Install-Module
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
+
+  - task: PowerShell@2
+    displayName: Set Variables
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        $ProjectName = $env:BUILD_REPOSITORY_NAME.split("/")[1]
+        Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
+        $NextVer = Get-NextNugetPackageVersion -Name $ProjectName
+        Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
+        Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
+
+  - task: PowerShell@2
+    displayName: Invoke-Build
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: |
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
+          $ReleaseVersion = $env:NEXTVER + "-alpha" + $env:BUILD_BUILDNUMBER
+          Write-Host "`$ReleaseVersion is $ReleaseVersion"
+          Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
+        }
+        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifacts
+    inputs:
+      artifactName: 'Build-$(Agent.OS)_$(psEdition)'
+      pathToPublish: '$(Build.Repository.LocalPath)'
+
+  - task: PowerShell@2
+    displayName: Invoke-Pester
+    inputs:
+      pwsh: ${{ parameters.pwsh }}
+      targetType: inline
+      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml"
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '**/TestResults.xml'
+      failTaskOnFailedTests: true
+      testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
