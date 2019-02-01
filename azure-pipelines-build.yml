@@ -92,7 +92,6 @@ jobs:
     displayName: Publish Test Results
     inputs:
       testResultsFormat: 'NUnit'
-      testResultsFiles: 'TestResults.xml' 
-      searchFolder: 'out\'
+      testResultsFiles: '**/TestResults.xml' 
       failTaskOnFailedTests: true
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
