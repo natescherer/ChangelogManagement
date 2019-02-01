@@ -68,11 +68,11 @@ jobs:
         }
         Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
 
-  - task: PublishPipelineArtifact@0
+  - task: PublishBuildArtifacts@1
     displayName: Publish Artifacts
     inputs:
       artifactName: 'Build-$(Agent.OS)_$(psEdition)'
-      targetPath: '$(Build.Repository.LocalPath)'
+      pathToPublish: '$(Build.Repository.LocalPath)'
 
   - task: PowerShell@2
     displayName: Invoke-Pester
