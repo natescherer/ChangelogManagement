@@ -10,7 +10,6 @@ trigger:
       - release/*
 
 variables:
-  - group: BuildSecrets
   - name: PowerShellModules
     value: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
   - name: LinkPattern
