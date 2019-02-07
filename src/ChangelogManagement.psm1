@@ -219,12 +219,6 @@ function New-Changelog {
     }
     $Output += ".$Eol$Eol"
     $Output += "## [Unreleased]$Eol"
-    $Output += "### Added$Eol$Eol"
-    $Output += "### Changed$Eol$Eol"
-    $Output += "### Deprecated$Eol$Eol"
-    $Output += "### Removed$Eol$Eol"
-    $Output += "### Fixed$Eol$Eol"
-    $Output += "### Security$Eol$Eol"
 
     Set-Content -Value $Output -Path $Path -NoNewline
 }

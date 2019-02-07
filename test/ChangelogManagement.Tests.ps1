@@ -655,19 +655,7 @@ InModuleScope $ModuleName {
                 "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$Eol" +
                 "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$Eol" +
                 "$Eol" +
-                "## [Unreleased]$Eol" +
-                "### Added$Eol" +
-                "$Eol" +
-                "### Changed$Eol" +
-                "$Eol" +
-                "### Deprecated$Eol" +
-                "$Eol" +
-                "### Removed$Eol" +
-                "$Eol" +
-                "### Fixed$Eol" +
-                "$Eol" +
-                "### Security$Eol" +
-                "$Eol")
+                "## [Unreleased]$Eol")
         }
         It "-NoSemVer" {
             $TestPath = "TestDrive:\CHANGELOG.md"
