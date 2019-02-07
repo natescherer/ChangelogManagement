@@ -24,16 +24,7 @@ jobs:
         Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
         Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
         Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
-
-  - task: PowerShell@2
-    displayName: Ensure PowerShell Core is Installed
-    inputs:
-      pwsh: ${{ parameters.pwsh }}
-      targetType: inline
-      script: |
-        if ($IsWindows -and ((Test-Path -Path "C:\Program Files\PowerShell\6") -eq $false)) {
-          choco install powershell-core
-        }
+        Write-Host "Current Location = $(Get-Location)"
 
   - task: PowerShell@2
     displayName: Install-Module
@@ -48,21 +39,36 @@ jobs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        $ProjectName = $env:BUILD_REPOSITORY_NAME.split("/")[1]
+        $ProjectName = Get-ProjectName
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
-        $NextVer = Get-NextNugetPackageVersion -Name $ProjectName
-        Write-Host "##vso[task.setvariable variable=nextVer]$NextVer"
         Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
 
   - task: PowerShell@2
     displayName: Invoke-Build
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: |
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!Deploy*") {$ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]}
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!Deploy*") {
-          $ReleaseVersion = $env:NEXTVER + "-alpha" + $env:BUILD_BUILDNUMBER
+        $Uri = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$env:BUILD_BUILDID/tags/ReleaseToProd?api-version=5.0"
+        Write-Host $Uri
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!ReleaseToProd*") {
+          $ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]
+          $TagSplat = @{
+            Uri = $Uri
+            Headers = @{
+              Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
+            }
+            Method = "Put"
+          }
+          Invoke-RestMethod @TagSplat
+        }
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!ReleaseToProd*") {
+          $ManifestVersion = (Import-PowerShellDataFile .\src\*.psd1).ModuleVersion
+          if ((Get-ChangelogData).Released -ne $null) { $AlphaVersionBase = Step-Version $ManifestVersion }
+          if ((Get-ChangelogData).Released -eq $null) { $AlphaVersionBase = $ManifestVersion }
+          $ReleaseVersion = $AlphaVersionBase + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("0000")
           Write-Host "`$ReleaseVersion is $ReleaseVersion"
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
         }
