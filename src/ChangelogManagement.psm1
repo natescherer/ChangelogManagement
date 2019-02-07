@@ -61,22 +61,93 @@ function Get-ChangelogData {
     $UnreleasedTemp = $Sections[0]
     $Sections.Remove($UnreleasedTemp)
 
+    # Construct the Data for $Output.Unreleased
+    if ($UnreleasedTemp -notlike "*### Added*") {
+        $UnreleasedAdded = $null
+    } else {
+        $UnreleasedAdded = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+    if ($UnreleasedTemp -notlike "*### Changed*") {
+        $UnreleasedChanged = $null
+    } else {
+        $UnreleasedChanged = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+    if ($UnreleasedTemp -notlike "*### Deprecated*") {
+        $UnreleasedDeprecated = $null
+    } else {
+        $UnreleasedDeprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+    if ($UnreleasedTemp -notlike "*### Removed*") {
+        $UnreleasedRemoved = $null
+    } else {
+        $UnreleasedRemoved = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+    if ($UnreleasedTemp -notlike "*### Fixed*") {
+        $UnreleasedFixed = $null
+    } else {
+        $UnreleasedFixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+    if ($UnreleasedTemp -notlike "*### Security*") {
+        $UnreleasedSecurity = $null
+    } else {
+        $UnreleasedSecurity = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+    }
+
     # Construct the $Output.Unreleased object
     $Output.Unreleased = [PSCustomObject]@{
         "RawData" = $UnreleasedTemp
         "Link" = (($Output.Footer -split "Unreleased\]: ")[1] -split $Eol)[0]
         "Data" = [PSCustomObject]@{
-            Added = (($UnreleasedTemp -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Changed = (($UnreleasedTemp -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Deprecated = (($UnreleasedTemp -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Removed = (($UnreleasedTemp -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Fixed = (($UnreleasedTemp -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-            Security = (($UnreleasedTemp -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+            Added = $UnreleasedAdded
+            Changed = $UnreleasedChanged
+            Deprecated = $UnreleasedDeprecated
+            Removed = $UnreleasedRemoved
+            Fixed = $UnreleasedFixed
+            Security = $UnreleasedSecurity
         }
     }
 
     # Construct the $Output.Released array
     foreach ($Release in $Sections) {
+        # Construct the Data for $Output.Released
+        if ($Release -notlike "*### Added*") {
+            $ReleaseAdded = $null
+        }
+        else {
+            $ReleaseAdded = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+        if ($UnreleasedTemp -notlike "*### Changed*") {
+            $ReleaseChanged = $null
+        }
+        else {
+            $ReleaseChanged = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+        if ($Release -notlike "*### Deprecated*") {
+            Write-Host "Hello!"
+            $ReleaseDeprecated = $null
+        }
+        else {
+            $ReleaseDeprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+        if ($Release -notlike "*### Removed*") {
+            $ReleaseRemoved = $null
+        }
+        else {
+            $ReleaseRemoved = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+        if ($Release -notlike "*### Fixed*") {
+            $ReleaseFixed = $null
+        }
+        else {
+            $ReleaseFixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+        if ($Release -notlike "*### Security*") {
+            $ReleaseSecurity = $null
+        }
+        else {
+            $ReleaseSecurity = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+        }
+
         $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
         $Output.Released += [PSCustomObject]@{
             "RawData" = $Release
@@ -84,12 +155,12 @@ function Get-ChangelogData {
             "Version" = $LoopVersionNumber
             "Link" = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $Eol)[0]
             "Data" = [PSCustomObject]@{
-                Added = (($Release -split "### Added$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Changed = (($Release -split "### Changed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Deprecated = (($Release -split "### Deprecated$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Removed = (($Release -split "### Removed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Fixed = (($Release -split "### Fixed$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
-                Security = (($Release -split "### Security$Eol")[1] -split "###")[0].TrimEnd($Eol) -split $Eol | ForEach-Object { $_.TrimStart("- ") }
+                Added = $ReleaseAdded
+                Changed = $ReleaseChanged
+                Deprecated = $ReleaseDeprecated
+                Removed = $ReleaseRemoved
+                Fixed = $ReleaseFixed
+                Security = $ReleaseSecurity
             }
         }
     }
