@@ -10,9 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Building/releasing changed from AppVeyor to Azure Pipelines
+### Deprecated
+
+### Removed
 
 ### Fixed
 - Version comparison check in Update-Changelog required .NET System.Version; check has been removed to support any versioning scheme
+
+### Security
 
 ## [2.0.0] - 2019-01-28
 ### Changed
