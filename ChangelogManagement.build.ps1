@@ -59,18 +59,14 @@ task Init {
 task UpdateChangelog {
     $SafeVersion = ($Version -split "-")[0]
 
-    $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$Eol", ""
-    $NewRelease = $NewRelease -replace "### Added$Eol$Eol", ""
-    $NewRelease = $NewRelease -replace "### Changed$Eol$Eol", ""
-    $NewRelease = $NewRelease -replace "### Deprecated$Eol$Eol", ""
-    $NewRelease = $NewRelease -replace "### Removed$Eol$Eol", ""
-    $NewRelease = $NewRelease -replace "### Fixed$Eol$Eol", ""
-    $NewRelease = $NewRelease -replace "### Security$Eol$Eol", ""
-
-    If ([string]::IsNullOrWhiteSpace($NewRelease)) {
-        Add-ChangelogData -Type "Added" -Data "Dummy Data"
-        $env:DeployMode = "false"
-        Write-Host -Object "No changes listed in Changelog. Inserting dummy data and blocking deployment." -ForegroundColor Red
+    $ChangelogData = Get-ChangelogData
+    if (($ChangelogData.Unreleased.Data.Added -eq "") -and
+        ($ChangelogData.Unreleased.Data.Changed -eq "") -and
+        ($ChangelogData.Unreleased.Data.Deprecated -eq "") -and
+        ($ChangelogData.Unreleased.Data.Fixed -eq "") -and
+        ($ChangelogData.Unreleased.Data.Security -eq "")) {
+        Add-ChangelogData -Type "Added" -Data "BLOCKED DEPLOYMENT TO PROD"
+        Write-Host -Object "No changes listed in Changelog. Inserting dummy data and blocking deployment to prod." -ForegroundColor Yellow
     }
 
     Update-Changelog -ReleaseVersion $SafeVersion -LinkMode "Automatic" -LinkPattern $LinkPattern
