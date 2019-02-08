@@ -9,7 +9,7 @@ function Get-ChangelogData {
         This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 format into a PowerShell object.
 
     .INPUTS
-        This cmdlet does not accept pipeline input
+        This cmdlet does not accept pipeline input.
 
     .OUTPUTS
         This cmdlet outputs a PSCustomObject containing the changelog data.
@@ -26,7 +26,7 @@ function Get-ChangelogData {
     param (
         [parameter(Mandatory=$false)]
         [ValidateScript({Test-Path -Path $_})]
-        # Path to the changelog. Defaults to ".\CHANGELOG.md".
+        # Path to the changelog; defaults to ".\CHANGELOG.md"
         [string]$Path = "CHANGELOG.md"
     )
 
@@ -135,10 +135,10 @@ function Add-ChangelogData {
         changelog in Keep a Changelog 1.0.0 format.
 
     .INPUTS
-        This cmdlet does not accept pipeline input
+        This cmdlet does not accept pipeline input.
 
     .OUTPUTS
-        This cmdlet does not generate output
+        This cmdlet does not generate output.
 
     .EXAMPLE
         Add-ChangelogData -Type "Added" -Data "Spanish language translation"
@@ -156,18 +156,17 @@ function Add-ChangelogData {
     param (
         [parameter(Mandatory=$false)]
         [ValidateScript({Test-Path -Path $_})]
-        # The path to the source changelog file, if it is different than .\CHANGELOG.md
+        # The path to the source changelog file; defaults to .\CHANGELOG.md
         [string]$Path = "CHANGELOG.md",
 
         [parameter(Mandatory=$false)]
         [ValidatePattern(".*\.md")]
-        # The path to the output changelog file, if it is different than than the source path
+        # The path to the output changelog file; defaults to the same path as the source file
         [string]$OutputPath = $Path,
 
         [parameter(Mandatory=$true)]
         [ValidateSet("Added","Changed","Deprecated","Removed","Fixed","Security")]
-        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-        # versioning scheme
+        # Type of change to add to the changelog (Added, Changed, Deprecated, Removed, Fixed, or Security)
         [string]$Type,
 
         [parameter(Mandatory=$true)]
@@ -219,10 +218,10 @@ function New-Changelog {
         This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
 
     .INPUTS
-        This cmdlet does not accept pipeline input
+        This cmdlet does not accept pipeline input.
 
     .OUTPUTS
-        This cmdlet does not generate output
+        This cmdlet does not generate output.
 
     .EXAMPLE
         New-Changelog
@@ -230,7 +229,7 @@ function New-Changelog {
 
     .EXAMPLE
         New-Changelog -Path project\CHANGELOG.md -NoSemVer
-        Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header.
+        Does not generate output, but creates a new changelog at project\CHANGELOG.md while excluding SemVer statement from the header
 
     .LINK
         https://github.com/natescherer/ChangelogManagement
@@ -240,12 +239,11 @@ function New-Changelog {
     param (
         [parameter(Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        # The path to the output changelog file, if it is different than .\CHANGELOG.md
+        # The path to output the changelog file; defaults to .\CHANGELOG.md
         [string]$Path = "CHANGELOG.md",
 
         [parameter(Mandatory=$false)]
-        # Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-        # versioning scheme
+        # Exclude the statement about Semantic Versioning from the changelog
         [switch]$NoSemVer
     )
 
@@ -267,8 +265,8 @@ function New-Changelog {
 function Update-Changelog {
     <#
     .SYNOPSIS
-        Takes all unreleased changes listed in a Keep a Changelog 1.0.0 changelog, adds them to a new version,
-        and makes a new, blankUnreleased section.
+        Takes all unreleased changes listed in changelog, adds them to a new version,
+        and makes a new, blank Unreleased section.
 
     .DESCRIPTION
         This cmdlet automates the updating of changelogs in Keep a Changelog 1.0.0 format at release time. It
@@ -276,10 +274,10 @@ function Update-Changelog {
         then makes a new, blank Unreleased section.
 
     .INPUTS
-        This cmdlet does not accept pipeline input
+        This cmdlet does not accept pipeline input.
 
     .OUTPUTS
-        This cmdlet does not generate output except in the event of an error or notice
+        This cmdlet does not generate output except in the event of an error or notice.
 
     .EXAMPLE
         Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern @{FirstRelease="https://github.com/testuser/testrepo/tree/v{CUR}";NormalRelease="https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"}
@@ -301,12 +299,12 @@ function Update-Changelog {
 
         [parameter(Mandatory=$false)]
         [ValidateScript({Test-Path -Path $_})]
-        # The path to the source changelog file, if it is different than .\CHANGELOG.md
+        # The path to the source changelog file; defaults to .\CHANGELOG.md
         [string]$Path = "CHANGELOG.md",
 
         [parameter(Mandatory=$false)]
         [ValidatePattern(".*\.md")]
-        # The path to the output changelog file, if it is different than than the source path
+        # The path to the output changelog file; defaults to the source file
         [string]$OutputPath = $Path,
 
         [parameter(Mandatory=$true)]
@@ -320,7 +318,7 @@ function Update-Changelog {
         # Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic. This
         # is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
         # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous 
-        # versions with {PREV}.
+        # version with {PREV}. See examples for details on format of hashtable.
         [ValidateNotNullOrEmpty()]
         [hashtable]$LinkPattern
     )
@@ -396,10 +394,10 @@ function Convertfrom-Changelog {
         (markdown and links removed), and TextRelease (Unreleased section, markdown, and links removed).
 
     .INPUTS
-        This cmdlet does not accept pipeline input
+        This cmdlet does not accept pipeline input.
 
     .OUTPUTS
-        This cmdlet does not generate output
+        This cmdlet does not generate output.
 
     .EXAMPLE
         Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
@@ -417,12 +415,12 @@ function Convertfrom-Changelog {
     param (
         [parameter(Mandatory=$false)]
         [ValidateScript({Test-Path -Path $_})]
-        # Path to the changelog. Defaults to ".\CHANGELOG.md".
+        # Path to the changelog; defaults to ".\CHANGELOG.md"
         [string]$Path = "CHANGELOG.md",
 
         [parameter(Mandatory=$false)]
         [ValidateNotNullOrEmpty()]
-        # The path to the output changelog file, if it is different than than the source path
+        # The path to the output changelog file; defaults to source path
         [string]$OutputPath = $Path,
 
         [parameter(Mandatory=$true)]
