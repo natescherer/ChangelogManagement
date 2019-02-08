@@ -176,11 +176,32 @@ function Add-ChangelogData {
         [string]$Data
     )
 
+    $ChangeTypes = @("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security")
     $ChangelogData = Get-ChangelogData -Path $Path
 
     $Output = ""
     $Output += $ChangelogData.Header
-    $Output += $ChangelogData.Unreleased.RawData -replace "### $Type","### $Type$NL- $Data"
+    $Output += "## [Unreleased]$NL"
+    foreach ($ChangeType in $ChangeTypes) {
+        $ChangeMade = $false
+        if ($Type -eq $ChangeType) {
+            $Output += "### $ChangeType$NL"
+            $Output += "- $Data$NL"
+            $ChangeMade = $true
+        }
+        if ($ChangelogData.Unreleased.Data.$ChangeType) {
+            if ($Output -notlike "*### $ChangeType*") {
+                $Output += "### $ChangeType$NL"
+            }
+            foreach ($Datum in $ChangelogData.Unreleased.Data.$ChangeType) {
+                $Output += "- $Datum$NL"
+                $ChangeMade = $true
+            }
+        }
+        if ($ChangeMade) {
+            $Output += $NL
+        }
+    }
     foreach ($Release in $ChangelogData.Released) {
         $Output += $Release.RawData
     }
