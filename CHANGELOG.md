@@ -6,20 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Support for macOS
 
 ### Changed
-- Building/releasing/testing changed from AppVeyor to Azure Pipelines
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Version comparison check in Update-Changelog required .NET System.Version; check has been removed to support any versioning scheme
-- Unreleased sections now match specification in that they only contain headers for types of changes that exist
 
 ### Security
+
+## [2.1.0] - 2019-02-08
+### Added
+- Support for macOS
+
+### Changed
+- Building/releasing/testing changed from AppVeyor to Azure Pipelines
+
+### Fixed
+- Version comparison check in Update-Changelog required .NET System.Version; check has been removed to support any versioning scheme
+- Unreleased sections now match specification in that they only contain headers for types of changes that exist
 
 ## [2.0.0] - 2019-01-28
 ### Changed
@@ -33,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v2.0.0..HEAD
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.0..HEAD
+[2.1.0]: https://github.com/natescherer/ChangelogManagement/compare/v2.0.0..v2.1.0
 [2.0.0]: https://github.com/natescherer/ChangelogManagement/compare/v1.0.0..v2.0.0
 [1.0.0]: https://github.com/natescherer/ChangelogManagement/tree/v1.0.0
