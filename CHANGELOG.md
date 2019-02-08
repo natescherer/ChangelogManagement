@@ -9,13 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for macOS
 
 ### Changed
-- Building/releasing changed from AppVeyor to Azure Pipelines
+- Building/releasing/testing changed from AppVeyor to Azure Pipelines
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 - Version comparison check in Update-Changelog required .NET System.Version; check has been removed to support any versioning scheme
+- Unreleased sections now match specification in that they only contain headers for types of changes that exist
 
 ### Security
 
