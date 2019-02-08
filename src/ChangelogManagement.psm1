@@ -293,7 +293,7 @@ function Update-Changelog {
     [CmdletBinding()]
     param (
         [parameter(Mandatory=$true)]
-        [ValidatePattern("[0-9]\.[0-9]\.[0-9]")]
+        [ValidateNotNullOrEmpty()]
         # Version number for the new release
         [string]$ReleaseVersion,
 
