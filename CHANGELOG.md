@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Inaccurate parameter documentation corrected
 - Update-Changelog ReleaseVersion validation no longer forces SemVer format
 
 ## [2.1.0] - 2019-02-08
