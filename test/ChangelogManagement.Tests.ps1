@@ -1690,6 +1690,22 @@ InModuleScope $ModuleName {
                 "- Unreleased Addition 1$NL" +
                 "$NL")
         }
+        It "No Changes" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "$NL")
+                
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+            { Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None } | Should -Throw
+        }
     }
 
     Describe "ConvertFrom-Changelog" {
