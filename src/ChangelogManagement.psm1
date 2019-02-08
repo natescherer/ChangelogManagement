@@ -331,14 +331,8 @@ function Update-Changelog {
 
     $ChangelogData = Get-ChangelogData -Path $Path
 
-    # Create $NewRelease by removing empty sections from $ChangelogData.Unreleased
+    # Create $NewRelease by removing header from old Unreleased section
     $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$NL",""
-    $NewRelease = $NewRelease -replace "### Added$NL$NL",""
-    $NewRelease = $NewRelease -replace "### Changed$NL$NL",""
-    $NewRelease = $NewRelease -replace "### Deprecated$NL$NL",""
-    $NewRelease = $NewRelease -replace "### Removed$NL$NL",""
-    $NewRelease = $NewRelease -replace "### Fixed$NL$NL",""
-    $NewRelease = $NewRelease -replace "### Security$NL$NL",""
 
     If ([string]::IsNullOrWhiteSpace($NewRelease)) {
         Throw "No changes detected in current release, exiting."
@@ -378,13 +372,7 @@ function Update-Changelog {
 
     # Build & write updated CHANGELOG.md
     $Output += $ChangelogData.Header
-    $Output += ("## [Unreleased]$NL" +
-        "### Added$NL$NL" +
-        "### Changed$NL$NL" +
-        "### Deprecated$NL$NL" +
-        "### Removed$NL$NL" +
-        "### Fixed$NL$NL" +
-        "### Security$NL$NL")
+    $Output += "## [Unreleased]$NL$NL"
     $Output += $NewRelease
     if ($ChangelogData.Released) {
         #$Output += $NL

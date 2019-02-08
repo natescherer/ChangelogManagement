@@ -1206,16 +1206,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL")
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -1241,17 +1231,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.0.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1272,16 +1251,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.0.0] - 2000-01-01$NL" +
                     "### Added$NL" +
@@ -1314,17 +1283,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1350,16 +1308,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - 2001-01-01$NL" +
                     "### Added$NL" +
@@ -1400,17 +1348,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.2.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1446,16 +1383,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL")
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -1471,17 +1398,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.0.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1503,16 +1419,6 @@ InModuleScope $ModuleName {
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
                     "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
-                    "$NL" +
                     "## [1.0.0] - 2000-01-01$NL" +
                     "### Added$NL" +
                     "- Initial release$NL" +
@@ -1533,17 +1439,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1569,16 +1464,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - 2001-01-01$NL" +
                     "### Added$NL" +
@@ -1608,17 +1493,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.2.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1654,16 +1528,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL")
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -1679,17 +1543,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.0.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1708,16 +1561,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.0.0] - 2000-01-01$NL" +
                     "### Added$NL" +
@@ -1739,17 +1582,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1774,16 +1606,6 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.1.0] - 2001-01-01$NL" +
                     "### Added$NL" +
@@ -1813,17 +1635,6 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
-                    "### Added$NL" +
-                    "$NL" +
-                    "### Changed$NL" +
-                    "$NL" +
-                    "### Deprecated$NL" +
-                    "$NL" +
-                    "### Removed$NL" +
-                    "$NL" +
-                    "### Fixed$NL" +
-                    "$NL" +
-                    "### Security$NL" +
                     "$NL" +
                     "## [1.2.0] - $Today$NL" +
                     "### Added$NL" +
@@ -1858,16 +1669,6 @@ InModuleScope $ModuleName {
                 "## [Unreleased]$NL" +
                 "### Added$NL" +
                 "- Unreleased Addition 1$NL" +
-                "$NL" +
-                "### Changed$NL" +
-                "$NL" +
-                "### Deprecated$NL" +
-                "$NL" +
-                "### Removed$NL" +
-                "$NL" +
-                "### Fixed$NL" +
-                "$NL" +
-                "### Security$NL" +
                 "$NL")
 
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -1883,17 +1684,6 @@ InModuleScope $ModuleName {
                 "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                 "$NL" +
                 "## [Unreleased]$NL" +
-                "### Added$NL" +
-                "$NL" +
-                "### Changed$NL" +
-                "$NL" +
-                "### Deprecated$NL" +
-                "$NL" +
-                "### Removed$NL" +
-                "$NL" +
-                "### Fixed$NL" +
-                "$NL" +
-                "### Security$NL" +
                 "$NL" +
                 "## [1.0.0] - $Today$NL" +
                 "### Added$NL" +
@@ -1914,16 +1704,6 @@ InModuleScope $ModuleName {
             "## [Unreleased]$NL" +
             "### Added$NL" +
             "- Unreleased Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "$NL" +
-            "### Deprecated$NL" +
-            "$NL" +
-            "### Removed$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "$NL" +
-            "### Security$NL" +
             "$NL" +
             "## [1.1.0] - 2001-01-01$NL" +
             "### Added$NL" +
@@ -1983,16 +1763,6 @@ InModuleScope $ModuleName {
                     "[Unreleased]$NL" +
                     "Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "Changed$NL" +
-                    "$NL" +
-                    "Deprecated$NL" +
-                    "$NL" +
-                    "Removed$NL" +
-                    "$NL" +
-                    "Fixed$NL" +
-                    "$NL" +
-                    "Security$NL" +
                     "$NL" +
                     "[1.1.0] - 2001-01-01$NL" +
                     "Added$NL" +
@@ -2062,16 +1832,6 @@ InModuleScope $ModuleName {
                 $Result | Should -Be ("[Unreleased]$NL" +
                     "Added$NL" +
                     "- Unreleased Addition 1$NL" +
-                    "$NL" +
-                    "Changed$NL" +
-                    "$NL" +
-                    "Deprecated$NL" +
-                    "$NL" +
-                    "Removed$NL" +
-                    "$NL" +
-                    "Fixed$NL" +
-                    "$NL" +
-                    "Security$NL" +
                     "$NL" +
                     "[1.1.0] - 2001-01-01$NL" +
                     "Added$NL" +
