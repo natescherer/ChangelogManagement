@@ -27,7 +27,11 @@ param (
 
     [parameter(ParameterSetName = "Prod", Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string]$GitHubPat 
+    [string]$GitHubPat,
+
+    [parameter(ParameterSetName = "Prod", Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string]$PSGalleryKey
 )
 
 $NL = [System.Environment]::NewLine
@@ -142,4 +146,12 @@ if ($Mode -eq "Prod") {
     git commit -s -m "Azure Pipelines Release: $FullVersion ***NO_CI***"
     git tag -a v$($FullVersion) -m v$($FullVersion)
     git push https://$GitHubPat@github.com/$GitHubUser/$($GitHubRepo).git
+
+    # Publish to PowerShell Gallery
+    $PublishSplat = @{
+        Path        = "$PSScriptRoot\out\$GitHubRepo"
+        NuGetApiKey = $PSGalleryKey
+        ErrorAction = "Stop"
+    }
+    Publish-Module @PublishSplat
 }
