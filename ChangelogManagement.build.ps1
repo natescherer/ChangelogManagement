@@ -81,7 +81,7 @@ task UpdateChangelog {
 
 # Synopsis: Updates the module manifest file for the new release.
 task UpdateManifest {
-    $Description = (((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", "" -replace "!.*", "").Trim()
+    $Description = (((Get-Content -Path ".\README.md" -Raw) -split "## Getting Started")[0] -replace "#.*", "" -replace "[!.*", "").Trim()
 
     $SafeVersion = ($Version -split "-")[0]
 
