@@ -57,19 +57,17 @@ task Init {
 
 # Synopsis: Updates the CHANGELOG.md file for the new release.
 task UpdateChangelog {
-    $SafeVersion = ($Version -split "-")[0]
-
     $ChangelogData = Get-ChangelogData
-    if (($ChangelogData.Unreleased.Data.Added -eq "") -and
-        ($ChangelogData.Unreleased.Data.Changed -eq "") -and
-        ($ChangelogData.Unreleased.Data.Deprecated -eq "") -and
-        ($ChangelogData.Unreleased.Data.Fixed -eq "") -and
-        ($ChangelogData.Unreleased.Data.Security -eq "")) {
+    if (($ChangelogData.Unreleased.Data.Added -eq $null) -and
+        ($ChangelogData.Unreleased.Data.Changed -eq $null) -and
+        ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
+        ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
+        ($ChangelogData.Unreleased.Data.Security -eq $null)) {
         Add-ChangelogData -Type "Added" -Data "BLOCKED DEPLOYMENT TO PROD"
         Write-Host -Object "No changes listed in Changelog. Inserting dummy data and blocking deployment to prod." -ForegroundColor Yellow
     }
 
-    Update-Changelog -ReleaseVersion $SafeVersion -LinkMode "Automatic" -LinkPattern $LinkPattern
+    Update-Changelog -ReleaseVersion $Version -LinkMode "Automatic" -LinkPattern $LinkPattern
 }
 
 # Synopsis: Updates the module manifest file for the new release.
