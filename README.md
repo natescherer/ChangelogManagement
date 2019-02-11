@@ -15,7 +15,7 @@ Other features include:
 
 ## Getting Started
 
-ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 5.0+ and PowerShell Core 6.0+.
+ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 5.0+ and PowerShell Core 6.0+ on Windows/Linux/macOS.
 
 ### Prerequisites
 
@@ -82,9 +82,7 @@ Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHAN
 
 ### Documentation
 
-For detailed documentation, [click here on GitHub][DocsDir], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
-
-[DocsDir]: ../v1.0.0/docs/
+For detailed documentation, [click here on GitHub][docs], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
 
 ## Questions/Comments
 
@@ -96,9 +94,7 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 
 ## Building
 
-If you fork into your own repository, you can build through Appveyor by updating the environment section at the top of [appveyor.yml](appveyor.yml).
-
-Local builds can be done via Invoke-Build.
+Building is unnecessary, per se. The provided build script generates documentation files and metadata for release/publishing. If modifying locally, you can simply use the updated .psd1/.psm1 files without running a build process.
 
 ## Authors
 
