@@ -10,7 +10,16 @@ param (
     [hashtable]$LinkPattern,
 
     [parameter(Mandatory=$false)]
-    [string]$ZipDestination = ".\out"
+    [string]$ZipDestination = ".\out",
+
+    [parameter(Mandatory=$true)]
+    [string]$LicenseUri,
+
+    [parameter(Mandatory=$true)]
+    [string]$ProjectUri,
+
+    [parameter(Mandatory=$true)]
+    [string]$HelpInfoUri
 )
 $NL = [System.Environment]::NewLine
 if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
@@ -95,9 +104,9 @@ task UpdateManifest {
         Description = $Description
         ModuleVersion = $SafeVersion
         FunctionsToExport = $FunctionsToExport
-        LicenseUri = "https://github.com/$env:APPVEYOR_REPO_NAME/blob/master/LICENSE"
-        ProjectUri = "https://github.com/$env:APPVEYOR_REPO_NAME"
-        HelpInfoUri = "https://github.com/$env:APPVEYOR_REPO_NAME"
+        LicenseUri = $LicenseUri
+        ProjectUri = $ProjectUri
+        HelpInfoUri = $HelpInfoUri
     }
 
     if ($Version -like "*-*") {

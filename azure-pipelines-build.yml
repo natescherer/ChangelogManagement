@@ -72,7 +72,14 @@ jobs:
           Write-Host "`$ReleaseVersion is $ReleaseVersion"
           Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
         }
-        Invoke-Build -Version $ReleaseVersion -LinkPattern (Invoke-Expression $env:LINKPATTERN)
+        $BuildSplat = @{
+          Version = $ReleaseVersion
+          LinkPattern = Invoke-Expression $env:LINKPATTERN
+          LicenseUri = "https://github.com/$env:BUILD_REPOSITORY_NAME/blob/master/LICENSE"
+          ProjectUri = "https://github.com/$env:BUILD_REPOSITORY_NAME"
+          HelpInfoUri = "https://github.com/$env:BUILD_REPOSITORY_NAME"
+        }
+        Invoke-Build @BuildSplat
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifacts
