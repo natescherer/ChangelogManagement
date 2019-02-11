@@ -40,7 +40,7 @@ Does not generate output, but adds a new Security change into changelog at proje
 ## PARAMETERS
 
 ### -Path
-The path to the source changelog file, if it is different than .\CHANGELOG.md
+The path to the source changelog file; defaults to .\CHANGELOG.md
 
 ```yaml
 Type: String
@@ -55,7 +55,7 @@ Accept wildcard characters: False
 ```
 
 ### -OutputPath
-The path to the output changelog file, if it is different than than the source path
+The path to the output changelog file; defaults to the same path as the source file
 
 ```yaml
 Type: String
@@ -70,8 +70,7 @@ Accept wildcard characters: False
 ```
 
 ### -Type
-Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-versioning scheme
+Type of change to add to the changelog (Added, Changed, Deprecated, Removed, Fixed, or Security)
 
 ```yaml
 Type: String
@@ -106,10 +105,10 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### This cmdlet does not accept pipeline input
+### This cmdlet does not accept pipeline input.
 ## OUTPUTS
 
-### This cmdlet does not generate output
+### This cmdlet does not generate output.
 ## NOTES
 
 ## RELATED LINKS

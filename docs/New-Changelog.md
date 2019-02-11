@@ -33,12 +33,12 @@ Does not generate output, but creates a new changelog at .\CHANGELOG.md
 New-Changelog -Path project\CHANGELOG.md -NoSemVer
 ```
 
-Does not generate output, but creates a new changelog at project\CHANGELOG.md, and excludes SemVer statement from the header.
+Does not generate output, but creates a new changelog at project\CHANGELOG.md while excluding SemVer statement from the header
 
 ## PARAMETERS
 
 ### -Path
-The path to the output changelog file, if it is different than .\CHANGELOG.md
+The path to output the changelog file; defaults to .\CHANGELOG.md
 
 ```yaml
 Type: String
@@ -53,8 +53,7 @@ Accept wildcard characters: False
 ```
 
 ### -NoSemVer
-Exclude the statement about Semantic Versioning from the changelog, if your project uses another
-versioning scheme
+Exclude the statement about Semantic Versioning from the changelog
 
 ```yaml
 Type: SwitchParameter
@@ -74,10 +73,10 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### This cmdlet does not accept pipeline input
+### This cmdlet does not accept pipeline input.
 ## OUTPUTS
 
-### This cmdlet does not generate output
+### This cmdlet does not generate output.
 ## NOTES
 
 ## RELATED LINKS

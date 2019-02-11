@@ -31,8 +31,7 @@ Returns an object containing Header, Unreleased, Released, Footer, and LastVersi
 ## PARAMETERS
 
 ### -Path
-Path to the changelog.
-Defaults to ".\CHANGELOG.md".
+Path to the changelog; defaults to ".\CHANGELOG.md"
 
 ```yaml
 Type: String
@@ -52,7 +51,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### This cmdlet does not accept pipeline input
+### This cmdlet does not accept pipeline input.
 ## OUTPUTS
 
 ### This cmdlet outputs a PSCustomObject containing the changelog data.

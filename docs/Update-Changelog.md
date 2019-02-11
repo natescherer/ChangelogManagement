@@ -8,8 +8,8 @@ schema: 2.0.0
 # Update-Changelog
 
 ## SYNOPSIS
-Takes all unreleased changes listed in a Keep a Changelog 1.0.0 changelog, adds them to a new version,
-and makes a new, blankUnreleased section.
+Takes all unreleased changes listed in changelog, adds them to a new version,
+and makes a new, blank Unreleased section.
 
 ## SYNTAX
 
@@ -57,7 +57,7 @@ Accept wildcard characters: False
 ```
 
 ### -Path
-The path to the source changelog file, if it is different than .\CHANGELOG.md
+The path to the source changelog file; defaults to .\CHANGELOG.md
 
 ```yaml
 Type: String
@@ -72,7 +72,7 @@ Accept wildcard characters: False
 ```
 
 ### -OutputPath
-The path to the output changelog file, if it is different than than the source path
+The path to the output changelog file; defaults to the source file
 
 ```yaml
 Type: String
@@ -110,7 +110,8 @@ This
 is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
 and Unreleased.
 The current version in the patterns should be replaced with {CUR} and the previous 
-versions with {PREV}.
+version with {PREV}.
+See examples for details on format of hashtable.
 
 ```yaml
 Type: Hashtable
@@ -130,10 +131,10 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### This cmdlet does not accept pipeline input
+### This cmdlet does not accept pipeline input.
 ## OUTPUTS
 
-### This cmdlet does not generate output except in the event of an error or notice
+### This cmdlet does not generate output except in the event of an error or notice.
 ## NOTES
 
 ## RELATED LINKS
