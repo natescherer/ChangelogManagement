@@ -1,6 +1,5 @@
 # ChangelogManagement
-
-[![Build Status](https://dev.azure.com/natescherer/ChangelogManagement/_apis/build/status/natescherer.ChangelogManagement?branchName=master)](https://dev.azure.com/natescherer/ChangelogManagement/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://img.shields.io/azure-devops/build/natescherer/changelogmanagement/1.svg?logo=azuredevops)](https://dev.azure.com/natescherer/ChangelogManagement/_build/latest?definitionId=1&branchName=master) ![Tests](https://img.shields.io/azure-devops/tests/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Code Coverage](https://img.shields.io/azure-devops/coverage/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)
 
 ChangelogManagement is a PowerShell module for reading and manipulating changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
