@@ -10,10 +10,8 @@ trigger:
       - release/*
 
 variables:
-  - name: PowerShellModules
-    value: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
-  - name: LinkPattern
-    value: '@{FirstRelease="$env:BUILD_REPOSITORY_URI/tree/v{CUR}";NormalRelease="$env:BUILD_REPOSITORY_URI/compare/v{PREV}..v{CUR}";Unreleased="$env:BUILD_REPOSITORY_URI/compare/v{CUR}..HEAD"}'
+  PowerShellModules: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
+  LinkPattern: '@{FirstRelease="$env:BUILD_REPOSITORY_URI/tree/v{CUR}";NormalRelease="$env:BUILD_REPOSITORY_URI/compare/v{PREV}..v{CUR}";Unreleased="$env:BUILD_REPOSITORY_URI/compare/v{CUR}..HEAD"}'
 
 jobs:
 - template: azure-pipelines-build.yml
