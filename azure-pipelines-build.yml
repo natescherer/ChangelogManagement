@@ -92,7 +92,7 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml"
+      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage "src\$env:PROJECTNAME.psm1" -CodeCoverageOutputFile "out\CoverageResults.xml"
 
   - task: PublishTestResults@2
     displayName: Publish Test Results
@@ -101,3 +101,9 @@ jobs:
       testResultsFiles: '**/TestResults.xml'
       failTaskOnFailedTests: true
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'JaCoCo'
+      summaryFileLocation: '**/CoverageResults.xml'
+      failIfCoverageEmpty: true
