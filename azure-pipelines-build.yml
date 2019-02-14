@@ -107,3 +107,4 @@ jobs:
       codeCoverageTool: 'JaCoCo'
       summaryFileLocation: '**/CoverageResults.xml'
       failIfCoverageEmpty: true
+      additionalCodeCoverageFiles: '**/CoverageResults.xml'
