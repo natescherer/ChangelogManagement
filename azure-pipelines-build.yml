@@ -103,6 +103,7 @@ jobs:
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
 
   - task: PublishCodeCoverageResults@1
+    displayName: Publish Code Coverage Results
     inputs:
       codeCoverageTool: 'JaCoCo'
       summaryFileLocation: '**/CoverageResults.xml'
