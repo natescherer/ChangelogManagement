@@ -104,6 +104,7 @@ jobs:
 
   - task: PublishCodeCoverageResults@1
     displayName: Publish Code Coverage Results
+    condition: always()
     inputs:
       codeCoverageTool: 'JaCoCo'
       summaryFileLocation: '**/CoverageResults.xml'
