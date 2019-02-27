@@ -58,9 +58,13 @@ function Get-ChangelogData {
         $i++
     }
 
-    # Split the Unreleased section into $UnreleasedTemp, then remove it from $Sections
-    $UnreleasedTemp = $Sections[0]
-    $Sections.Remove($UnreleasedTemp)
+    # If found, split the Unreleased section into $UnreleasedTemp, then remove it from $Sections
+    if ($Sections[0] -match "## \[Unreleased\].*") {
+        $UnreleasedTemp = $Sections[0]
+        $Sections.Remove($UnreleasedTemp)
+    } else {
+        $UnreleasedTemp = ""
+    }
 
     # Construct the $Output.Unreleased object
     foreach ($ChangeType in $ChangeTypes) {
