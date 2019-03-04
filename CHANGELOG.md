@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Capitalization on ConvertFrom-Changelog now matches verb specifications
 - Handling of missing Unreleased section in changelog file
 
 ## [2.1.2] - 2019-02-13

@@ -387,7 +387,7 @@ function Update-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
-function Convertfrom-Changelog {
+function ConvertFrom-Changelog {
     <#
     .SYNOPSIS
         Takes a changelog in Keep a Changelog 1.0.0 format and converts it to another format.
@@ -404,11 +404,11 @@ function Convertfrom-Changelog {
         This cmdlet does not generate output.
 
     .EXAMPLE
-        Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
+        ConvertFrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
         Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
 
     .EXAMPLE
-        Convertfrom-Changelog -Path .\CHANGELOG.md -Format Text -OutputPath CHANGELOG.txt
+        ConvertFrom-Changelog -Path .\CHANGELOG.md -Format Text -OutputPath CHANGELOG.txt
         .Does not generate output, but creates a file at CHANGELOG.txt that has header, markdown, and links removed.
 
     .LINK
@@ -474,4 +474,4 @@ function Convertfrom-Changelog {
     Set-Content -Value $Output -Path $OutputPath -NoNewline
 }
 
-Export-ModuleMember -Function Get-ChangelogData, Add-ChangelogData, New-Changelog, Update-Changelog, Convertfrom-Changelog
+Export-ModuleMember -Function Get-ChangelogData, Add-ChangelogData, New-Changelog, Update-Changelog, ConvertFrom-Changelog
