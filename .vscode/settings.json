@@ -1,0 +1,4 @@
+{
+    "files.autoSave": "afterDelay",
+    "git.postCommitCommand": "sync"
+}
