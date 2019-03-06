@@ -47,20 +47,20 @@ $MarkdownToHtmlTemplate = (
 
 Enter-Build {
     $global:ModuleName = Get-ProjectName
-    $global:ModulePath = "$PSScriptRoot\src\$ModuleName.psm1"
-    $global:ManifestPath = "$PSScriptRoot\src\$ModuleName.psd1"
+    $global:ModulePath = "$PSScriptRoot\src\$global:ModuleName.psm1"
+    $global:ManifestPath = "$PSScriptRoot\src\$global:ModuleName.psd1"
 }
 
 # Synopsis: Perform all build tasks.
 task . Init, UpdateChangelog, UpdateManifest, GenerateMarkdownHelp, GenerateHtmlHelp, CopySource, Zip
 
-# Synopsis: Removes files from docs and out, makes out\$ModuleName if needed, runs Set-BuildEnvironment for BuildHelpers commands.
+# Synopsis: Removes files from docs and out, makes out\$global:ModuleName if needed, runs Set-BuildEnvironment for BuildHelpers commands.
 task Init {
     Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
     Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
 
-    if (!(Test-Path -Path "out\$ModuleName")) {
-        New-Item -Path "out\$ModuleName" -ItemType Directory | Out-Null
+    if (!(Test-Path -Path "out\$global:ModuleName")) {
+        New-Item -Path "out\$global:ModuleName" -ItemType Directory | Out-Null
     }
 }
 
@@ -72,8 +72,12 @@ task UpdateChangelog {
         ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
         ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
         ($ChangelogData.Unreleased.Data.Security -eq $null)) {
-        Add-ChangelogData -Type "Added" -Data "BLOCKED DEPLOYMENT TO PROD"
-        Write-Host -Object "No changes listed in Changelog. Inserting dummy data and blocking deployment to prod." -ForegroundColor Yellow
+        if ($Version -like "*-*") {
+            Add-ChangelogData -Type "Added" -Data "Dummy changelog data for alpha"
+            Write-Host -Object "No changes are listed in changelog. Dummy data inserted as -Version is alpha." -ForegroundColor Yellow
+        } else {
+            throw "-Version is production, but no changes are listed in changelog. Exiting"
+        }
     }
 
     Update-Changelog -ReleaseVersion $Version -LinkMode "Automatic" -LinkPattern $LinkPattern
@@ -86,7 +90,7 @@ task UpdateManifest {
     $SafeVersion = ($Version -split "-")[0]
 
     $FunctionsToExport = @()	
-    $ModuleData = Get-Content $ModulePath	
+    $ModuleData = Get-Content $global:ModulePath	
     foreach ($Line in $ModuleData) {	
         if ($Line -like "Export-ModuleMember*") {	
             $LineFunctions = ((($Line -replace "Export-ModuleMember","") -replace "-Function","") -replace " ","") -split ","	
@@ -99,7 +103,7 @@ task UpdateManifest {
     $ReleaseNotes = ((Get-ChangelogData).Released[0].RawData -replace "^## .*", "").Trim()
 
     $ManifestData = @{
-        Path = $ManifestPath
+        Path = $global:ManifestPath
         ReleaseNotes = $ReleaseNotes
         Description = $Description
         ModuleVersion = $SafeVersion
@@ -115,19 +119,19 @@ task UpdateManifest {
 
     Update-ModuleManifest @ManifestData
 
-    $ManifestData = Get-Content $ManifestPath
+    $ManifestData = Get-Content $global:ManifestPath
     $ManifestData = $ManifestData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
     $ManifestData = $ManifestData -replace "^AliasesToExport.*", "AliasesToExport = @()"
     $ManifestData = $ManifestData -replace "^VariablesToExport.*", "VariablesToExport = @()"
-    Set-Content -Path $ManifestPath -Value $ManifestData
+    Set-Content -Path $global:ManifestPath -Value $ManifestData
 }
 
 # Synopsis: Generates Markdown help file from comment-based help in script.
 task GenerateMarkdownHelp {
-    Get-Module -Name $ModuleName -All | Remove-Module -Force -ErrorAction Ignore
-    Import-Module -Name $ModulePath -Force -ErrorAction Stop
+    Get-Module -Name $global:ModuleName -All | Remove-Module -Force -ErrorAction Ignore
+    Import-Module -Name $global:ModulePath -Force -ErrorAction Stop
 
-    New-MarkdownHelp -Module $ModuleName -OutputFolder docs | Out-Null
+    New-MarkdownHelp -Module $global:ModuleName -OutputFolder docs | Out-Null
 }
 
 # Synopsis: Creates HTML help files for inclusion in releases.
@@ -139,22 +143,22 @@ task GenerateHtmlHelp {
     New-Item -Path "$TempDir\MarkdownToHtml" -Type Directory | Out-Null
     Set-Content -Value $MarkdownToHtmlTemplate -Path "$TempDir\MarkdownToHtml\md-template.html" -NoNewLine
 
-    Convert-MarkdownToHTML -Path "docs" -Destination "$PSScriptRoot\out\$ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
+    Convert-MarkdownToHTML -Path "docs" -Destination "$PSScriptRoot\out\$global:ModuleName\docs" -Template "$TempDir\MarkdownToHtml" | Out-Null
 
     Remove-Item -Path "$TempDir\MarkdownToHtml" -Recurse -Force
     Remove-Item -Path "docs\README.md"
     Remove-Item -Path "docs\CHANGELOG.md"
 
-    Move-Item -Path "out\$ModuleName\docs\README.html" -Destination "out\$ModuleName"
-    Move-Item -Path "out\$ModuleName\docs\CHANGELOG.html" -Destination "out\$ModuleName"
+    Move-Item -Path "out\$global:ModuleName\docs\README.html" -Destination "out\$global:ModuleName"
+    Move-Item -Path "out\$global:ModuleName\docs\CHANGELOG.html" -Destination "out\$global:ModuleName"
 }
 
-# Synopsis: Copies source files into out\$ModuleName.
+# Synopsis: Copies source files into out\$global:ModuleName.
 task CopySource {
-    Copy-Item -Path "src\*" -Destination "out\$ModuleName\"
+    Copy-Item -Path "src\*" -Destination "out\$global:ModuleName\"
 }
 
 # Synopsis: Compresses module for release.
 task Zip {
-    Compress-Archive -Path "out\$ModuleName" -DestinationPath "$ZipDestination\$ModuleName-v$Version.zip"
+    Compress-Archive -Path "out\$global:ModuleName" -DestinationPath "$ZipDestination\$global:ModuleName-v$Version.zip"
 }

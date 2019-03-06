@@ -34,7 +34,9 @@ jobs:
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
 
   - task: PowerShell@2
-    displayName: Set Variables
+    displayName: Set Variables and Tags
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
@@ -42,21 +44,10 @@ jobs:
         $ProjectName = Get-ProjectName
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
         Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
-
-  - task: PowerShell@2
-    displayName: Invoke-Build
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      pwsh: ${{ parameters.pwsh }}
-      targetType: inline
-      script: |
-        $Uri = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$env:BUILD_BUILDID/tags/ReleaseToProd?api-version=5.0"
-        Write-Host $Uri
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!ReleaseToProd*") {
-          $ReleaseVersion = $env:BUILD_SOURCEVERSIONMESSAGE.split(" ")[1]
+        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!ReleaseToProd *") {
+          $ReleaseVersion = ($env:BUILD_SOURCEVERSIONMESSAGE -split "!ReleaseToProd ")[1]
           $TagSplat = @{
-            Uri = $Uri
+            Uri = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$env:BUILD_BUILDID/tags/GitCommitProdDeploy?api-version=5.0"
             Headers = @{
               Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
             }
@@ -64,28 +55,7 @@ jobs:
           }
           Invoke-RestMethod @TagSplat
         }
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -notlike "!ReleaseToProd*") {
-          $ManifestVersion = (Import-PowerShellDataFile .\src\*.psd1).ModuleVersion
-          if ((Get-ChangelogData).Released -ne $null) { $AlphaVersionBase = Step-Version $ManifestVersion }
-          if ((Get-ChangelogData).Released -eq $null) { $AlphaVersionBase = $ManifestVersion }
-          $ReleaseVersion = $AlphaVersionBase + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("0000")
-          Write-Host "`$ReleaseVersion is $ReleaseVersion"
-          Write-Host "##vso[task.setvariable variable=releaseVersion]$ReleaseVersion"
-        }
-        $BuildSplat = @{
-          Version = $ReleaseVersion
-          LinkPattern = Invoke-Expression $env:LINKPATTERN
-          LicenseUri = "https://github.com/$env:BUILD_REPOSITORY_NAME/blob/master/LICENSE"
-          ProjectUri = "https://github.com/$env:BUILD_REPOSITORY_NAME"
-          HelpInfoUri = "https://github.com/$env:BUILD_REPOSITORY_NAME"
-        }
-        Invoke-Build @BuildSplat
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Artifacts
-    inputs:
-      artifactName: 'Build-$(Agent.OS)_$(psEdition)'
-      pathToPublish: '$(Build.Repository.LocalPath)'
 
   - task: PowerShell@2
     displayName: Invoke-Pester
@@ -109,3 +79,9 @@ jobs:
       codeCoverageTool: 'JaCoCo'
       summaryFileLocation: '**/CoverageResults.xml'
       failIfCoverageEmpty: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifacts
+    inputs:
+      artifactName: 'Build-$(Agent.OS)_$(psEdition)'
+      pathToPublish: '$(Build.Repository.LocalPath)'
