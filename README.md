@@ -99,6 +99,7 @@ Building is unnecessary, per se. The provided build script generates documentati
 ## Authors
 
 **Nate Scherer** - *Initial work* - [natescherer](https://github.com/natescherer)
+
 **James Charlesworth** - *Fix for Issue #9* [jcharlesworthuk](https://github.com/jcharlesworthuk)
 
 ## License
