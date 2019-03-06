@@ -62,7 +62,9 @@ jobs:
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
-      script: Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage "src\$env:PROJECTNAME.psm1" -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
+      script: |
+        if (!(Test-Path "out\")) { New-Item -Path "out" -Type Directory | Out-Null }
+        Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage "src\$env:PROJECTNAME.psm1" -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
 
   - task: PublishTestResults@2
     displayName: Publish Test Results
