@@ -234,6 +234,56 @@ InModuleScope $ModuleName {
         It "Return.LastVersion" {
             $Data.LastVersion | Should -Be "1.1.0"
         }
+        Context "Missing Unreleased Section" {
+            $TestPathNoUnreleased = "TestDrive:\CHANGELOGNOUNRELEASED.md"
+            $SeedDataNoUnreleased = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "- Released Addition 2$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "- Released Change 2$NL" +
+                "$NL" +
+                "### Deprecated$NL" +
+                "- Released Deprecation 1$NL" +
+                "- Released Deprecation 2$NL" +
+                "$NL" +
+                "### Removed$NL" +
+                "- Released Removal 1$NL" +
+                "- Released Removal 2$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "- Released Fix 2$NL" +
+                "$NL" +
+                "### Security$NL" +
+                "- Released Vulnerability 1$NL" +
+                "- Released Vulnerability 2$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Set-Content -Value $SeedDataNoUnreleased -Path $TestPathNoUnreleased -NoNewline
+            $DataNoUnreleased = Get-ChangelogData -Path $TestPathNoUnreleased
+            It "Data.Unreleased.RawData" {
+                $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
+            }
+            It "Data.Unreleased.Data" {
+                $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
+            }
+        }
     }
 
     Describe "Add-ChangelogData" {
@@ -1194,6 +1244,28 @@ InModuleScope $ModuleName {
 
     Describe "Update-Changelog" {
         Context "-LinkMode Automatic" {
+            It "Missing -LinkPattern" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL")
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.0.0"
+                    LinkMode       = "Automatic"
+                }
+                { Update-Changelog @UCSplat } | Should  -Throw
+            }
             It "First Release" {
                 $TestPath = "TestDrive:\CHANGELOG.md"
 
