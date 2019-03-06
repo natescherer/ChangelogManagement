@@ -5,7 +5,7 @@ online version: https://github.com/natescherer/ChangelogManagement
 schema: 2.0.0
 ---
 
-# Convertfrom-Changelog
+# ConvertFrom-Changelog
 
 ## SYNOPSIS
 {{Fill in the Synopsis}}
@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Convertfrom-Changelog [[-Path] <String>] [[-OutputPath] <String>] [-Format] <String> [-NoHeader]
+ConvertFrom-Changelog [[-Path] <String>] [[-OutputPath] <String>] [-Format] <String> [-NoHeader]
  [<CommonParameters>]
 ```
 
