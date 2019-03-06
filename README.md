@@ -11,7 +11,7 @@ Other features include:
 - Creating new changelog files via New-Changelog
 - Adding data to changelog files via Add-ChangelogData
 - Getting changelog contents (parsed into a PowerShell object) via Get-ChangelogData
-- Converting changelogs into other formats via Convertfrom-Changelog
+- Converting changelogs into other formats via ConvertFrom-Changelog
 
 ## Getting Started
 
@@ -75,7 +75,7 @@ Get-ChangelogData
 - Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
 
 ``` PowerShell
-Convertfrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
+ConvertFrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHANGELOG.md
 ```
 
 - Does not generate output, but creates a file at docs\CHANGELOG.md that is the same as the input with the Unreleased section removed.
