@@ -74,7 +74,7 @@ function Get-ChangelogData {
         else {
             $Value = (($UnreleasedTemp -split "### $ChangeType$NL")[1] -split "###")[0].TrimEnd($NL) -split $NL | ForEach-Object { $_.TrimStart("- ") }
             Set-Variable -Name "Unreleased$ChangeType" -Value $Value
-        }       
+        }
     }
     $Output.Unreleased = [PSCustomObject]@{
         "RawData" = $UnreleasedTemp
@@ -98,7 +98,7 @@ function Get-ChangelogData {
             else {
                 $Value = (($Release -split "### $ChangeType$NL")[1] -split "###")[0].TrimEnd($NL) -split $NL | ForEach-Object { $_.TrimStart("- ") }
                 Set-Variable -Name "Release$ChangeType" -Value $Value
-            }       
+            }
         }
 
         $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
@@ -320,8 +320,8 @@ function Update-Changelog {
 
         [parameter(Mandatory=$false)]
         # Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic. This
-        # is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
-        # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous 
+        # is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease,
+        # and Unreleased. The current version in the patterns should be replaced with {CUR} and the previous
         # version with {PREV}. See examples for details on format of hashtable.
         [ValidateNotNullOrEmpty()]
         [hashtable]$LinkPattern
@@ -333,8 +333,13 @@ function Update-Changelog {
 
     $ChangelogData = Get-ChangelogData -Path $Path
 
-    # Create $NewRelease by removing header from old Unreleased section
-    $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]$NL",""
+    <#
+        Create $NewRelease by removing header from old Unreleased section
+
+        Using the regular expression '\r?\n' to look for either CRLF or just LF.
+        This resolves issue #11.
+    #>
+    $NewRelease = $ChangelogData.Unreleased.RawData -replace "## \[Unreleased\]\r?\n",""
 
     If ([string]::IsNullOrWhiteSpace($NewRelease)) {
         Throw "No changes detected in current release, exiting."
