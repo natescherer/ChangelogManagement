@@ -1598,7 +1598,9 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                     "$NL" +
                     "## [Unreleased]$NL" +
+                    "$NL" +
                     "### Added$NL" +
+                    "$NL" +
                     "- Unreleased Addition 1$NL" +
                     "$NL")
 
@@ -1617,7 +1619,9 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "$NL" +
                     "## [1.0.0] - $Today$NL" +
+                    "$NL" +
                     "### Added$NL" +
+                    "$NL" +
                     "- Unreleased Addition 1$NL" +
                     "$NL")
             }
@@ -1727,6 +1731,49 @@ InModuleScope $ModuleName {
                     "[1.1.0]: ENTER-URL-HERE$NL" +
                     "[1.0.0]: ENTER-URL-HERE")
             }
+
+            <#
+                Regression test for issue #11.
+            #>
+            It "First Release - changelog is using different line endings than [System.Environment]::NewLine" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "`n" +
+                    "### Added`n" +
+                    "`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $ExpectedResult = "# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.0.0] - $Today$NL" +
+                    "`n" +
+                    "### Added`n" +
+                    "`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n"
+
+                $Result | Should -Be $ExpectedResult
+            }
         }
         It "-OutputPath" {
             $TestPath = "TestDrive:\CHANGELOG.md"
@@ -1773,7 +1820,7 @@ InModuleScope $ModuleName {
                 "$NL" +
                 "## [Unreleased]$NL" +
                 "$NL")
-                
+
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
             { Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None } | Should -Throw
