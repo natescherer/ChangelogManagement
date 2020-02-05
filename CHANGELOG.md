@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Newline matching in regex updated to work properly on Linux [#11](https://github.com/natescherer/ChangelogManagement/issues/11)
 
 ## [2.1.3] - 2019-03-06
 ### Fixed
@@ -43,8 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: /compare/v2.1.3..HEAD
-[2.1.3]: /compare/v2.1.2..v2.1.3
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.3..HEAD
+[2.1.3]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.2..v2.1.3
 [2.1.2]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.1..v2.1.2
 [2.1.1]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.0..v2.1.1
 [2.1.0]: https://github.com/natescherer/ChangelogManagement/compare/v2.0.0..v2.1.0
