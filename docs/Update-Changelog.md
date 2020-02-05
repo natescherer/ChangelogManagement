@@ -107,9 +107,9 @@ Accept wildcard characters: False
 ### -LinkPattern
 Pattern used for adding links at the bottom of the Changelog when -LinkMode is set to Automatic.
 This
-is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease, 
+is a hashtable that defines the format for the three possible types of links needed: FirstRelease, NormalRelease,
 and Unreleased.
-The current version in the patterns should be replaced with {CUR} and the previous 
+The current version in the patterns should be replaced with {CUR} and the previous
 version with {PREV}.
 See examples for details on format of hashtable.
 
@@ -126,8 +126,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
