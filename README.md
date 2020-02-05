@@ -102,6 +102,10 @@ Building is unnecessary, per se. The provided build script generates documentati
 
 **James Charlesworth** - *Fix for Issue #9* [jcharlesworthuk](https://github.com/jcharlesworthuk)
 
+**Gael Colas** - *Fix for Issue #11* [gaelcolas](https://github.com/gaelcolas)
+
+**Johan Ljunggren** - *Fix for Issue #11* [johlju](https://github.com/johlju)
+
 ## License
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
