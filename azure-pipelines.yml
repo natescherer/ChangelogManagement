@@ -25,7 +25,7 @@ variables:
 stages:
 - stage: Build
   jobs:
-  - job: ubuntu-latest
+  - job: ubuntu_latest
     pool: 
       vmImage: ubuntu-latest
     steps:
@@ -34,15 +34,15 @@ stages:
         tempDir: /tmp
         moduleInstallOptions: -Scope CurrentUser
         artifactName: ubuntu-latest
-  - job: macos-latest
+  - job: macos_latest
     pool: 
-      vmImage: macos-latest
+      vmImage: macoslatest
     steps:
     - template: azure-pipelines-build-steps.yml
       parameters:
         tempDir: $env:TMPDIR
         artifactName: macos-latest
-  - job: windows-latest_w_windows_powershell
+  - job: windows_latest_w_windows_powershell
     pool: 
       vmImage: windows-latest
     steps:
@@ -51,7 +51,7 @@ stages:
         tempDir: $env:TEMP
         pwsh: false
         artifactName: windows-latest_w_windows_powershell
-  - job: windows-latest
+  - job: windows_latest
     pool: 
       vmImage: windows-latest
     steps:
