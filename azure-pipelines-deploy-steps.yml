@@ -7,12 +7,12 @@ steps:
   inputs:
     artifact: ${{ parameters.artifactName }}
 - task: PowerShell@2
-  displayName: Set Variables
+  displayName: Set Artifact Path
   inputs:
     targetType: inline
     script: |
       $ArtifactPath = "$env:PIPELINE_WORKSPACE\${{ parameters.artifactName }}"
-      Write-Host "##vso[task.setvariable variable=projectName]$ArtifactPath"
+      Write-Host "##vso[task.setvariable variable=artifactPath]$ArtifactPath"
 - task: PowerShell@2
   displayName: Install-Module
   inputs:
