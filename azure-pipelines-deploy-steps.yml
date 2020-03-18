@@ -1,0 +1,317 @@
+parameters:
+  environmentName: ''
+
+steps:
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifact: artifact
+- task: PowerShell@2
+  displayName: Install-Module
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber
+- task: PowerShell@2
+  displayName: Set Variables
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: |
+      $ModuleName = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\src\*.psm1"
+      Write-Host "##vso[task.setvariable variable=ModulePath]$($ModuleName.FullName)"
+      Write-Host "ModulePath is $($ModuleName.FullName)"
+      Write-Host "##vso[task.setvariable variable=ModuleName]$($ModuleName.BaseName)"
+      Write-Host "ModuleName is $($ModuleName.BaseName)"
+      $ManifestName = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\src\*.psd1"
+      Write-Host "##vso[task.setvariable variable=ManifestPath]$($ManifestName.FullName)"
+      Write-Host "ManifestPath is $($ManifestName.FullName)"
+      $ManifestVersion = (Import-PowerShellDataFile $ManifestName.FullName).ModuleVersion
+      if ("${{ parameters.environmentName }}" -eq "DEV") {
+        if ((Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md").Released.Count -gt 0) {
+          $ReleaseVersion = (Step-Version $ManifestVersion) + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
+        } else {
+          $ReleaseVersion = $ManifestVersion + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
+        }
+      }
+      if ("${{ parameters.environmentName }}" -eq "PRD") {
+        $ReleaseVersion = $env:PRDVERSION
+      }
+      Write-Host "##vso[task.setvariable variable=ReleaseVersion]$ReleaseVersion"
+      Write-Host "ReleaseVersion is $ReleaseVersion"
+      if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
+      if ($IsWindows) {$TempDir = $env:TEMP}
+      if ($IsLinux) {$TempDir = "/tmp"}
+      if ($IsMacOS) {$TempDir = $env:TMPDIR}
+      Write-Host "##vso[task.setvariable variable=TempDir]$TempDir"
+      Write-Host "TempDir is $TempDir"
+- task: PowerShell@2
+  displayName: Update Module Info
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: |
+      $SafeVersion = ($env:RELEASEVERSION -split "-")[0]
+      Write-Host $SafeVersion
+
+      Write-Host $env:MANIFESTPATH
+      $FunctionsToExport = @()	
+      $PublicFiles = Get-ChildItem -Path $env:PIPELINE_WORKSPACE\artifact\src\Public\*.ps1
+      foreach ($PublicFile in $PublicFiles) {
+        $FunctionsToExport += [io.path]::GetFileNameWithoutExtension($PublicFile.FullName)
+      }
+
+      $ReleaseNotes = ((Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md").Released[0].RawData -replace "^## .*", "").Trim()
+
+      $ManifestNewData = @{
+          Path = $env:MANIFESTPATH
+          ReleaseNotes = $ReleaseNotes
+          ModuleVersion = $SafeVersion
+          FunctionsToExport = $FunctionsToExport
+          LicenseUri = $env:LICENSEURI
+          ProjectUri = $env:PROJECTURI
+          HelpInfoUri = $env:HELPINFOURI
+      }
+
+      if ($env:RELEASEVERSION -like "*-*") {
+          $ManifestNewData += @{Prerelease = ($env:RELEASEVERSION -split "-")[1]}
+      }
+
+      Update-ModuleManifest @ManifestNewData
+
+      $ManifestNewData = Get-Content $env:MANIFESTPATH
+      $ManifestNewData = $ManifestNewData -replace "^CmdletsToExport.*$", "CmdletsToExport = @()" 
+      $ManifestNewData = $ManifestNewData -replace "^AliasesToExport.*", "AliasesToExport = @()"
+      $ManifestNewData = $ManifestNewData -replace "^VariablesToExport.*", "VariablesToExport = @()"
+      Set-Content -Path $env:MANIFESTPATH -Value $ManifestNewData
+- task: PowerShell@2
+  displayName: Update Changelog
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: |
+      $ChangelogData = Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+      if (($ChangelogData.Unreleased.Data.Added -eq $null) -and
+          ($ChangelogData.Unreleased.Data.Changed -eq $null) -and
+          ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
+          ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
+          ($ChangelogData.Unreleased.Data.Security -eq $null)) {
+          if ($env:RELEASEVERSION -like "*alpha*") {
+              Add-ChangelogData -Type "Added" -Data "Dummy changelog data for alpha" -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+              Write-Host -Object "No changes are listed in changelog. Dummy data inserted as -Version is alpha." -ForegroundColor Yellow
+          }
+          else {
+              throw "-Version is production, but no changes are listed in changelog. Exiting"
+          }
+      }
+      $LinkHash = Invoke-Expression $env:LINKPATTERN
+      Update-Changelog -ReleaseVersion $env:RELEASEVERSION -LinkMode "Automatic" -LinkPattern $LinkHash -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+- task: PowerShell@2
+  displayName: Generate Markdown Help Files
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: |
+      if (!(Test-Path -Path "$env:PIPELINE_WORKSPACE\artifact\docs")) {
+        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\docs" -ItemType Directory | Out-Null
+      }
+      Get-Module -Name $env:MODULENAME -All | Remove-Module -Force -ErrorAction Ignore
+      Import-Module -Name $env:MODULEPATH -Force -ErrorAction Stop
+      New-MarkdownHelp -Module $env:MODULENAME -OutputFolder "$env:PIPELINE_WORKSPACE\artifact\docs" -ErrorAction SilentlyContinue | Out-Null
+- task: PowerShell@2
+  displayName: Generate HTML Help Files
+  inputs:
+      pwsh: false
+      targetType: inline
+      script: |
+        # Set variables used by different platforms
+        $NL = [System.Environment]::NewLine
+
+        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\out\" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\out\docs" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+
+        function ConvertTo-HtmlFromMarkdown {
+          [CmdletBinding()]
+          param(
+              [Parameter(Mandatory = $true)]
+              # The path of the file to convert
+              [string]$Path,
+              [Parameter(Mandatory = $true)]
+              # The output path for the HTML
+              [string]$OutputPath,
+              [Parameter(Mandatory = $true)]
+              # String containing HTML template
+              [string]$Template,
+              # String containing title for the HTML
+              [string]$Title       
+          )
+          $Item = Get-Item -Path $Path
+          $Content = Get-Content -Path $Path -Raw
+          $Converted = (Invoke-WebRequest -Method POST -ContentType "text/plain" -Body $Content -Uri "https://api.github.com/markdown/raw" -UseBasicParsing).Content
+          $Html = $Template.Replace("[content]", $Converted)
+          $Html = $Html.Replace("[title]", $Title)
+          Set-Content -Value $Html -Path $OutputPath -NoNewLine
+        }
+
+        # Set template used for HTML conversion
+        $MarkdownStyle = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css" -UseBasicParsing).Content
+        $HtmlTemplate = (
+          '<!DOCTYPE html>' + $NL +
+          '<html>' + $NL +
+          '<head>' + $NL +
+          '<meta charset="utf-8" />' + $NL +
+          '<title>[title]</title>' + $NL +
+          '<style>' + $NL +
+          $MarkdownStyle + $NL +
+          '</style>' + $NL +
+          '<style>' + $NL +
+          '.markdown-body {' + $NL +
+          "`t" + 'box-sizing: border-box;' + $NL +
+          "`t" + 'min-width: 200px;' + $NL +
+          "`t" + 'max-width: 980px;' + $NL +
+          "`t" + 'margin: 0 auto;' + $NL +
+          "`t" + 'padding: 45px;' + $NL +
+          '}' + $NL +
+          $NL +
+          '@media (max-width: 767px) {' + $NL +
+          "`t" + '.markdown-body {' + $NL +
+          "`t`t" + 'padding: 15px;' + $NL +
+          "`t" + '}' + $NL +
+          '}' + $NL +
+          '</style>' + $NL +
+          $NL +
+          '</head>' + $NL +
+          '<body>' + $NL +
+          '<article class="markdown-body">' + $NL +
+          '[content]' + $NL +
+          '</article>' + $NL +
+          '</body>' + $NL +
+          '</html>'
+        )
+
+        # Convert CHANGELOG.md
+        ConvertFrom-Changelog -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md" -Format "Release" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md"
+        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\out\CHANGELOG.html" -Title "CHANGELOG"
+        Remove-Item -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md"
+
+        # Convert README.md
+        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:PIPELINE_WORKSPACE\artifact\README.md" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\out\README.html" -Title "README"
+
+        # Convert help files
+        $MarkdownFiles = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\docs"
+        foreach ($File in $MarkdownFiles) {
+          $OutputPath = "$env:PIPELINE_WORKSPACE\artifact\out\docs\" + $File.Name.Replace(".md","") + ".html"
+          ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path $File.FullName -OutputPath $OutputPath -Title $File.Name.Replace(".md","")
+        }
+- task: PowerShell@2
+  displayName: Copy 'src' to 'out'
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: Copy-Item -Path "$env:PIPELINE_WORKSPACE\artifact\src\*" -Destination "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME" -Recurse
+- task: PowerShell@2
+  displayName: (DEV Only) Publish Module to PoshTestGallery
+  inputs:
+    condition: eq('${{ parameters.environmentName }}', 'DEV')
+    targetType: inline
+    pwsh: false
+    script: |
+      $RegisterSplat = @{
+        Name = "PoshTestGallery"
+        SourceLocation = "https://www.poshtestgallery.com/api/v2"
+        PublishLocation = "https://www.poshtestgallery.com/api/v2/package/"
+        ScriptSourceLocation = "https://www.poshtestgallery.com/api/v2/items/psscript"
+        ScriptPublishLocation = "https://www.poshtestgallery.com/api/v2/package/"
+      }
+      Register-PSRepository -
+      $PublishSplat = @{
+        Repository = "PoshTestGallery"
+        Path = "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME"
+        NuGetApiKey = $env:POSHTESTGALLERYKEY
+        ErrorAction = "Stop"
+      }
+      Publish-Module @PublishSplat
+- task: PowerShell@2
+  displayName: (PRD Only) Compress module for GitHub release
+  condition: eq('${{ parameters.environmentName }}', 'PRD')
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: Compress-Archive -Path "out\$env:MODULENAME" -DestinationPath "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
+- task: PowerShell@2
+  displayName: (PRD Only) Publish GitHub release
+  condition: eq('${{ parameters.environmentName }}', 'PRD')
+  inputs:
+    pwsh: false
+    targetType: inline
+    script: |
+      $Zip = Get-ChildItem "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
+      $ManifestData = Import-PowerShellDataFile "$env:PIPELINE_WORKSPACE\artifact\src\*.psd1"
+      $GitHubUser = $env:BUILD_REPOSITORY_NAME.split("/")[0]
+      $AuthHeader = "Basic {0}" -f [System.Convert]::ToBase64String([char[]]"$GitHubUser`:$env:GITHUBPAT")
+      $ReleaseFilePath = $Zip.FullName
+      $ReleaseFileName = Split-Path -Path $ReleaseFilePath -Leaf
+      $ReleaseVersion = $env:RELEASEVERSION
+      $ReleaseBody = $ManifestData.PrivateData.PSData.ReleaseNotes
+
+      $ReleaseParams = @{
+          Headers = @{
+              "Authorization" = $AuthHeader
+          }
+          Body = ConvertTo-Json -InputObject @{
+              tag_name = "v$env:RELEASEVERSION"
+              name = "v$env:RELEASEVERSION"
+              body = $ReleaseBody
+          }
+          Uri = "https://api.github.com/repos/$env:BUILD_REPOSITORY_NAME/releases"
+          Method = "Post"
+      }
+      $ReleaseResult = Invoke-RestMethod @ReleaseParams
+
+      if ($ReleaseResult.upload_url) {
+        $UploadParams = @{
+            Headers = @{
+                Authorization = $AuthHeader
+                Content-Type = "application/zip"
+            }
+            Uri = $ReleaseResult.upload_url.split("{")[0] + "?name=$ReleaseFileName"
+            Method = "Post"
+            InFile = $Zip.FullName
+        }
+        $UploadResult = Invoke-RestMethod @UploadParams
+
+        if ($UploadResult.state -ne "uploaded") {
+            Write-Output $UploadResult
+            throw "There was a problem uploading."
+        }
+      }
+      else {
+          Write-Output $ReleaseResult
+          throw "There was a problem releasing."
+      }
+- checkout: self
+  displayName: (PRD Only) Git checkout
+  condition: eq('${{ parameters.environmentName }}', 'PRD')
+  path: pushback
+  persistCredentials: true
+- task: CopyFiles@2
+  displayName: (PRD Only) Copy files to git directory
+  condition: eq('${{ parameters.environmentName }}', 'PRD')
+  inputs:
+    sourceFolder: $(Pipeline.Workspace)\artifact
+    targetFolder: $(Agent.BuildDirectory)\pushback
+    overWrite: true
+- task: Bash@3
+  displayName: (PRD Only) Push changes to repo
+  condition: eq('${{ parameters.environmentName }}', 'PRD')
+  inputs:
+    workingDirectory: $(Agent.BuildDirectory)\pushback
+    failOnStderr: true
+    targetType: inline
+    script: |
+      git config user.email "$(GitEmail)"
+      git config user.name "$(GitName)"
+      git add --all
+      git commit -m "Azure DevOps Release $(ReleaseVersion) [skip ci]"
+      git tag v$(ReleaseVersion)
+      git push origin HEAD:master --porcelain
+      git push origin --tags --porcelain

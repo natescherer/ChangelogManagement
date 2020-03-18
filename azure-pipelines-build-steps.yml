@@ -10,7 +10,6 @@ jobs:
   pool: 
     vmImage: ${{ parameters.vmImage }}
   steps:
-
   - task: PowerShell@2
     displayName: Environment Details
     inputs:
@@ -25,14 +24,12 @@ jobs:
         Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
         Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
         Write-Host "Current Location = $(Get-Location)"
-
   - task: PowerShell@2
     displayName: Install-Module
     inputs:
       pwsh: ${{ parameters.pwsh }}
       targetType: inline
       script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
-
   - task: PowerShell@2
     displayName: Set Variables and Tags
     env:
@@ -44,19 +41,6 @@ jobs:
         $ProjectName = Get-ProjectName
         Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
         Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
-        if ($env:BUILD_SOURCEVERSIONMESSAGE -like "!ReleaseToProd *") {
-          $ReleaseVersion = ($env:BUILD_SOURCEVERSIONMESSAGE -split "!ReleaseToProd ")[1]
-          $TagSplat = @{
-            Uri = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECT/_apis/build/builds/$env:BUILD_BUILDID/tags/GitCommitProdDeploy?api-version=5.0"
-            Headers = @{
-              Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
-            }
-            Method = "Put"
-          }
-          Invoke-RestMethod @TagSplat
-        }
-
-
   - task: PowerShell@2
     displayName: Invoke-Pester
     inputs:
@@ -65,7 +49,6 @@ jobs:
       script: |
         if (!(Test-Path "out\")) { New-Item -Path "out" -Type Directory | Out-Null }
         Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage "src\$env:PROJECTNAME.psm1" -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
-
   - task: PublishTestResults@2
     displayName: Publish Test Results
     condition: always()
@@ -73,7 +56,6 @@ jobs:
       testResultsFormat: 'NUnit'
       testResultsFiles: '**/TestResults.xml'
       testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
-
   - task: PublishCodeCoverageResults@1
     displayName: Publish Code Coverage Results
     condition: always()
@@ -81,9 +63,21 @@ jobs:
       codeCoverageTool: 'JaCoCo'
       summaryFileLocation: '**/CoverageResults.xml'
       failIfCoverageEmpty: true
-
-  - task: PublishBuildArtifacts@1
+  - task: PowerShell@2
+    displayName: File & Directory Cleanup
+    inputs:
+      pwsh: false
+      targetType: inline
+      script: |
+        # Remove uploaded Pester results files
+        Remove-Item -Path "out\TestResults.xml" -ErrorAction SilentlyContinue
+        Remove-Item -Path "out\CoverageResults.xml" -ErrorAction SilentlyContinue
+        # Remove old docs
+        Remove-Item -Path "docs\*" -Recurse -ErrorAction SilentlyContinue
+        # Remove old output files
+        Remove-Item -Path "out\*" -Recurse -ErrorAction SilentlyContinue
+  - task: PublishPipelineArtifact@0
     displayName: Publish Artifacts
     inputs:
       artifactName: 'Build-$(Agent.OS)_$(psEdition)'
-      pathToPublish: '$(Build.Repository.LocalPath)'
+      targetPath: '$(Build.Repository.LocalPath)'
