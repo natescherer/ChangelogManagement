@@ -36,7 +36,7 @@ stages:
         artifactName: ubuntu-latest
   - job: macos_latest
     pool: 
-      vmImage: macoslatest
+      vmImage: macos-latest
     steps:
     - template: azure-pipelines-build-steps.yml
       parameters:
