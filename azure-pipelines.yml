@@ -24,28 +24,41 @@ variables:
 
 stages:
 - stage: Build
-  - template: azure-pipelines-build-steps.yml
-    parameters:
-      name: ubuntu-latest
-      vmImage: ubuntu-latest
-      tempDir: /tmp
-      moduleInstallOptions: -Scope CurrentUser
-  - template: azure-pipelines-build-steps.yml
-    parameters:
-      name: macos-latest
-      vmImage: macos-latest
-      tempDir: $env:TMPDIR
-  - template: azure-pipelines-build-steps.yml
-    parameters:
-      name: windows-latest_w_windows_powershell
-      vmImage: windows-latest
-      tempDir: $env:TEMP
-      pwsh: false
-  - template: azure-pipelines-build-steps.yml
-    parameters:
-      name: windows-latest_w_powershell_core
-      vmImage: windows-latest
-      tempDir: $env:TEMP
+  jobs:
+  - job: ubuntu-latest
+    pool: 
+      - vmImage: ubuntu-latest
+    steps:
+    - template: azure-pipelines-build-steps.yml
+      parameters:
+        tempDir: /tmp
+        moduleInstallOptions: -Scope CurrentUser
+        artifactName: ubuntu-latest
+  - job: macos-latest
+    pool: 
+      - vmImage: macos-latest
+    steps:
+    - template: azure-pipelines-build-steps.yml
+      parameters:
+        tempDir: $env:TMPDIR
+        artifactName: macos-latest
+  - job: windows-latest_w_windows_powershell
+    pool: 
+      - vmImage: windows-latest
+    steps:
+    - template: azure-pipelines-build-steps.yml
+      parameters:
+        tempDir: $env:TEMP
+        pwsh: false
+        artifactName: windows-latest_w_windows_powershell
+  - job: windows-latest
+    pool: 
+      - vmImage: windows-latest
+    steps:
+    - template: azure-pipelines-build-steps.yml
+      parameters:
+        tempDir: $env:TEMP
+        artifactName: windows-latest
 - stage: DeployDev
   condition: eq(variables['PrdVersion'], '')
   jobs:
@@ -60,6 +73,7 @@ stages:
           - template: azure-pipelines-deploy-steps.yml
             parameters:
               environmentName: DEV
+              artifactName: windows-latest
 - stage: DeployPrd
   condition: ne(variables['PrdVersion'], '')
   jobs:
@@ -74,3 +88,4 @@ stages:
           - template: azure-pipelines-deploy-steps.yml
             parameters:
               environmentName: PRD
+              artifactName: windows-latest

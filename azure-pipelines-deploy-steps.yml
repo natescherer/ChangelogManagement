@@ -1,10 +1,18 @@
 parameters:
   environmentName: ''
+  artifactName: ''
 
 steps:
 - task: DownloadPipelineArtifact@2
   inputs:
-    artifact: artifact
+    artifact: ${{ parameters.artifactName }}
+- task: PowerShell@2
+  displayName: Set Variables
+  inputs:
+    targetType: inline
+    script: |
+      $ArtifactPath = "$env:PIPELINE_WORKSPACE\${{ parameters.artifactName }}"
+      Write-Host "##vso[task.setvariable variable=projectName]$ArtifactPath"
 - task: PowerShell@2
   displayName: Install-Module
   inputs:
@@ -17,17 +25,17 @@ steps:
     pwsh: false
     targetType: inline
     script: |
-      $ModuleName = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\src\*.psm1"
+      $ModuleName = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psm1"
       Write-Host "##vso[task.setvariable variable=ModulePath]$($ModuleName.FullName)"
       Write-Host "ModulePath is $($ModuleName.FullName)"
       Write-Host "##vso[task.setvariable variable=ModuleName]$($ModuleName.BaseName)"
       Write-Host "ModuleName is $($ModuleName.BaseName)"
-      $ManifestName = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\src\*.psd1"
+      $ManifestName = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psd1"
       Write-Host "##vso[task.setvariable variable=ManifestPath]$($ManifestName.FullName)"
       Write-Host "ManifestPath is $($ManifestName.FullName)"
       $ManifestVersion = (Import-PowerShellDataFile $ManifestName.FullName).ModuleVersion
       if ("${{ parameters.environmentName }}" -eq "DEV") {
-        if ((Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md").Released.Count -gt 0) {
+        if ((Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md").Released.Count -gt 0) {
           $ReleaseVersion = (Step-Version $ManifestVersion) + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
         } else {
           $ReleaseVersion = $ManifestVersion + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
@@ -55,12 +63,12 @@ steps:
 
       Write-Host $env:MANIFESTPATH
       $FunctionsToExport = @()	
-      $PublicFiles = Get-ChildItem -Path $env:PIPELINE_WORKSPACE\artifact\src\Public\*.ps1
+      $PublicFiles = Get-ChildItem -Path $env:ARTIFACTPATH\src\Public\*.ps1
       foreach ($PublicFile in $PublicFiles) {
         $FunctionsToExport += [io.path]::GetFileNameWithoutExtension($PublicFile.FullName)
       }
 
-      $ReleaseNotes = ((Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md").Released[0].RawData -replace "^## .*", "").Trim()
+      $ReleaseNotes = ((Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md").Released[0].RawData -replace "^## .*", "").Trim()
 
       $ManifestNewData = @{
           Path = $env:MANIFESTPATH
@@ -89,14 +97,14 @@ steps:
     pwsh: false
     targetType: inline
     script: |
-      $ChangelogData = Get-ChangelogData -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+      $ChangelogData = Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md"
       if (($ChangelogData.Unreleased.Data.Added -eq $null) -and
           ($ChangelogData.Unreleased.Data.Changed -eq $null) -and
           ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
           ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
           ($ChangelogData.Unreleased.Data.Security -eq $null)) {
           if ($env:RELEASEVERSION -like "*alpha*") {
-              Add-ChangelogData -Type "Added" -Data "Dummy changelog data for alpha" -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+              Add-ChangelogData -Type "Added" -Data "Dummy changelog data for alpha" -Path "$env:ARTIFACTPATH\CHANGELOG.md"
               Write-Host -Object "No changes are listed in changelog. Dummy data inserted as -Version is alpha." -ForegroundColor Yellow
           }
           else {
@@ -104,19 +112,19 @@ steps:
           }
       }
       $LinkHash = Invoke-Expression $env:LINKPATTERN
-      Update-Changelog -ReleaseVersion $env:RELEASEVERSION -LinkMode "Automatic" -LinkPattern $LinkHash -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md"
+      Update-Changelog -ReleaseVersion $env:RELEASEVERSION -LinkMode "Automatic" -LinkPattern $LinkHash -Path "$env:ARTIFACTPATH\CHANGELOG.md"
 - task: PowerShell@2
   displayName: Generate Markdown Help Files
   inputs:
     pwsh: false
     targetType: inline
     script: |
-      if (!(Test-Path -Path "$env:PIPELINE_WORKSPACE\artifact\docs")) {
-        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\docs" -ItemType Directory | Out-Null
+      if (!(Test-Path -Path "$env:ARTIFACTPATH\docs")) {
+        New-Item -Path "$env:ARTIFACTPATH\docs" -ItemType Directory | Out-Null
       }
       Get-Module -Name $env:MODULENAME -All | Remove-Module -Force -ErrorAction Ignore
       Import-Module -Name $env:MODULEPATH -Force -ErrorAction Stop
-      New-MarkdownHelp -Module $env:MODULENAME -OutputFolder "$env:PIPELINE_WORKSPACE\artifact\docs" -ErrorAction SilentlyContinue | Out-Null
+      New-MarkdownHelp -Module $env:MODULENAME -OutputFolder "$env:ARTIFACTPATH\docs" -ErrorAction SilentlyContinue | Out-Null
 - task: PowerShell@2
   displayName: Generate HTML Help Files
   inputs:
@@ -126,8 +134,8 @@ steps:
         # Set variables used by different platforms
         $NL = [System.Environment]::NewLine
 
-        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\out\" -Type Directory -ErrorAction SilentlyContinue | Out-Null
-        New-Item -Path "$env:PIPELINE_WORKSPACE\artifact\out\docs" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:ARTIFACTPATH\out\" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:ARTIFACTPATH\out\docs" -Type Directory -ErrorAction SilentlyContinue | Out-Null
 
         function ConvertTo-HtmlFromMarkdown {
           [CmdletBinding()]
@@ -189,17 +197,17 @@ steps:
         )
 
         # Convert CHANGELOG.md
-        ConvertFrom-Changelog -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG.md" -Format "Release" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md"
-        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\out\CHANGELOG.html" -Title "CHANGELOG"
-        Remove-Item -Path "$env:PIPELINE_WORKSPACE\artifact\CHANGELOG_out.md"
+        ConvertFrom-Changelog -Path "$env:ARTIFACTPATH\CHANGELOG.md" -Format "Release" -OutputPath "$env:ARTIFACTPATH\CHANGELOG_out.md"
+        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:ARTIFACTPATH\CHANGELOG_out.md" -OutputPath "$env:ARTIFACTPATH\out\CHANGELOG.html" -Title "CHANGELOG"
+        Remove-Item -Path "$env:ARTIFACTPATH\CHANGELOG_out.md"
 
         # Convert README.md
-        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:PIPELINE_WORKSPACE\artifact\README.md" -OutputPath "$env:PIPELINE_WORKSPACE\artifact\out\README.html" -Title "README"
+        ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:ARTIFACTPATH\README.md" -OutputPath "$env:ARTIFACTPATH\out\README.html" -Title "README"
 
         # Convert help files
-        $MarkdownFiles = Get-ChildItem -Path "$env:PIPELINE_WORKSPACE\artifact\docs"
+        $MarkdownFiles = Get-ChildItem -Path "$env:ARTIFACTPATH\docs"
         foreach ($File in $MarkdownFiles) {
-          $OutputPath = "$env:PIPELINE_WORKSPACE\artifact\out\docs\" + $File.Name.Replace(".md","") + ".html"
+          $OutputPath = "$env:ARTIFACTPATH\out\docs\" + $File.Name.Replace(".md","") + ".html"
           ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path $File.FullName -OutputPath $OutputPath -Title $File.Name.Replace(".md","")
         }
 - task: PowerShell@2
@@ -207,7 +215,7 @@ steps:
   inputs:
     pwsh: false
     targetType: inline
-    script: Copy-Item -Path "$env:PIPELINE_WORKSPACE\artifact\src\*" -Destination "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME" -Recurse
+    script: Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 - task: PowerShell@2
   displayName: (DEV Only) Publish Module to PoshTestGallery
   inputs:
@@ -225,7 +233,7 @@ steps:
       Register-PSRepository -
       $PublishSplat = @{
         Repository = "PoshTestGallery"
-        Path = "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME"
+        Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
         NuGetApiKey = $env:POSHTESTGALLERYKEY
         ErrorAction = "Stop"
       }
@@ -236,7 +244,7 @@ steps:
   inputs:
     pwsh: false
     targetType: inline
-    script: Compress-Archive -Path "out\$env:MODULENAME" -DestinationPath "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
+    script: Compress-Archive -Path "out\$env:MODULENAME" -DestinationPath "$env:ARTIFACTPATH\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
 - task: PowerShell@2
   displayName: (PRD Only) Publish GitHub release
   condition: eq('${{ parameters.environmentName }}', 'PRD')
@@ -244,8 +252,8 @@ steps:
     pwsh: false
     targetType: inline
     script: |
-      $Zip = Get-ChildItem "$env:PIPELINE_WORKSPACE\artifact\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
-      $ManifestData = Import-PowerShellDataFile "$env:PIPELINE_WORKSPACE\artifact\src\*.psd1"
+      $Zip = Get-ChildItem "$env:ARTIFACTPATH\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
+      $ManifestData = Import-PowerShellDataFile "$env:ARTIFACTPATH\src\*.psd1"
       $GitHubUser = $env:BUILD_REPOSITORY_NAME.split("/")[0]
       $AuthHeader = "Basic {0}" -f [System.Convert]::ToBase64String([char[]]"$GitHubUser`:$env:GITHUBPAT")
       $ReleaseFilePath = $Zip.FullName
