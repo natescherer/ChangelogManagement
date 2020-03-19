@@ -1,6 +1,8 @@
-$PrivateFiles = Get-ChildItem -Path $PSScriptRoot\Private\*.ps1
-foreach ($PrivateFile in $PrivateFiles) {
-    . $PrivateFile.FullName
+if (Test-Path $PSScriptRoot\Private) {
+    $PrivateFiles = Get-ChildItem -Path $PSScriptRoot\Private\*.ps1
+    foreach ($PrivateFile in $PrivateFiles) {
+        . $PrivateFile.FullName
+    }
 }
 
 $FunctionsToExport = @()
