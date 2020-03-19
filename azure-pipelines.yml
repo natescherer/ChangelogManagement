@@ -8,21 +8,24 @@ trigger:
 variables:
   - group: ReleaseSecrets
   - name: PowerShellModules
-    value: ChangelogManagement,InvokeBuild,Pester,platyPS,MarkdownToHtml,BuildHelpers,PowerShellGet
-  - name: LinkPattern
-    value: '@{FirstRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/tree/v{CUR}";NormalRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{CUR}..HEAD"}'
+    value: ChangelogManagement,Pester,platyPS,BuildHelpers,PowerShellGet
+  - name: ArtifactToDeploy
+    value: windows-latest
   - name: GitName
     value: Nate Scherer
   - name: GitEmail
     value: 376408+natescherer@users.noreply.github.com
+  # Warning: All variables below this line will be expanded via Invoke-Expression or $ExecutionContext.InvokeCommand.ExpandString. This means you can use PowerShell environment
+  # variables, but there is also a risk of arbitrary code execution. Proceeed with caution.
+  - name: LinkPattern
+    value: '@{FirstRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/tree/v{CUR}";NormalRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{CUR}..HEAD"}'
   - name: LicenseUri
     value: https://github.com/$env:BUILD_REPOSITORY_NAME/blob/master/LICENSE
   - name: ProjectUri
     value: https://github.com/$env:BUILD_REPOSITORY_NAME
   - name: HelpInfoUri
     value: https://github.com/$env:BUILD_REPOSITORY_NAME
-  - name: ArtifactToDeploy
-    value: windows-latest
+
 
 stages:
 - stage: Build

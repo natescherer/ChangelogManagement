@@ -75,9 +75,9 @@ steps:
           ReleaseNotes = $ReleaseNotes
           ModuleVersion = $SafeVersion
           FunctionsToExport = $FunctionsToExport
-          LicenseUri = Invoke-Expression $env:LICENSEURI
-          ProjectUri = Invoke-Expression $env:PROJECTURI
-          HelpInfoUri = Invoke-Expression $env:HELPINFOURI
+          LicenseUri = $ExecutionContext.InvokeCommand.ExpandString($env:LICENSEURI)
+          ProjectUri = $ExecutionContext.InvokeCommand.ExpandString($env:PROJECTURI)
+          HelpInfoUri = $ExecutionContext.InvokeCommand.ExpandString($env:HELPINFOURI)
       }
 
       if ($env:RELEASEVERSION -like "*-*") {
