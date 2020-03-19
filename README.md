@@ -1,6 +1,6 @@
 # ChangelogManagement
 
-[![Build Status](https://img.shields.io/azure-devops/build/natescherer/changelogmanagement/1.svg?logo=azuredevops)](https://dev.azure.com/natescherer/ChangelogManagement/_build/latest?definitionId=1&branchName=master) ![Tests](https://img.shields.io/azure-devops/tests/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Code Coverage](https://img.shields.io/azure-devops/coverage/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)
+[![Build Status](https://img.shields.io/azure-devops/build/natescherer/changelogmanagement/8.svg?logo=azuredevops)](https://dev.azure.com/natescherer/ChangelogManagement/_build/latest?definitionId=1&branchName=master) ![Tests](https://img.shields.io/azure-devops/tests/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Code Coverage](https://img.shields.io/azure-devops/coverage/natescherer/changelogmanagement/1.svg?logo=azuredevops) ![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)
 
 ChangelogManagement is a PowerShell module for reading and manipulating changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
@@ -82,7 +82,7 @@ ConvertFrom-Changelog -Path .\CHANGELOG.md -Format Release -OutputPath docs\CHAN
 
 ### Documentation
 
-For detailed documentation, [click here on GitHub][docs], see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
+For detailed documentation, [click here on GitHub](docs), see the docs folder in a release, or run Get-Help for the individual function in PowerShell.
 
 ## Questions/Comments
 
@@ -94,7 +94,7 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 
 ## Building
 
-Building is unnecessary, per se. The provided build script generates documentation files and metadata for release/publishing. If modifying locally, you can simply use the updated .psd1/.psm1 files without running a build process.
+Building is unnecessary, per se. The provided build YAML generates documentation files and metadata, then does the actual releasing and publishing. If modifying locally, you can simply use the updated .psd1/.psm1 files without running a build process.
 
 ## Authors
 
