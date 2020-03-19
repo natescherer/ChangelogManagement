@@ -21,6 +21,8 @@ variables:
     value: https://github.com/$env:BUILD_REPOSITORY_NAME
   - name: HelpInfoUri
     value: https://github.com/$env:BUILD_REPOSITORY_NAME
+  - name: ArtifactToDeploy
+    value: windows-latest
 
 stages:
 - stage: Build
@@ -73,7 +75,7 @@ stages:
           - template: azure-pipelines-deploy-steps.yml
             parameters:
               environmentName: DEV
-              artifactName: windows-latest
+              artifactName: $(ArtifactToDeploy)
 - stage: DeployPrd
   condition: ne(variables['PrdVersion'], '')
   jobs:
@@ -88,4 +90,4 @@ stages:
           - template: azure-pipelines-deploy-steps.yml
             parameters:
               environmentName: PRD
-              artifactName: windows-latest
+              artifactToDeploy: $(ArtifactToDeploy)

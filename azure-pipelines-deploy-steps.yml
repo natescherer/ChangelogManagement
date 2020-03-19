@@ -1,17 +1,17 @@
 parameters:
   environmentName: ''
-  artifactName: ''
+  artifactToDeploy: ''
 
 steps:
 - task: DownloadPipelineArtifact@2
   inputs:
-    artifact: ${{ parameters.artifactName }}
+    artifact: ${{ parameters.artifactToDeploy }}
 - task: PowerShell@2
   displayName: Set Artifact Path
   inputs:
     targetType: inline
     script: |
-      $ArtifactPath = "$env:PIPELINE_WORKSPACE\${{ parameters.artifactName }}"
+      $ArtifactPath = "$env:PIPELINE_WORKSPACE\${{ parameters.artifactToDeploy }}"
       Write-Host "##vso[task.setvariable variable=artifactPath]$ArtifactPath"
 - task: PowerShell@2
   displayName: Install-Module
@@ -75,9 +75,9 @@ steps:
           ReleaseNotes = $ReleaseNotes
           ModuleVersion = $SafeVersion
           FunctionsToExport = $FunctionsToExport
-          LicenseUri = $env:LICENSEURI
-          ProjectUri = $env:PROJECTURI
-          HelpInfoUri = $env:HELPINFOURI
+          LicenseUri = Invoke-Expression $env:LICENSEURI
+          ProjectUri = Invoke-Expression $env:PROJECTURI
+          HelpInfoUri = Invoke-Expression $env:HELPINFOURI
       }
 
       if ($env:RELEASEVERSION -like "*-*") {
@@ -230,7 +230,7 @@ steps:
         ScriptSourceLocation = "https://www.poshtestgallery.com/api/v2/items/psscript"
         ScriptPublishLocation = "https://www.poshtestgallery.com/api/v2/package/"
       }
-      Register-PSRepository -
+      Register-PSRepository @RegisterSplat
       $PublishSplat = @{
         Repository = "PoshTestGallery"
         Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
