@@ -75,7 +75,7 @@ stages:
           - template: azure-pipelines-deploy-steps.yml
             parameters:
               environmentName: DEV
-              artifactName: $(ArtifactToDeploy)
+              artifactToDeploy: $(ArtifactToDeploy)
 - stage: DeployPrd
   condition: ne(variables['PrdVersion'], '')
   jobs:
