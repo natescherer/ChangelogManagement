@@ -211,11 +211,11 @@ steps:
     script: Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 - task: PowerShell@2
   displayName: (DEV Only) Publish Module to PoshTestGallery
+  env:
+    GALLERYKEY: $(PoshTestGalleryKey)
   inputs:
     condition: eq('${{ parameters.environmentName }}', 'DEV')
     targetType: inline
-    env:
-      GALLERYKEY: $(PoshTestGalleryKey)
     script: |
       $RegisterSplat = @{
         Name = "PoshTestGallery"
@@ -290,11 +290,11 @@ steps:
       }
 - task: PowerShell@2
   displayName: (PRD Only) Publish Module to PowerShellGallery
+  env:
+    GALLERYKEY: $(PSGalleryKey)
   inputs:
     condition: eq('${{ parameters.environmentName }}', 'PRD')
     targetType: inline
-    env:
-      GALLERYKEY: $(PSGalleryKey)
     script: |
       $PublishSplat = @{
         Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
