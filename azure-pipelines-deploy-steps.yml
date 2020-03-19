@@ -16,13 +16,11 @@ steps:
 - task: PowerShell@2
   displayName: Install-Module
   inputs:
-    pwsh: false
     targetType: inline
     script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber
 - task: PowerShell@2
   displayName: Set Variables
   inputs:
-    pwsh: false
     targetType: inline
     script: |
       $ModuleName = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psm1"
@@ -55,7 +53,6 @@ steps:
 - task: PowerShell@2
   displayName: Update Module Info
   inputs:
-    pwsh: false
     targetType: inline
     script: |
       $SafeVersion = ($env:RELEASEVERSION -split "-")[0]
@@ -94,7 +91,6 @@ steps:
 - task: PowerShell@2
   displayName: Update Changelog
   inputs:
-    pwsh: false
     targetType: inline
     script: |
       $ChangelogData = Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md"
@@ -116,7 +112,6 @@ steps:
 - task: PowerShell@2
   displayName: Generate Markdown Help Files
   inputs:
-    pwsh: false
     targetType: inline
     script: |
       if (!(Test-Path -Path "$env:ARTIFACTPATH\docs")) {
@@ -128,7 +123,6 @@ steps:
 - task: PowerShell@2
   displayName: Generate HTML Help Files
   inputs:
-      pwsh: false
       targetType: inline
       script: |
         # Set variables used by different platforms
@@ -213,7 +207,6 @@ steps:
 - task: PowerShell@2
   displayName: Copy 'src' to 'out'
   inputs:
-    pwsh: false
     targetType: inline
     script: Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 - task: PowerShell@2
@@ -221,7 +214,8 @@ steps:
   inputs:
     condition: eq('${{ parameters.environmentName }}', 'DEV')
     targetType: inline
-    pwsh: false
+    env:
+      GALLERYKEY: $(PoshTestGalleryKey)
     script: |
       $RegisterSplat = @{
         Name = "PoshTestGallery"
@@ -234,7 +228,7 @@ steps:
       $PublishSplat = @{
         Repository = "PoshTestGallery"
         Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
-        NuGetApiKey = $env:POSHTESTGALLERYKEY
+        NuGetApiKey = $env:GALLERYKEY
         ErrorAction = "Stop"
       }
       Publish-Module @PublishSplat
@@ -242,14 +236,12 @@ steps:
   displayName: (PRD Only) Compress module for GitHub release
   condition: eq('${{ parameters.environmentName }}', 'PRD')
   inputs:
-    pwsh: false
     targetType: inline
     script: Compress-Archive -Path "out\$env:MODULENAME" -DestinationPath "$env:ARTIFACTPATH\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
 - task: PowerShell@2
   displayName: (PRD Only) Publish GitHub release
   condition: eq('${{ parameters.environmentName }}', 'PRD')
   inputs:
-    pwsh: false
     targetType: inline
     script: |
       $Zip = Get-ChildItem "$env:ARTIFACTPATH\out\$env:MODULENAME-v$env:RELEASEVERSION.zip"
@@ -296,6 +288,20 @@ steps:
           Write-Output $ReleaseResult
           throw "There was a problem releasing."
       }
+- task: PowerShell@2
+  displayName: (PRD Only) Publish Module to PowerShellGallery
+  inputs:
+    condition: eq('${{ parameters.environmentName }}', 'PRD')
+    targetType: inline
+    env:
+      GALLERYKEY: $(PSGalleryKey)
+    script: |
+      $PublishSplat = @{
+        Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
+        NuGetApiKey = $env:GALLERYKEY
+        ErrorAction = "Stop"
+      }
+      Publish-Module @PublishSplat
 - checkout: self
   displayName: (PRD Only) Git checkout
   condition: eq('${{ parameters.environmentName }}', 'PRD')
