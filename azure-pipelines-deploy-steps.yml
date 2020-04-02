@@ -2,6 +2,9 @@ parameters:
   environmentName: ''
   artifactToDeploy: ''
 
+variables:
+  - group: ReleaseSecrets
+
 steps:
 - task: DownloadPipelineArtifact@2
   inputs:
@@ -17,50 +20,39 @@ steps:
   displayName: Install-Module
   inputs:
     targetType: inline
-    script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber
+    script: Install-Module -Name $env:DEPLOYMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber
 - task: PowerShell@2
   displayName: Set Variables
   inputs:
     targetType: inline
     script: |
-      $ModuleName = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psm1"
-      Write-Host "##vso[task.setvariable variable=ModulePath]$($ModuleName.FullName)"
-      Write-Host "ModulePath is $($ModuleName.FullName)"
-      Write-Host "##vso[task.setvariable variable=ModuleName]$($ModuleName.BaseName)"
-      Write-Host "ModuleName is $($ModuleName.BaseName)"
-      $ManifestName = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psd1"
-      Write-Host "##vso[task.setvariable variable=ManifestPath]$($ManifestName.FullName)"
-      Write-Host "ManifestPath is $($ManifestName.FullName)"
-      $ManifestVersion = (Import-PowerShellDataFile $ManifestName.FullName).ModuleVersion
+      $Module = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psm1"
+      Write-Host "##vso[task.setvariable variable=ModulePath]$($Module.FullName)"
+      Write-Host "##vso[task.setvariable variable=ModuleName]$($Module.BaseName)"
+      $Manifest = Get-ChildItem -Path "$env:ARTIFACTPATH\src\*.psd1"
+      Write-Host "##vso[task.setvariable variable=ManifestPath]$($Manifest.FullName)"
+      $ManifestVersion = (Import-PowerShellDataFile $Manifest.FullName).ModuleVersion
       if ("${{ parameters.environmentName }}" -eq "DEV") {
         if ((Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md").Released.Count -gt 0) {
-          $ReleaseVersion = (Step-Version $ManifestVersion) + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
+          $ReleaseVersion = (Step-Version $ManifestVersion) + "-alpha" + (Get-Date -Format "yyyyMMddHmm")
         } else {
-          $ReleaseVersion = $ManifestVersion + "-alpha" + ([int]$env:BUILD_BUILDNUMBER).ToString("00000")
+          $ReleaseVersion = $ManifestVersion + "-alpha" + (Get-Date -Format "yyyyMMddHmm")
         }
       }
       if ("${{ parameters.environmentName }}" -eq "PRD") {
         $ReleaseVersion = $env:PRDVERSION
       }
       Write-Host "##vso[task.setvariable variable=ReleaseVersion]$ReleaseVersion"
-      Write-Host "ReleaseVersion is $ReleaseVersion"
-      if ($PSVersionTable.PSVersion.Major -eq 5) {$TempDir = $env:TEMP}
-      if ($IsWindows) {$TempDir = $env:TEMP}
-      if ($IsLinux) {$TempDir = "/tmp"}
-      if ($IsMacOS) {$TempDir = $env:TMPDIR}
-      Write-Host "##vso[task.setvariable variable=TempDir]$TempDir"
-      Write-Host "TempDir is $TempDir"
 - task: PowerShell@2
   displayName: Update Module Info
   inputs:
     targetType: inline
     script: |
-      $SafeVersion = ($env:RELEASEVERSION -split "-")[0]
-      Write-Host $SafeVersion
+      $VersionPrefix = ($env:RELEASEVERSION -split "-")[0]
+      $VersionSuffix = ($env:RELEASEVERSION -split "-")[1]
 
-      Write-Host $env:MANIFESTPATH
       $FunctionsToExport = @()	
-      $PublicFiles = Get-ChildItem -Path $env:ARTIFACTPATH\src\Public\*.ps1
+      $PublicFiles = Get-ChildItem -Path "$env:ARTIFACTPATH\src\Public\*.ps1"
       foreach ($PublicFile in $PublicFiles) {
         $FunctionsToExport += [io.path]::GetFileNameWithoutExtension($PublicFile.FullName)
       }
@@ -70,15 +62,15 @@ steps:
       $ManifestNewData = @{
           Path = $env:MANIFESTPATH
           ReleaseNotes = $ReleaseNotes
-          ModuleVersion = $SafeVersion
+          ModuleVersion = $VersionPrefix
           FunctionsToExport = $FunctionsToExport
           LicenseUri = $ExecutionContext.InvokeCommand.ExpandString($env:LICENSEURI)
           ProjectUri = $ExecutionContext.InvokeCommand.ExpandString($env:PROJECTURI)
           HelpInfoUri = $ExecutionContext.InvokeCommand.ExpandString($env:HELPINFOURI)
       }
 
-      if ($env:RELEASEVERSION -like "*-*") {
-          $ManifestNewData += @{Prerelease = ($env:RELEASEVERSION -split "-")[1]}
+      if ($VersionSuffix) {
+          $ManifestNewData += @{Prerelease = $VersionSuffix}
       }
 
       Update-ModuleManifest @ManifestNewData
@@ -93,22 +85,21 @@ steps:
   inputs:
     targetType: inline
     script: |
-      $ChangelogData = Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md"
-      if (($ChangelogData.Unreleased.Data.Added -eq $null) -and
-          ($ChangelogData.Unreleased.Data.Changed -eq $null) -and
-          ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
-          ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
-          ($ChangelogData.Unreleased.Data.Security -eq $null)) {
-          if ($env:RELEASEVERSION -like "*alpha*") {
-              Add-ChangelogData -Type "Added" -Data "Dummy changelog data for alpha" -Path "$env:ARTIFACTPATH\CHANGELOG.md"
-              Write-Host -Object "No changes are listed in changelog. Dummy data inserted as -Version is alpha." -ForegroundColor Yellow
-          }
-          else {
-              throw "-Version is production, but no changes are listed in changelog. Exiting"
-          }
+      if ("${{ parameters.environmentName }}" -eq "DEV") {
+        Write-Host -Object "Ignoring changlog as Environment is DEV."
       }
-      $LinkHash = Invoke-Expression $env:LINKPATTERN
-      Update-Changelog -ReleaseVersion $env:RELEASEVERSION -LinkMode "Automatic" -LinkPattern $LinkHash -Path "$env:ARTIFACTPATH\CHANGELOG.md"
+      else {
+        $ChangelogData = Get-ChangelogData -Path "$env:ARTIFACTPATH\CHANGELOG.md"
+        if (($ChangelogData.Unreleased.Data.Added -eq $null) -and
+            ($ChangelogData.Unreleased.Data.Changed -eq $null) -and
+            ($ChangelogData.Unreleased.Data.Deprecated -eq $null) -and
+            ($ChangelogData.Unreleased.Data.Fixed -eq $null) -and
+            ($ChangelogData.Unreleased.Data.Security -eq $null)) {
+                throw "Environment is PRD, but no changes are listed in changelog. Exiting."
+        }
+        $LinkHash = Invoke-Expression $env:LINKPATTERN
+        Update-Changelog -ReleaseVersion $env:RELEASEVERSION -LinkMode "Automatic" -LinkPattern $LinkHash -Path "$env:ARTIFACTPATH\CHANGELOG.md"
+      }
 - task: PowerShell@2
   displayName: Generate Markdown Help Files
   inputs:
@@ -154,41 +145,10 @@ steps:
           Set-Content -Value $Html -Path $OutputPath -NoNewLine
         }
 
-        # Set template used for HTML conversion
+        # Create template used for HTML conversion
         $MarkdownStyle = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css" -UseBasicParsing).Content
-        $HtmlTemplate = (
-          '<!DOCTYPE html>' + $NL +
-          '<html>' + $NL +
-          '<head>' + $NL +
-          '<meta charset="utf-8" />' + $NL +
-          '<title>[title]</title>' + $NL +
-          '<style>' + $NL +
-          $MarkdownStyle + $NL +
-          '</style>' + $NL +
-          '<style>' + $NL +
-          '.markdown-body {' + $NL +
-          "`t" + 'box-sizing: border-box;' + $NL +
-          "`t" + 'min-width: 200px;' + $NL +
-          "`t" + 'max-width: 980px;' + $NL +
-          "`t" + 'margin: 0 auto;' + $NL +
-          "`t" + 'padding: 45px;' + $NL +
-          '}' + $NL +
-          $NL +
-          '@media (max-width: 767px) {' + $NL +
-          "`t" + '.markdown-body {' + $NL +
-          "`t`t" + 'padding: 15px;' + $NL +
-          "`t" + '}' + $NL +
-          '}' + $NL +
-          '</style>' + $NL +
-          $NL +
-          '</head>' + $NL +
-          '<body>' + $NL +
-          '<article class="markdown-body">' + $NL +
-          '[content]' + $NL +
-          '</article>' + $NL +
-          '</body>' + $NL +
-          '</html>'
-        )
+        $HtmlTemplate = (Invoke-WebRequest -Uri "https://gist.githubusercontent.com/natescherer/3475c1a0aa5487dd7d5c967553e13ea6/raw/704ed32a04b717a660d561fa4180df14d7ed392a/MarkdownToHtmlTemplate.html" -UseBasicParsing).Content
+        $HtmlTemplate = $HtmlTemplate.Replace("[style]", $MarkdownStyle)
 
         # Convert CHANGELOG.md
         ConvertFrom-Changelog -Path "$env:ARTIFACTPATH\CHANGELOG.md" -Format "Release" -OutputPath "$env:ARTIFACTPATH\CHANGELOG_out.md"

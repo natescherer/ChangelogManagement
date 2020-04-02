@@ -1,41 +1,22 @@
 parameters:
-  moduleInstallOptions: ''
   pwsh: true
-  tempDir: ''
   artifactName: ''
 
 steps:
-- task: PowerShell@2
-  displayName: Environment Details
-  inputs:
-    pwsh: ${{ parameters.pwsh }}
-    targetType: inline
-    script: |
-      $PSVersionTable
-      Write-Host "tempDir = ${{ parameters.tempDir }}"
-      Write-Host "Build.Repository.Uri = $env:BUILD_REPOSITORY_URI"
-      Write-Host "Build.QueuedBy = $env:BUILD_QUEUEDBY"
-      Write-Host "Build.SourceVersionMessage = $env:BUILD_SOURCEVERSIONMESSAGE"
-      Write-Host "Build.Repository.Name = $env:BUILD_REPOSITORY_NAME"
-      Write-Host "Build.BuildNumber = $env:BUILD_BUILDNUMBER"
-      Write-Host "Current Location = $(Get-Location)"
 - task: PowerShell@2
   displayName: Install-Module
   inputs:
     pwsh: ${{ parameters.pwsh }}
     targetType: inline
-    script: Install-Module -Name $env:POWERSHELLMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber ${{ parameters.moduleInstallOptions }}
+    script: Install-Module -Name $env:BUILDMODULES.split(",") -Force -SkipPublisherCheck -AllowClobber
 - task: PowerShell@2
   displayName: Set Variables and Tags
-  env:
-    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   inputs:
     pwsh: ${{ parameters.pwsh }}
     targetType: inline
     script: |
       $ProjectName = Get-ProjectName
       Write-Host "##vso[task.setvariable variable=projectName]$ProjectName"
-      Write-Host "##vso[task.setvariable variable=psEdition]$PSEdition"
 - task: PowerShell@2
   displayName: Invoke-Pester
   inputs:
@@ -43,19 +24,31 @@ steps:
     targetType: inline
     script: |
       if (!(Test-Path "out\")) { New-Item -Path "out" -Type Directory | Out-Null }
-      Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage "src\$env:PROJECTNAME.psm1" -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
+      $CodeCoverageFiles = @()
+      $PublicFiles = Get-ChildItem -Path "src\public"
+      foreach ($File in $PublicFiles) {
+        $CodeCoverageFiles += $File.FullName
+      }
+      if (Test-Path -Path "src\private") {
+        $PrivateFiles = Get-ChildItem -Path "src\private"
+        foreach ($File in $PrivateFiles) {
+          $CodeCoverageFiles += $File.FullName
+        }        
+      }
+      Write-Host $CodeCoverageFiles
+      Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage $CodeCoverageFiles -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
 - task: PublishTestResults@2
   displayName: Publish Test Results
   condition: always()
   inputs:
-    testResultsFormat: 'NUnit'
+    testResultsFormat: NUnit
     testResultsFiles: '**/TestResults.xml'
-    testRunTitle: 'TestResults-$(Agent.OS)_$(psEdition)'
+    testRunTitle: TestResults-${{ parameters.artifactName }}
 - task: PublishCodeCoverageResults@1
   displayName: Publish Code Coverage Results
   condition: always()
   inputs:
-    codeCoverageTool: 'JaCoCo'
+    codeCoverageTool: JaCoCo
     summaryFileLocation: '**/CoverageResults.xml'
     failIfCoverageEmpty: true
 - task: PowerShell@2
@@ -75,4 +68,4 @@ steps:
   displayName: Publish Artifacts
   inputs:
     artifactName: ${{ parameters.artifactName }}
-    targetPath: '$(Build.Repository.LocalPath)'
+    targetPath: $(Build.Repository.LocalPath)
