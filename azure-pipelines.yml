@@ -6,17 +6,17 @@ trigger:
       - master
 
 variables:
-  - BuildModules: Pester,BuildHelpers
-  - DeployModules: ChangelogManagement,platyPS,BuildHelpers
-  - ArtifactToDeploy: windows-latest
-  - GitName: Nate Scherer
-  - GitEmail: 376408+natescherer@users.noreply.github.com
+  BuildModules: Pester,BuildHelpers
+  DeployModules: ChangelogManagement,platyPS,BuildHelpers
+  ArtifactToDeploy: windows-latest
+  GitName: Nate Scherer
+  GitEmail: 376408+natescherer@users.noreply.github.com
   # Warning: All variables below this line will be expanded via Invoke-Expression or $ExecutionContext.InvokeCommand.ExpandString. This means you can use PowerShell environment
   # variables, but there is also a risk of arbitrary code execution. Proceeed with caution.
-  - LinkPattern: '@{FirstRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/tree/v{CUR}";NormalRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{CUR}..HEAD"}'
-  - LicenseUri: https://github.com/$env:BUILD_REPOSITORY_NAME/blob/master/LICENSE
-  - ProjectUri: https://github.com/$env:BUILD_REPOSITORY_NAME
-  - HelpInfoUri: https://github.com/$env:BUILD_REPOSITORY_NAME
+  LinkPattern: '@{FirstRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/tree/v{CUR}";NormalRelease="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/$env:BUILD_REPOSITORY_NAME/compare/v{CUR}..HEAD"}'
+  LicenseUri: https://github.com/$env:BUILD_REPOSITORY_NAME/blob/master/LICENSE
+  ProjectUri: https://github.com/$env:BUILD_REPOSITORY_NAME
+  HelpInfoUri: https://github.com/$env:BUILD_REPOSITORY_NAME
 
 stages:
 - stage: Build
