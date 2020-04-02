@@ -2,9 +2,6 @@ parameters:
   environmentName: ''
   artifactToDeploy: ''
 
-variables:
-  - group: ReleaseSecrets
-
 steps:
 - task: DownloadPipelineArtifact@2
   inputs:
