@@ -165,7 +165,9 @@ steps:
   displayName: Copy 'src' to 'out'
   inputs:
     targetType: inline
-    script: Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
+    script: |
+      Get-ChildItem -Path "$env:ARTIFACTPATH\src\*" -Recurse
+      Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 - task: PowerShell@2
   displayName: (DEV Only) Publish Module to PoshTestGallery
   condition: eq('${{ parameters.environmentName }}', 'DEV')
@@ -174,6 +176,8 @@ steps:
   inputs:
     targetType: inline
     script: |
+      Get-ChildItem -Path "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
+
       $RegisterSplat = @{
         Name = "PoshTestGallery"
         SourceLocation = "https://www.poshtestgallery.com/api/v2"
