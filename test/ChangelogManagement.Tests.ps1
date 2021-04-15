@@ -290,7 +290,28 @@ InModuleScope $ModuleName {
         }
         It "Output.ReleaseNotes" {
             $Data.ReleaseNotes | Should -Be ("### Added$NL" +
-                "- Initial release")
+                    "- Released Addition 1$NL" +
+                    "- Released Addition 2$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Released Change 1$NL" +
+                    "- Released Change 2$NL" +
+                    "$NL" +
+                    "### Deprecated$NL" +
+                    "- Released Deprecation 1$NL" +
+                    "- Released Deprecation 2$NL" +
+                    "$NL" +
+                    "### Removed$NL" +
+                    "- Released Removal 1$NL" +
+                    "- Released Removal 2$NL" +
+                    "$NL" +
+                    "### Fixed$NL" +
+                    "- Released Fix 1$NL" +
+                    "- Released Fix 2$NL" +
+                    "$NL" +
+                    "### Security$NL" +
+                    "- Released Vulnerability 1$NL" +
+                    "- Released Vulnerability 2")
         }
         Context "Different Newline Encodings" {
             It "Changelog with Linux/macOS Newlines" {
