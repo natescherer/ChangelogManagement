@@ -1,14 +1,15 @@
-$ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
-$ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
+$global:ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
+$global:ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
+$global:ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
+$global:NL = [System.Environment]::NewLine
+if ($IsWindows -eq $null) { $global:IsWindows = $true }
+
+$global:Today = (Get-Date -Format 'o').Split('T')[0]
+
 Get-Module -Name $ModuleName -All | Remove-Module -Force -ErrorAction Ignore
 Import-Module -Name $ModulePath -Force -ErrorAction Stop
 
 InModuleScope $ModuleName {
-    $NL = [System.Environment]::NewLine
-    $Today = (Get-Date -Format 'o').Split('T')[0]
-    $ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','') -Leaf
-    $ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
-
     Describe 'Module Manifest Tests' {
         It 'Passes Test-ModuleManifest' {
             Test-ModuleManifest -Path $ModuleManifestPath | Should -Not -BeNullOrEmpty
@@ -17,74 +18,76 @@ InModuleScope $ModuleName {
     }
 
     Describe "Get-ChangelogData" {
-        $TestPath = "TestDrive:\CHANGELOG.md"
-        $SeedData = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "### Added$NL" +
-            "- Unreleased Addition 1$NL" +
-            "- Unreleased Addition 2$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Unreleased Change 1$NL" +
-            "- Unreleased Change 2$NL" +
-            "$NL" +
-            "### Deprecated$NL" +
-            "- Unreleased Deprecation 1$NL" +
-            "- Unreleased Deprecation 2$NL" +
-            "$NL" +
-            "### Removed$NL" +
-            "- Unreleased Removal 1$NL" +
-            "- Unreleased Removal 2$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Unreleased Fix 1$NL" +
-            "- Unreleased Fix 2$NL" +
-            "$NL" +
-            "### Security$NL" +
-            "- Unreleased Vulnerability 1$NL" +
-            "- Unreleased Vulnerability 2$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Released Addition 1$NL" +
-            "- Released Addition 2$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "- Released Change 2$NL" +
-            "$NL" +
-            "### Deprecated$NL" +
-            "- Released Deprecation 1$NL" +
-            "- Released Deprecation 2$NL" +
-            "$NL" +
-            "### Removed$NL" +
-            "- Released Removal 1$NL" +
-            "- Released Removal 2$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "- Released Fix 2$NL" +
-            "$NL" +
-            "### Security$NL" +
-            "- Released Vulnerability 1$NL" +
-            "- Released Vulnerability 2$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+        BeforeAll {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "- Unreleased Addition 2$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Unreleased Change 1$NL" +
+                "- Unreleased Change 2$NL" +
+                "$NL" +
+                "### Deprecated$NL" +
+                "- Unreleased Deprecation 1$NL" +
+                "- Unreleased Deprecation 2$NL" +
+                "$NL" +
+                "### Removed$NL" +
+                "- Unreleased Removal 1$NL" +
+                "- Unreleased Removal 2$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Unreleased Fix 1$NL" +
+                "- Unreleased Fix 2$NL" +
+                "$NL" +
+                "### Security$NL" +
+                "- Unreleased Vulnerability 1$NL" +
+                "- Unreleased Vulnerability 2$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "- Released Addition 2$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "- Released Change 2$NL" +
+                "$NL" +
+                "### Deprecated$NL" +
+                "- Released Deprecation 1$NL" +
+                "- Released Deprecation 2$NL" +
+                "$NL" +
+                "### Removed$NL" +
+                "- Released Removal 1$NL" +
+                "- Released Removal 2$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "- Released Fix 2$NL" +
+                "$NL" +
+                "### Security$NL" +
+                "- Released Vulnerability 1$NL" +
+                "- Released Vulnerability 2$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
 
-        Set-Content -Value $SeedData -Path $TestPath -NoNewline
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-        $Data = Get-ChangelogData -Path $TestPath
+            $Data = Get-ChangelogData -Path $TestPath
+        }
 
         It "Return.Header" {
             $Data.Header | Should -Be ("# Changelog$NL" +
@@ -235,48 +238,50 @@ InModuleScope $ModuleName {
             $Data.LastVersion | Should -Be "1.1.0"
         }
         Context "Missing Unreleased Section" {
-            $TestPathNoUnreleased = "TestDrive:\CHANGELOGNOUNRELEASED.md"
-            $SeedDataNoUnreleased = ("# Changelog$NL" +
-                "All notable changes to this project will be documented in this file.$NL" +
-                "$NL" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-                "$NL" +
-                "## [1.1.0] - 2001-01-01$NL" +
-                "### Added$NL" +
-                "- Released Addition 1$NL" +
-                "- Released Addition 2$NL" +
-                "$NL" +
-                "### Changed$NL" +
-                "- Released Change 1$NL" +
-                "- Released Change 2$NL" +
-                "$NL" +
-                "### Deprecated$NL" +
-                "- Released Deprecation 1$NL" +
-                "- Released Deprecation 2$NL" +
-                "$NL" +
-                "### Removed$NL" +
-                "- Released Removal 1$NL" +
-                "- Released Removal 2$NL" +
-                "$NL" +
-                "### Fixed$NL" +
-                "- Released Fix 1$NL" +
-                "- Released Fix 2$NL" +
-                "$NL" +
-                "### Security$NL" +
-                "- Released Vulnerability 1$NL" +
-                "- Released Vulnerability 2$NL" +
-                "$NL" +
-                "## [1.0.0] - 2000-01-01$NL" +
-                "### Added$NL" +
-                "- Initial release$NL" +
-                "$NL" +
-                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            BeforeAll {
+                $TestPathNoUnreleased = "TestDrive:\CHANGELOGNOUNRELEASED.md"
+                $SeedDataNoUnreleased = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [1.1.0] - 2001-01-01$NL" +
+                    "### Added$NL" +
+                    "- Released Addition 1$NL" +
+                    "- Released Addition 2$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Released Change 1$NL" +
+                    "- Released Change 2$NL" +
+                    "$NL" +
+                    "### Deprecated$NL" +
+                    "- Released Deprecation 1$NL" +
+                    "- Released Deprecation 2$NL" +
+                    "$NL" +
+                    "### Removed$NL" +
+                    "- Released Removal 1$NL" +
+                    "- Released Removal 2$NL" +
+                    "$NL" +
+                    "### Fixed$NL" +
+                    "- Released Fix 1$NL" +
+                    "- Released Fix 2$NL" +
+                    "$NL" +
+                    "### Security$NL" +
+                    "- Released Vulnerability 1$NL" +
+                    "- Released Vulnerability 2$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
 
-            Set-Content -Value $SeedDataNoUnreleased -Path $TestPathNoUnreleased -NoNewline
-            $DataNoUnreleased = Get-ChangelogData -Path $TestPathNoUnreleased
+                Set-Content -Value $SeedDataNoUnreleased -Path $TestPathNoUnreleased -NoNewline
+                $DataNoUnreleased = Get-ChangelogData -Path $TestPathNoUnreleased
+            }
             It "Data.Unreleased.RawData" {
                 $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
             }
@@ -287,128 +292,130 @@ InModuleScope $ModuleName {
     }
 
     Describe "Add-ChangelogData" {
-        $TestPath = "TestDrive:\CHANGELOG.md"
-        $SeedData = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "### Added$NL" +
-            "- Unreleased Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Unreleased Change 1$NL" +
-            "$NL" +
-            "### Deprecated$NL" +
-            "- Unreleased Deprecation 1$NL" +
-            "$NL" +
-            "### Removed$NL" +
-            "- Unreleased Removal 1$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Unreleased Fix 1$NL" +
-            "$NL" +
-            "### Security$NL" +
-            "- Unreleased Vulnerability 1$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Released Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
-        $SeedDataPartiallyPopulatedAdded = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "### Added$NL" +
-            "- Unreleased Addition 1$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Released Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
-        $SeedDataPartiallyPopulatedChanged = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "### Changed$NL" +
-            "- Unreleased Change 1$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Released Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
-        $SeedDataUnpopulated = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Released Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+        BeforeAll {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Unreleased Change 1$NL" +
+                "$NL" +
+                "### Deprecated$NL" +
+                "- Unreleased Deprecation 1$NL" +
+                "$NL" +
+                "### Removed$NL" +
+                "- Unreleased Removal 1$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Unreleased Fix 1$NL" +
+                "$NL" +
+                "### Security$NL" +
+                "- Unreleased Vulnerability 1$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            $SeedDataPartiallyPopulatedAdded = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            $SeedDataPartiallyPopulatedChanged = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Changed$NL" +
+                "- Unreleased Change 1$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            $SeedDataUnpopulated = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+        }
         Context "Populated Source -Type" {
             It "Added" {
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -1731,10 +1738,6 @@ InModuleScope $ModuleName {
                     "[1.1.0]: ENTER-URL-HERE$NL" +
                     "[1.0.0]: ENTER-URL-HERE")
             }
-
-            <#
-                Regression test for issue #11.
-            #>
             It "First Release - changelog is using different line endings than [System.Environment]::NewLine" {
                 $TestPath = "TestDrive:\CHANGELOG.md"
 
@@ -1745,9 +1748,7 @@ InModuleScope $ModuleName {
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
                     "`n" +
                     "## [Unreleased]`n" +
-                    "`n" +
                     "### Added`n" +
-                    "`n" +
                     "- Unreleased Addition 1`n" +
                     "`n")
 
@@ -1757,7 +1758,7 @@ InModuleScope $ModuleName {
 
                 $Result = Get-Content -Path $TestPath -Raw
 
-                $ExpectedResult = "# Changelog`n" +
+                $ExpectedResult = ("# Changelog`n" +
                     "All notable changes to this project will be documented in this file.`n" +
                     "`n" +
                     "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
@@ -1766,11 +1767,9 @@ InModuleScope $ModuleName {
                     "## [Unreleased]$NL" +
                     "$NL" +
                     "## [1.0.0] - $Today$NL" +
-                    "`n" +
                     "### Added`n" +
-                    "`n" +
                     "- Unreleased Addition 1`n" +
-                    "`n"
+                    "`n")
 
                 $Result | Should -Be $ExpectedResult
             }
@@ -1828,32 +1827,34 @@ InModuleScope $ModuleName {
     }
 
     Describe "ConvertFrom-Changelog" {
-        $TestPath = "TestDrive:\CHANGELOG.md"
+        BeforeAll {
+            $TestPath = "TestDrive:\CHANGELOG.md"
 
-        $SeedData = ("# Changelog$NL" +
-            "All notable changes to this project will be documented in this file.$NL" +
-            "$NL" +
-            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-            "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-            "$NL" +
-            "## [Unreleased]$NL" +
-            "### Added$NL" +
-            "- Unreleased Addition 1$NL" +
-            "$NL" +
-            "## [1.1.0] - 2001-01-01$NL" +
-            "### Added$NL" +
-            "- Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Change 1$NL" +
-            "$NL" +
-            "## [1.0.0] - 2000-01-01$NL" +
-            "### Added$NL" +
-            "- Initial release$NL" +
-            "$NL" +
-            "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
-            "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
-            "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Addition 1$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Change 1$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+        }
         Context "-Format" {
             It "Release" {
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
