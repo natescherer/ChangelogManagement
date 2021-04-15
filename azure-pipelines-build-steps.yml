@@ -33,10 +33,20 @@ steps:
         $PrivateFiles = Get-ChildItem -Path "src\private"
         foreach ($File in $PrivateFiles) {
           $CodeCoverageFiles += $File.FullName
-        }        
+        }
       }
       Write-Host $CodeCoverageFiles
-      Invoke-Pester -Path ".\test" -OutputFormat NUnitXml -OutputFile "out\TestResults.xml" -CodeCoverage $CodeCoverageFiles -CodeCoverageOutputFile "out\CoverageResults.xml" -EnableExit
+
+      Import-Module Pester
+      $Configuration = [PesterConfiguration]::Default
+      $Configuration.Run.Path = ".\test"
+      $Configuration.Run.Exit = $true
+      $Configuration.CodeCoverage.Enabled = $true
+      $Configuration.CodeCoverage.Path = $CodeCoverageFiles
+      $Configuration.CodeCoverage.OutputPath = "out\CoverageResults.xml"
+      $Configuration.TestResult.Enabled = $true
+      $Configuration.TestResult.OutputPath = "out\TestResults.xml"
+      Invoke-Pester -Configuration $Configuration
 - task: PublishTestResults@2
   displayName: Publish Test Results
   condition: always()
