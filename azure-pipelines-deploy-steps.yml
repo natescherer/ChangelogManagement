@@ -109,6 +109,59 @@ steps:
       Import-Module -Name $env:MODULEPATH -Force -ErrorAction Stop
       New-MarkdownHelp -Module $env:MODULENAME -OutputFolder "$env:ARTIFACTPATH\docs" -ErrorAction SilentlyContinue | Out-Null
 - task: PowerShell@2
+  displayName: Generate HTML Help Files
+  inputs:
+      targetType: inline
+      script: |
+        # # Set variables used by different platforms
+        # $NL = [System.Environment]::NewLine
+
+        # New-Item -Path "$env:ARTIFACTPATH\out\" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+        # New-Item -Path "$env:ARTIFACTPATH\out\docs" -Type Directory -ErrorAction SilentlyContinue | Out-Null
+
+        # function ConvertTo-HtmlFromMarkdown {
+        #   [CmdletBinding()]
+        #   param(
+        #       [Parameter(Mandatory = $true)]
+        #       # The path of the file to convert
+        #       [string]$Path,
+        #       [Parameter(Mandatory = $true)]
+        #       # The output path for the HTML
+        #       [string]$OutputPath,
+        #       [Parameter(Mandatory = $true)]
+        #       # String containing HTML template
+        #       [string]$Template,
+        #       # String containing title for the HTML
+        #       [string]$Title       
+        #   )
+        #   $Item = Get-Item -Path $Path
+        #   $Content = Get-Content -Path $Path -Raw
+        #   $Converted = (Invoke-WebRequest -Method POST -ContentType "text/plain" -Body $Content -Uri "https://api.github.com/markdown/raw" -UseBasicParsing).Content
+        #   $Html = $Template.Replace("[content]", $Converted)
+        #   $Html = $Html.Replace("[title]", $Title)
+        #   Set-Content -Value $Html -Path $OutputPath -NoNewLine
+        # }
+
+        # # Create template used for HTML conversion
+        # $MarkdownStyle = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css" -UseBasicParsing).Content
+        # $HtmlTemplate = (Invoke-WebRequest -Uri "https://gist.githubusercontent.com/natescherer/3475c1a0aa5487dd7d5c967553e13ea6/raw/704ed32a04b717a660d561fa4180df14d7ed392a/MarkdownToHtmlTemplate.html" -UseBasicParsing).Content
+        # $HtmlTemplate = $HtmlTemplate.Replace("[style]", $MarkdownStyle)
+
+        # # Convert CHANGELOG.md
+        # ConvertFrom-Changelog -Path "$env:ARTIFACTPATH\CHANGELOG.md" -Format "Release" -OutputPath "$env:ARTIFACTPATH\CHANGELOG_out.md"
+        # ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:ARTIFACTPATH\CHANGELOG_out.md" -OutputPath "$env:ARTIFACTPATH\out\CHANGELOG.html" -Title "CHANGELOG"
+        # Remove-Item -Path "$env:ARTIFACTPATH\CHANGELOG_out.md"
+
+        # # Convert README.md
+        # ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path "$env:ARTIFACTPATH\README.md" -OutputPath "$env:ARTIFACTPATH\out\README.html" -Title "README"
+
+        # # Convert help files
+        # $MarkdownFiles = Get-ChildItem -Path "$env:ARTIFACTPATH\docs"
+        # foreach ($File in $MarkdownFiles) {
+        #   $OutputPath = "$env:ARTIFACTPATH\out\docs\" + $File.Name.Replace(".md","") + ".html"
+        #   ConvertTo-HtmlFromMarkdown -Template $HtmlTemplate -Path $File.FullName -OutputPath $OutputPath -Title $File.Name.Replace(".md","")
+        # }
+- task: PowerShell@2
   displayName: Copy 'src' to 'out'
   inputs:
     targetType: inline
