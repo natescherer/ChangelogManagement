@@ -167,7 +167,7 @@ steps:
     targetType: inline
     script: |
       Get-ChildItem -Path "$env:ARTIFACTPATH\src\*" -Recurse
-      Copy-Item -Path "$env:ARTIFACTPATH\src\*" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
+      Copy-Item -Path "$env:ARTIFACTPATH\src" -Destination "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 - task: PowerShell@2
   displayName: (DEV Only) Publish Module to PoshTestGallery
   condition: eq('${{ parameters.environmentName }}', 'DEV')
