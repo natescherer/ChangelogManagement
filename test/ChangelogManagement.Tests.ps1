@@ -1944,6 +1944,338 @@ InModuleScope $ModuleName {
                     "[1.0.0]: ENTER-URL-HERE")
             }
         }
+        Context "-LinkMode GitHub" {
+            BeforeAll {
+                $env:GITHUB_REPOSITORY = "testuser/testrepo"
+            }
+            It "First Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.0.0"
+                    LinkMode       = "GitHub"
+                }
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.0.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Second Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.1.0"
+                    LinkMode       = "GitHub"
+                }
+
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.1.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.1.0..HEAD$NL" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            It "Third Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.1.0] - 2001-01-01$NL" +
+                    "### Added$NL" +
+                    "- Addition 1$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Change 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.2.0"
+                    LinkMode       = "GitHub"
+                }
+
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.2.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.1.0] - 2001-01-01$NL" +
+                    "### Added$NL" +
+                    "- Addition 1$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Change 1$NL" +
+                    "$NL" + ,
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.2.0..HEAD$NL" +
+                    "[1.2.0]: https://github.com/testuser/testrepo/compare/v1.1.0..v1.2.0$NL" +
+                    "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                    "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+        }
+        Context "-LinkMode AzureDevOps" {
+            BeforeAll {
+                $env:SYSTEM_TASKDEFINITIONSURI = "https://dev.azure.com/testcompany/"
+                $env:SYSTEM_TEAMPROJECT = "testproject"
+                $env:BUILD_REPOSITORY_NAME = "testrepo"
+            }
+            It "First Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.0.0"
+                    LinkMode       = "AzureDevOps"
+                }
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.0.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GBmain&_a=commits$NL" +
+                    "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
+            }
+            It "Second Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GBmain&_a=commits$NL" +
+                    "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.1.0"
+                    LinkMode       = "AzureDevOps"
+                }
+
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.1.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.1.0&targetVersion=GBmain&_a=commits$NL" +
+                    "[1.1.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GTv1.1.0&_a=commits$NL" +
+                    "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
+            }
+            It "Third Release" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.1.0] - 2001-01-01$NL" +
+                    "### Added$NL" +
+                    "- Addition 1$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Change 1$NL" +
+                    "$NL" +
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.1.0&targetVersion=GBmain&_a=commits$NL" +
+                    "[1.1.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GTv1.1.0&_a=commits$NL" +
+                    "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $UCSplat = @{
+                    Path           = $TestPath
+                    ReleaseVersion = "1.2.0"
+                    LinkMode       = "AzureDevOps"
+                }
+
+                Update-Changelog @UCSplat
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $Result | Should -Be ("# Changelog$NL" +
+                    "All notable changes to this project will be documented in this file.$NL" +
+                    "$NL" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                    "$NL" +
+                    "## [Unreleased]$NL" +
+                    "$NL" +
+                    "## [1.2.0] - $Today$NL" +
+                    "### Added$NL" +
+                    "- Unreleased Addition 1$NL" +
+                    "$NL" +
+                    "## [1.1.0] - 2001-01-01$NL" +
+                    "### Added$NL" +
+                    "- Addition 1$NL" +
+                    "$NL" +
+                    "### Changed$NL" +
+                    "- Change 1$NL" +
+                    "$NL" + ,
+                    "## [1.0.0] - 2000-01-01$NL" +
+                    "### Added$NL" +
+                    "- Initial release$NL" +
+                    "$NL" +
+                    "[Unreleased]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.2.0&targetVersion=GBmain&_a=commits$NL" +
+                    "[1.2.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.1.0&targetVersion=GTv1.2.0&_a=commits$NL" +
+                    "[1.1.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GTv1.1.0&_a=commits$NL" +
+                    "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
+            }
+        }
         It "-OutputPath" {
             $TestPath = "TestDrive:\CHANGELOG.md"
             $TestPath2 = "TestDrive:\CHANGELOG2.md"

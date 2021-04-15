@@ -45,9 +45,12 @@ function Update-Changelog {
 
         [parameter(Mandatory = $true)]
         # Mode used for adding links at the bottom of the Changelog for new versions. Can either be Automatic
-        # (adding based pattern provided via -LinkPattern), Manual (adding placeholders which
-        # will need manually updated), or None (not adding links).
-        [ValidateSet("Automatic", "Manual", "None")]
+        # (adding based on pattern provided via -LinkPattern), Manual (adding placeholders which
+        # will need manually updated), None (not adding links), GitHub (adding based on GitHub Actions context),
+        # or AzureDevOps (adding based on Azure Pipelines environment variables). Note that you must be running
+        # this cmdlet inside GitHub Actions to use GitHub option. Likewise, you must be running this cmdlet inside
+        # Azure Pipelines and using an Azure DevOps repository to use AzureDevOps option.
+        [ValidateSet("Automatic", "Manual", "None", "GitHub", "AzureDevOps")]
         [string]$LinkMode,
 
         [parameter(Mandatory = $false)]
@@ -71,6 +74,28 @@ function Update-Changelog {
         throw "-LinkPattern must be used when -LinkMode is set to Automatic"
     }
 
+    if ($LinkMode -eq "GitHub") {
+        if (!$env:GITHUB_REPOSITORY) {
+            throw "You must be running in GitHub Actions to use GitHub LinkMode"
+        }
+        $LinkPattern = @{
+            FirstRelease = "https://github.com/$env:GITHUB_REPOSITORY/tree/v{CUR}"
+            NormalRelease = "https://github.com/$env:GITHUB_REPOSITORY/compare/v{PREV}..v{CUR}"
+            Unreleased = "https://github.com/$env:GITHUB_REPOSITORY/compare/v{CUR}..HEAD"
+        }
+    }
+    if ($LinkMode -eq "AzureDevOps") {
+        if (!$env:SYSTEM_TASKDEFINITIONSURI) {
+            throw "You must be running in Azure Pipelines to use AzureDevOps LinkMode"
+        }
+        $BaseUri = $env:SYSTEM_TASKDEFINITIONSURI + $env:SYSTEM_TEAMPROJECT + "/_git/" + $env:BUILD_REPOSITORY_NAME
+        $LinkPattern = @{
+            FirstRelease = $BaseUri + "?version=GTv{CUR}"
+            NormalRelease = $BaseUri + "/branchCompare?baseVersion=GTv{PREV}&targetVersion=GTv{CUR}&_a=commits"
+            Unreleased = $BaseUri + "/branchCompare?baseVersion=GTv{CUR}&targetVersion=GBmain&_a=commits"
+        }
+    }
+
     $ChangelogData = Get-ChangelogData -Path $Path
 
     <#
@@ -90,7 +115,7 @@ function Update-Changelog {
     $NewRelease = "## [$ReleaseVersion] - $Today$FileNewline" + $NewRelease
 
     # Inject links into footer
-    if ($LinkMode -eq "Automatic") {
+    if (($LinkMode -eq "Automatic") -or ($LinkMode -eq "GitHub") -or ($LinkMode -eq "AzureDevOps")) {
         if ($ChangelogData.Released -ne "") {
             $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$FileNewline" +
                 "[$ReleaseVersion]: " + (($LinkPattern['NormalRelease'] -replace "{CUR}", $ReleaseVersion) -replace "{PREV}", $ChangelogData.LastVersion) + "$FileNewline" +
