@@ -31,8 +31,7 @@ function Get-ChangelogData {
     $NL = [System.Environment]::NewLine
     if ((Get-Content -Path $Path -Raw) -like "*`r`n*") {
         $FileNewline = "`r`n"
-    }
-    else {
+    } else {
         $FileNewline = "`n"
     }
 
@@ -45,6 +44,7 @@ function Get-ChangelogData {
         "Released"    = @()
         "Footer"      = ""
         "LastVersion" = ""
+        "ReleaseNotes" = ""
     }
 
     # Split changelog into $Sections and split header and footer into their own variables
@@ -68,8 +68,7 @@ function Get-ChangelogData {
     if ($Sections[0] -match "## \[Unreleased\].*") {
         $UnreleasedTemp = $Sections[0]
         $Sections.Remove($UnreleasedTemp)
-    }
-    else {
+    } else {
         $UnreleasedTemp = ""
     }
 
@@ -77,8 +76,7 @@ function Get-ChangelogData {
     foreach ($ChangeType in $ChangeTypes) {
         if ($UnreleasedTemp -notlike "*### $ChangeType*") {
             Set-Variable -Name "Unreleased$ChangeType" -Value $null
-        }
-        else {
+        } else {
             $Value = (($UnreleasedTemp -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
             Set-Variable -Name "Unreleased$ChangeType" -Value $Value
         }
@@ -95,7 +93,6 @@ function Get-ChangelogData {
                 Fixed      = $UnreleasedFixed
                 Security   = $UnreleasedSecurity
             }
-            "ReleaseNotes" = ($UnreleasedTemp -replace "^## .*", "").Trim()
         }
     }
 
@@ -104,8 +101,7 @@ function Get-ChangelogData {
         foreach ($ChangeType in $ChangeTypes) {
             if ($Release -notlike "*### $ChangeType*") {
                 Set-Variable -Name "Release$ChangeType" -Value $null
-            }
-            else {
+            } else {
                 $Value = (($Release -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
                 Set-Variable -Name "Release$ChangeType" -Value $Value
             }
@@ -132,10 +128,15 @@ function Get-ChangelogData {
     # have not been any releases yet
     if ($Output.Released[0].Version) {
         $Output.LastVersion = $Output.Released[0].Version
-    }
-    else {
+    } else {
         $Output.LastVersion = $null
     }
 
+    if ($Output.Released[0]) {
+        $Output.ReleaseNotes = ($Output.Released[0].RawData -replace "^## .*", "").Trim()
+    } else {
+        $Output.ReleaseNotes = $null
+    }
+    
     $Output
 }

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - New LinkModes 'GitHub' and 'AzureDevOps' added on Update-Changelog which remove the need to manually specify a LinkPattern
-- Unreleased.ReleaseNotes property returned by Get-ChangelogData
+- ReleaseNotes property returned by Get-ChangelogData containing a formatted version of the changes from the most recent release
 
 ### Changed
 - Get-ChangelogData's Output.Unreleased is now null if there are no unreleased changes to match the behavior of Output.Released

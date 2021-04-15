@@ -146,31 +146,6 @@ InModuleScope $ModuleName {
                 "- Unreleased Vulnerability 2$NL" +
                 "$NL")
         }
-        It "Output.Unreleased.ReleaseNotes" {
-            $Data.Unreleased.ReleaseNotes | Should -Be ("### Added$NL" +
-                "- Unreleased Addition 1$NL" +
-                "- Unreleased Addition 2$NL" +
-                "$NL" +
-                "### Changed$NL" +
-                "- Unreleased Change 1$NL" +
-                "- Unreleased Change 2$NL" +
-                "$NL" +
-                "### Deprecated$NL" +
-                "- Unreleased Deprecation 1$NL" +
-                "- Unreleased Deprecation 2$NL" +
-                "$NL" +
-                "### Removed$NL" +
-                "- Unreleased Removal 1$NL" +
-                "- Unreleased Removal 2$NL" +
-                "$NL" +
-                "### Fixed$NL" +
-                "- Unreleased Fix 1$NL" +
-                "- Unreleased Fix 2$NL" +
-                "$NL" +
-                "### Security$NL" +
-                "- Unreleased Vulnerability 1$NL" +
-                "- Unreleased Vulnerability 2")
-        }
         It "Output.Released.RawData" {
             $Data.Released.RawData | Should -Be @(("## [1.1.0] - 2001-01-01$NL" +
                 "### Added$NL" +
@@ -312,6 +287,10 @@ InModuleScope $ModuleName {
             It "Data.Unreleased.Data" {
                 $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
             }
+        }
+        It "Output.ReleaseNotes" {
+            $Data.ReleaseNotes | Should -Be ("### Added$NL" +
+                "- Initial release")
         }
         Context "Different Newline Encodings" {
             It "Changelog with Linux/macOS Newlines" {
