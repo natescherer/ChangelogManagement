@@ -88,7 +88,7 @@ InModuleScope $ModuleName {
             $Data = Get-ChangelogData -Path $TestPath
         }
 
-        It "Return.Header" {
+        It "Output.Header" {
             $Data.Header | Should -Be ("# Changelog$NL" +
                 "All notable changes to this project will be documented in this file.$NL" +
                 "$NL" +
@@ -96,7 +96,7 @@ InModuleScope $ModuleName {
                 "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
                 "$NL")
         }
-        Context "Return.Unreleased.Data" {
+        Context "Output.Unreleased.Data" {
             It ".Added" {
                 $Data.Unreleased.Data.Added | Should -Be @("Unreleased Addition 1", "Unreleased Addition 2")
             }
@@ -116,10 +116,10 @@ InModuleScope $ModuleName {
                 $Data.Unreleased.Data.Security | Should -Be @("Unreleased Vulnerability 1", "Unreleased Vulnerability 2")
             }
         }
-        It "Return.Unreleased.Link" {
+        It "Output.Unreleased.Link" {
             $Data.Unreleased.Link | Should -Be "https://github.com/testuser/testrepo/compare/v1.0.0..HEAD"
         }
-        It "Return.Unreleased.RawData" {
+        It "Output.Unreleased.RawData" {
             $Data.Unreleased.RawData | Should -Be ("## [Unreleased]$NL" +
                 "### Added$NL" +
                 "- Unreleased Addition 1$NL" +
@@ -146,7 +146,7 @@ InModuleScope $ModuleName {
                 "- Unreleased Vulnerability 2$NL" +
                 "$NL")
         }
-        It "Return.Unreleased.ReleaseNotes" {
+        It "Output.Unreleased.ReleaseNotes" {
             $Data.Unreleased.ReleaseNotes | Should -Be ("### Added$NL" +
                 "- Unreleased Addition 1$NL" +
                 "- Unreleased Addition 2$NL" +
@@ -171,7 +171,7 @@ InModuleScope $ModuleName {
                 "- Unreleased Vulnerability 1$NL" +
                 "- Unreleased Vulnerability 2")
         }
-        It "Return.Released.RawData" {
+        It "Output.Released.RawData" {
             $Data.Released.RawData | Should -Be @(("## [1.1.0] - 2001-01-01$NL" +
                 "### Added$NL" +
                 "- Released Addition 1$NL" +
@@ -202,18 +202,18 @@ InModuleScope $ModuleName {
                 "- Initial release$NL" +
                 "$NL"))
         }
-        It "Return.Released.Date" {
+        It "Output.Released.Date" {
             $Data.Released.Date | Should -Be @((Get-Date "1/1/2001 12:00:00 AM"),
                 (Get-Date "1/1/2000 12:00:00 AM"))
         }
-        It "Return.Released.Version" {
+        It "Output.Released.Version" {
             $Data.Released.Version | Should -Be @("1.1.0","1.0.0")
         }
-        It "Return.Released.Link" {
+        It "Output.Released.Link" {
             $Data.Released.Link | Should -Be @("https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0",
                 "https://github.com/testuser/testrepo/tree/v1.0.0")
         }
-        Context "Return.Released[0].Data" {
+        Context "Output.Released[0].Data" {
             It ".Added" {
                 $Data.Released[0].Data.Added | Should -Be @("Released Addition 1", "Released Addition 2")
             }
@@ -233,7 +233,7 @@ InModuleScope $ModuleName {
                 $Data.Released[0].Data.Security | Should -Be @("Released Vulnerability 1", "Released Vulnerability 2")
             }
         }
-        Context "Return.Released[1].Data" {
+        Context "Output.Released[1].Data" {
             It ".Added" {
                 $Data.Released[1].Data.Added | Should -Be "Initial release"
             }
@@ -253,12 +253,12 @@ InModuleScope $ModuleName {
                 $Data.Released[1].Data.Security | Should -BeNullOrEmpty
             }
         }
-        It "Return.Footer" {
+        It "Output.Footer" {
             $Data.Footer | Should -Be ("[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
         }
-        It "Return.LastVersion" {
+        It "Output.LastVersion" {
             $Data.LastVersion | Should -Be "1.1.0"
         }
         Context "Missing Unreleased Section" {
