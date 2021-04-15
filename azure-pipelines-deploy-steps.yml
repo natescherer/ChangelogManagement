@@ -176,23 +176,21 @@ steps:
   inputs:
     targetType: inline
     script: |
+      Install-Module PowerShellGet -AllowPrerelease -Force -Repository PSGallery -SkipPublisherCheck
       Get-ChildItem -Path "$env:ARTIFACTPATH\out\$env:MODULENAME" -Recurse
 
       $RegisterSplat = @{
         Name = "PoshTestGallery"
-        SourceLocation = "https://www.poshtestgallery.com/api/v2"
-        PublishLocation = "https://www.poshtestgallery.com/api/v2/package/"
-        ScriptSourceLocation = "https://www.poshtestgallery.com/api/v2/items/psscript"
-        ScriptPublishLocation = "https://www.poshtestgallery.com/api/v2/package/"
+        URL = "https://www.poshtestgallery.com/api/v2/package/"
       }
-      Register-PSRepository @RegisterSplat
+      Register-PSResourceRepository @RegisterSplat
       $PublishSplat = @{
         Repository = "PoshTestGallery"
         Path = "$env:ARTIFACTPATH\out\$env:MODULENAME"
-        NuGetApiKey = $env:GALLERYKEY
+        ApiKey = $env:GALLERYKEY
         ErrorAction = "Stop"
       }
-      Publish-Module @PublishSplat
+      Publish-PSResource @PublishSplat
 - task: PowerShell@2
   displayName: (PRD Only) Compress module for GitHub release
   condition: eq('${{ parameters.environmentName }}', 'PRD')
