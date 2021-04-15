@@ -29,6 +29,12 @@ function Get-ChangelogData {
     )
 
     $NL = [System.Environment]::NewLine
+    if ((Get-Content -Path $Path -Raw) -like "*`r`n*") {
+        $FileNewline = "`r`n"
+    }
+    else {
+        $FileNewline = "`n"
+    }
 
     $ChangeTypes = @("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security")
     $ChangelogData = Get-Content -Path $Path -Raw
@@ -73,14 +79,14 @@ function Get-ChangelogData {
             Set-Variable -Name "Unreleased$ChangeType" -Value $null
         }
         else {
-            $Value = (($UnreleasedTemp -split "### $ChangeType$NL")[1] -split "###")[0].TrimEnd($NL) -split $NL | ForEach-Object { $_.TrimStart("- ") }
+            $Value = (($UnreleasedTemp -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
             Set-Variable -Name "Unreleased$ChangeType" -Value $Value
         }
     }
-    if (($UnreleasedAdded) -or ($UnreleasedChanged) -or ($UnreleasedDeprecated) -or ($UnreleasedRemoved) -or ($UnreleasedFixed) -or ($UnreleasedSecurity)) {
+    if ($UnreleasedAdded -or $UnreleasedChanged -or $UnreleasedDeprecated -or $UnreleasedRemoved -or $UnreleasedFixed -or $UnreleasedSecurity) {
         $Output.Unreleased = [PSCustomObject]@{
             "RawData" = $UnreleasedTemp
-            "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $NL)[0]
+            "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $FileNewline)[0]
             "Data"    = [PSCustomObject]@{
                 Added      = $UnreleasedAdded
                 Changed    = $UnreleasedChanged
@@ -99,7 +105,7 @@ function Get-ChangelogData {
                 Set-Variable -Name "Release$ChangeType" -Value $null
             }
             else {
-                $Value = (($Release -split "### $ChangeType$NL")[1] -split "###")[0].TrimEnd($NL) -split $NL | ForEach-Object { $_.TrimStart("- ") }
+                $Value = (($Release -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
                 Set-Variable -Name "Release$ChangeType" -Value $Value
             }
         }
@@ -107,9 +113,9 @@ function Get-ChangelogData {
         $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
         $Output.Released += [PSCustomObject]@{
             "RawData" = $Release
-            "Date"    = Get-Date ($Release -split "\] \- ")[1].Split($NL)[0]
+            "Date"    = Get-Date ($Release -split "\] \- ")[1].Split($FileNewline)[0]
             "Version" = $LoopVersionNumber
-            "Link"    = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $NL)[0]
+            "Link"    = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $FileNewline)[0]
             "Data"    = [PSCustomObject]@{
                 Added      = $ReleaseAdded
                 Changed    = $ReleaseChanged

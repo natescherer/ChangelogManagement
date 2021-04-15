@@ -2,7 +2,6 @@ $global:ModuleName = Split-Path -Path ($PSCommandPath -replace '\.Tests\.ps1$','
 $global:ModulePath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psm1"
 $global:ModuleManifestPath = "$(Split-Path -Path $PSScriptRoot -Parent)\src\$ModuleName.psd1"
 $global:NL = [System.Environment]::NewLine
-if ($IsWindows -eq $null) { $global:IsWindows = $true }
 
 $global:Today = (Get-Date -Format 'o').Split('T')[0]
 
@@ -287,6 +286,48 @@ InModuleScope $ModuleName {
             }
             It "Data.Unreleased.Data" {
                 $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
+            }
+        }
+        Context "Different Newline Encodings" {
+            It "Changelog with Linux/macOS Newlines" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "### Added`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $Result = Get-ChangelogData -Path $TestPath
+
+                $Result.Unreleased.Data.Added | Should -Be "Unreleased Addition 1"
+            }
+            It "Changelog with Windows Newlines" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                $Result = Get-ChangelogData -Path $TestPath
+
+                $Result.Unreleased.Data.Added | Should -Be "Unreleased Addition 1"
             }
         }
     }
@@ -1218,6 +1259,148 @@ InModuleScope $ModuleName {
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
         }
+        Context "Different Newline Encodings" {
+            It "Changelog with Linux/macOS Newlines - Added" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "### Added`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type Added -Data "Unreleased Addition 2"
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $ExpectedResult = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "### Added`n" +
+                    "- Unreleased Addition 2`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n")
+
+                $Result | Should -Be $ExpectedResult
+            }
+            It "Changelog with Linux/macOS Newlines - Changed" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "### Added`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type Changed -Data "Unreleased Change 1"
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $ExpectedResult = ("# Changelog`n" +
+                    "All notable changes to this project will be documented in this file.`n" +
+                    "`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
+                    "`n" +
+                    "## [Unreleased]`n" +
+                    "### Added`n" +
+                    "- Unreleased Addition 1`n" +
+                    "`n" +
+                    "### Changed`n" +
+                    "- Unreleased Change 1`n" +
+                    "`n")
+
+                $Result | Should -Be $ExpectedResult
+            }
+            It "Changelog with Windows Newlines - Added" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type Added -Data "Unreleased Addition 2"
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $ExpectedResult = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 2`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
+
+                $Result | Should -Be $ExpectedResult
+            }
+            It "Changelog with Windows Newlines - Changed" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
+
+                $SeedData = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
+
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+                Add-ChangelogData -Path $TestPath -Type Changed -Data "Unreleased Change 1"
+
+                $Result = Get-Content -Path $TestPath -Raw
+
+                $ExpectedResult = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n" +
+                    "### Changed`r`n" +
+                    "- Unreleased Change 1`r`n" +
+                    "`r`n")
+
+                $Result | Should -Be $ExpectedResult
+            }
+        }
     }
 
     Describe "New-Changelog" {
@@ -1262,8 +1445,7 @@ InModuleScope $ModuleName {
                     "$NL" +
                     "## [Unreleased]$NL" +
                     "### Added$NL" +
-                    "- Unreleased Addition 1$NL" +
-                    "$NL")
+                    "- Unreleased Addition 1$NL")
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
                 $UCSplat = @{
@@ -1608,8 +1790,7 @@ InModuleScope $ModuleName {
                     "$NL" +
                     "### Added$NL" +
                     "$NL" +
-                    "- Unreleased Addition 1$NL" +
-                    "$NL")
+                    "- Unreleased Addition 1$NL")
 
                 Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
@@ -1629,8 +1810,7 @@ InModuleScope $ModuleName {
                     "$NL" +
                     "### Added$NL" +
                     "$NL" +
-                    "- Unreleased Addition 1$NL" +
-                    "$NL")
+                    "- Unreleased Addition 1$NL")
             }
             It "Second Release" {
                 $TestPath = "TestDrive:\CHANGELOG.md"
@@ -1738,7 +1918,56 @@ InModuleScope $ModuleName {
                     "[1.1.0]: ENTER-URL-HERE$NL" +
                     "[1.0.0]: ENTER-URL-HERE")
             }
-            It "First Release - changelog is using different line endings than [System.Environment]::NewLine" {
+        }
+        It "-OutputPath" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+            $TestPath2 = "TestDrive:\CHANGELOG2.md"
+
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2 -LinkMode None
+
+            $Result = Get-Content -Path $TestPath2 -Raw
+
+            $Result | Should -Be ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "$NL" +
+                "## [1.0.0] - $Today$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL")
+        }
+        It "No Changes" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+            { Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None } | Should -Throw
+        }
+        Context "Different Newline Encodings" {
+            It "Changelog with Linux/macOS Newlines" {
                 $TestPath = "TestDrive:\CHANGELOG.md"
 
                 $SeedData = ("# Changelog`n" +
@@ -1764,65 +1993,50 @@ InModuleScope $ModuleName {
                     "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`n" +
                     "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`n" +
                     "`n" +
-                    "## [Unreleased]$NL" +
-                    "$NL" +
-                    "## [1.0.0] - $Today$NL" +
+                    "## [Unreleased]`n" +
+                    "`n" +
+                    "## [1.0.0] - $Today`n" +
                     "### Added`n" +
                     "- Unreleased Addition 1`n" +
                     "`n")
 
                 $Result | Should -Be $ExpectedResult
             }
-        }
-        It "-OutputPath" {
-            $TestPath = "TestDrive:\CHANGELOG.md"
-            $TestPath2 = "TestDrive:\CHANGELOG2.md"
+            It "Changelog with Windows Newlines" {
+                $TestPath = "TestDrive:\CHANGELOG.md"
 
-            $SeedData = ("# Changelog$NL" +
-                "All notable changes to this project will be documented in this file.$NL" +
-                "$NL" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-                "$NL" +
-                "## [Unreleased]$NL" +
-                "### Added$NL" +
-                "- Unreleased Addition 1$NL" +
-                "$NL")
+                $SeedData = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
 
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+                Set-Content -Value $SeedData -Path $TestPath -NoNewline
 
-            Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -OutputPath $TestPath2 -LinkMode None
+                Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None
 
-            $Result = Get-Content -Path $TestPath2 -Raw
+                $Result = Get-Content -Path $TestPath -Raw
 
-            $Result | Should -Be ("# Changelog$NL" +
-                "All notable changes to this project will be documented in this file.$NL" +
-                "$NL" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-                "$NL" +
-                "## [Unreleased]$NL" +
-                "$NL" +
-                "## [1.0.0] - $Today$NL" +
-                "### Added$NL" +
-                "- Unreleased Addition 1$NL" +
-                "$NL")
-        }
-        It "No Changes" {
-            $TestPath = "TestDrive:\CHANGELOG.md"
+                $ExpectedResult = ("# Changelog`r`n" +
+                    "All notable changes to this project will be documented in this file.`r`n" +
+                    "`r`n" +
+                    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`r`n" +
+                    "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).`r`n" +
+                    "`r`n" +
+                    "## [Unreleased]`r`n" +
+                    "`r`n" +
+                    "## [1.0.0] - $Today`r`n" +
+                    "### Added`r`n" +
+                    "- Unreleased Addition 1`r`n" +
+                    "`r`n")
 
-            $SeedData = ("# Changelog$NL" +
-                "All notable changes to this project will be documented in this file.$NL" +
-                "$NL" +
-                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
-                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
-                "$NL" +
-                "## [Unreleased]$NL" +
-                "$NL")
-
-            Set-Content -Value $SeedData -Path $TestPath -NoNewline
-
-            { Update-Changelog -Path $TestPath -ReleaseVersion "1.0.0" -LinkMode None } | Should -Throw
+                $Result | Should -Be $ExpectedResult
+            }
         }
     }
 

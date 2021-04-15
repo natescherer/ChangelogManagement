@@ -5,10 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Unreleased Addition 2
+- Unreleased Addition 2
+- Unreleased Addition 2
+- Unreleased Addition 2
+- Unreleased Addition 2
+- Unreleased Addition 2
+
 ### Changed
+- Unreleased Change 1
+- Unreleased Change 1
+- Unreleased Change 1
+- Unreleased Change 1
+- Unreleased Change 1
 - Output.Unreleased is now null if there are no unreleased changes to match the behavior of the Released section
 - Build process updated to use YAML multi-stage pipelines in Azure DevOps
 - Module psm1 split into multiple dot-source files
+
+### Fixed
+- Add-ChangelogData now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
+- Update-Changelog now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
+- Get-ChangelogData now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
 
 ## [2.1.4] - 2020-02-05
 ### Fixed

@@ -60,6 +60,12 @@ function Update-Changelog {
     )
 
     $NL = [System.Environment]::NewLine
+    if ((Get-Content -Path $Path -Raw) -like "*`r`n*") {
+        $FileNewline = "`r`n"
+    }
+    else {
+        $FileNewline = "`n"
+    }
 
     if (($LinkMode -eq "Automatic") -and !($LinkPattern)) {
         throw "-LinkPattern must be used when -LinkMode is set to Automatic"
@@ -81,29 +87,29 @@ function Update-Changelog {
 
     # Edit $NewRelease to add version number and today's date
     $Today = (Get-Date -Format 'o').Split('T')[0]
-    $NewRelease = "## [$ReleaseVersion] - $Today$NL" + $NewRelease
+    $NewRelease = "## [$ReleaseVersion] - $Today$FileNewline" + $NewRelease
 
     # Inject links into footer
     if ($LinkMode -eq "Automatic") {
         if ($ChangelogData.Released -ne "") {
-            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$NL" +
-                "[$ReleaseVersion]: " + (($LinkPattern['NormalRelease'] -replace "{CUR}", $ReleaseVersion) -replace "{PREV}", $ChangelogData.LastVersion) + "$NL" +
-                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*", "").TrimStart($NL))
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$FileNewline" +
+                "[$ReleaseVersion]: " + (($LinkPattern['NormalRelease'] -replace "{CUR}", $ReleaseVersion) -replace "{PREV}", $ChangelogData.LastVersion) + "$FileNewline" +
+                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*", "").TrimStart($FileNewline))
         }
         else {
-            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$NL" +
+            $NewFooter = ("[Unreleased]: " + ($LinkPattern['Unreleased'] -replace "{CUR}", $ReleaseVersion) + "$FileNewline" +
                 "[$ReleaseVersion]: " + ($LinkPattern['FirstRelease'] -replace "{CUR}", $ReleaseVersion))
         }
     }
     if ($LinkMode -eq "Manual") {
         if ($ChangelogData.Released -ne "") {
-            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$NL" +
-                "[$ReleaseVersion]: ENTER-URL-HERE$NL" +
-                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*", "").TrimStart($NL))
+            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$FileNewline" +
+                "[$ReleaseVersion]: ENTER-URL-HERE$FileNewline" +
+                ($ChangelogData.Footer.Trim() -replace "\[Unreleased\].*", "").TrimStart($FileNewline))
 
         }
         else {
-            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$NL" +
+            $NewFooter = ("[Unreleased]: ENTER-URL-HERE$FileNewline" +
                 "[$ReleaseVersion]: ENTER-URL-HERE")
         }
         Write-Output ("Because you selected LinkMode Manual, you will need to manually update the links at the " +
@@ -115,10 +121,9 @@ function Update-Changelog {
 
     # Build & write updated CHANGELOG.md
     $Output += $ChangelogData.Header
-    $Output += "## [Unreleased]$NL$NL"
+    $Output += "## [Unreleased]$FileNewline$FileNewline"
     $Output += $NewRelease
     if ($ChangelogData.Released) {
-        #$Output += $NL
         foreach ($Release in $ChangelogData.Released) {
             $Output += $Release.RawData
         }

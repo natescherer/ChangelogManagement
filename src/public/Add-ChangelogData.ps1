@@ -49,31 +49,37 @@ function Add-ChangelogData {
     )
 
     $NL = [System.Environment]::NewLine
+    if ((Get-Content -Path $Path -Raw) -like "*`r`n*") {
+        $FileNewline = "`r`n"
+    }
+    else {
+        $FileNewline = "`n"
+    }
 
     $ChangeTypes = @("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security")
     $ChangelogData = Get-ChangelogData -Path $Path
 
     $Output = ""
     $Output += $ChangelogData.Header
-    $Output += "## [Unreleased]$NL"
+    $Output += "## [Unreleased]$FileNewline"
     foreach ($ChangeType in $ChangeTypes) {
         $ChangeMade = $false
         if ($Type -eq $ChangeType) {
-            $Output += "### $ChangeType$NL"
-            $Output += "- $Data$NL"
+            $Output += "### $ChangeType$FileNewline"
+            $Output += "- $Data$FileNewline"
             $ChangeMade = $true
         }
         if ($ChangelogData.Unreleased.Data.$ChangeType) {
             if ($Output -notlike "*### $ChangeType*") {
-                $Output += "### $ChangeType$NL"
+                $Output += "### $ChangeType$FileNewline"
             }
             foreach ($Datum in $ChangelogData.Unreleased.Data.$ChangeType) {
-                $Output += "- $Datum$NL"
+                $Output += "- $Datum$FileNewline"
                 $ChangeMade = $true
             }
         }
         if ($ChangeMade) {
-            $Output += $NL
+            $Output += $FileNewline
         }
     }
     foreach ($Release in $ChangelogData.Released) {
