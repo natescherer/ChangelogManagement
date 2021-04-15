@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Output.Unreleased is now null if there are no unreleased changes to match the behavior of the Released section
 - Build process updated to use YAML multi-stage pipelines in Azure DevOps
 - Module psm1 split into multiple dot-source files
 

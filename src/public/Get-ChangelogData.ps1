@@ -77,16 +77,18 @@ function Get-ChangelogData {
             Set-Variable -Name "Unreleased$ChangeType" -Value $Value
         }
     }
-    $Output.Unreleased = [PSCustomObject]@{
-        "RawData" = $UnreleasedTemp
-        "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $NL)[0]
-        "Data"    = [PSCustomObject]@{
-            Added      = $UnreleasedAdded
-            Changed    = $UnreleasedChanged
-            Deprecated = $UnreleasedDeprecated
-            Removed    = $UnreleasedRemoved
-            Fixed      = $UnreleasedFixed
-            Security   = $UnreleasedSecurity
+    if (($UnreleasedAdded) -or ($UnreleasedChanged) -or ($UnreleasedDeprecated) -or ($UnreleasedRemoved) -or ($UnreleasedFixed) -or ($UnreleasedSecurity)) {
+        $Output.Unreleased = [PSCustomObject]@{
+            "RawData" = $UnreleasedTemp
+            "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $NL)[0]
+            "Data"    = [PSCustomObject]@{
+                Added      = $UnreleasedAdded
+                Changed    = $UnreleasedChanged
+                Deprecated = $UnreleasedDeprecated
+                Removed    = $UnreleasedRemoved
+                Fixed      = $UnreleasedFixed
+                Security   = $UnreleasedSecurity
+            }
         }
     }
 
