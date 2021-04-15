@@ -95,6 +95,7 @@ function Get-ChangelogData {
                 Fixed      = $UnreleasedFixed
                 Security   = $UnreleasedSecurity
             }
+            "ReleaseNotes" = ($UnreleasedTemp -replace "^## .*", "").Trim()
         }
     }
 

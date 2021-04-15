@@ -6,22 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Unreleased Addition 2
-- Unreleased Addition 2
-- Unreleased Addition 2
-- Unreleased Addition 2
-- Unreleased Addition 2
-- Unreleased Addition 2
+- Unreleased.ReleaseNotes property returned by Get-ChangelogData
 
 ### Changed
-- Unreleased Change 1
-- Unreleased Change 1
-- Unreleased Change 1
-- Unreleased Change 1
-- Unreleased Change 1
-- Output.Unreleased is now null if there are no unreleased changes to match the behavior of the Released section
-- Build process updated to use YAML multi-stage pipelines in Azure DevOps
-- Module psm1 split into multiple dot-source files
+- Get-ChangelogData's Output.Unreleased is now null if there are no unreleased changes to match the behavior of Output.Released
+- Module structure changed to use dot-sourcing
 
 ### Fixed
 - Add-ChangelogData now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
