@@ -284,5 +284,5 @@ steps:
       git add --all
       git commit -m "Azure DevOps Release $(ReleaseVersion) [skip ci]"
       git tag v$(ReleaseVersion)
-      git push origin HEAD:master --porcelain
+      git push origin HEAD:main --porcelain
       git push origin --tags --porcelain
