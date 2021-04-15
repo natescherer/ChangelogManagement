@@ -1,0 +1,28 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    regex: main$
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: true
+  bugfix:
+    regex: bug(fix)?[-/]
+    source-branches:
+    - main
+    tag: alpha
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+  feature:
+    regex: f(eatures)?[-/]
+    tag: alpha
+    increment: Minor
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
