@@ -31,6 +31,7 @@ jobs:
         id: pester
         uses: natescherer/pester-tests-report@feature/code-coverage
         with:
+          skip_check_run: true
           report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           gist_name: ${{ env.BARE_REPOSITORY }}_TestResults_${{ runner.os }}_${{ matrix.shell }}.md
