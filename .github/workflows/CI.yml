@@ -38,10 +38,10 @@ jobs:
           gist_badge_label: ${{ runner.os }} ${{ matrix.shell }}
           gist_token: ${{ secrets.PESTER_GIST_TOKEN }}
           tests_fail_step: true
-          coverage_paths: src
+          coverage_paths: src\private,src\public
           coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
           coverage_gist: true
-          coverage_gist_badge: true
+          coverage_gist_badge_label: Code Coverage
       - name: Convert Path for Codecov Action
         run: |
           if [[ "${{ matrix.os }}" -eq "windows-latest" ]] 
