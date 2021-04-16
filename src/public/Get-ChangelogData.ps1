@@ -4,7 +4,7 @@ function Get-ChangelogData {
         Takes a changelog in Keep a Changelog 1.0.0 format and parses the data into a PowerShell object.
 
     .DESCRIPTION
-        This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 format into a PowerShell object.
+        Takes a changelog in Keep a Changelog 1.0.0 format and parses the data into a PowerShell object.
 
     .INPUTS
         This cmdlet does not accept pipeline input.
@@ -137,6 +137,6 @@ function Get-ChangelogData {
     } else {
         $Output.ReleaseNotes = $null
     }
-    
+
     $Output
 }
