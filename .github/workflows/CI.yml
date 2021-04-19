@@ -8,6 +8,9 @@ on:
 jobs:
   Test:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
     strategy:
       fail-fast: false
       matrix:
@@ -22,7 +25,6 @@ jobs:
       - name: Set Variables
         run: |
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
-        shell: ${{ matrix.shell }}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Pester Tests
