@@ -1,8 +1,9 @@
 mode: ContinuousDeployment
+next-version: 3.0.0
 branches:
   main:
     regex: main$
-    tag: ''
+    tag: 'alpha'
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
