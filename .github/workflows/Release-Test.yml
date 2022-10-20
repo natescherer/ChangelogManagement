@@ -1,4 +1,4 @@
-name: ReleaseToTestGallery
+name: ReleaseToTest
 on: 
   workflow_dispatch:
 jobs:
@@ -20,14 +20,15 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v0.9.7
       - name: Update PowerShell Metadata
-        uses: natescherer/update-powershell-metadata-action@main
+        uses: natescherer/update-powershell-metadata-action@v2.0.0
         with:
           path: src
           version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
           copyright: (c) YYYY Nate Scherer. All rights reserved.
-      - name: Publish Module to PoshTestGallery
+      - name: Publish Module to JFrog
         uses: natescherer/publish-powershell-action@main
         with:
-          token: ${{ secrets.POSHTESTGALLERY_TOKEN }}
-          target: testgallery
+          token: ${{ secrets.JFROG_TOKEN }}
+          target: nuget
+          nugetUrl: https://natescherer.jfrog.io/artifactory/api/nuget/nuget
           path: src
