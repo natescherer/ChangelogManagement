@@ -42,17 +42,17 @@ jobs:
           coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
           coverage_gist: true
           coverage_gist_badge_label: Code Coverage
-      # - name: Convert Path for Codecov Action
-      #   run: |
-      #     if [[ "${{ matrix.os }}" -eq "windows-latest" ]] 
-      #     then
-      #       echo "CODE_COVERAGE_PATH=$(cygpath -u '${{ steps.pester.outputs.coverage_results_path }}')" >> $GITHUB_ENV
-      #     else
-      #       echo "CODE_COVERAGE_PATH=${{ steps.pester.outputs.coverage_results_path }}" >> $GITHUB_ENV
-      #     fi
-      #   shell: bash
+      - name: Convert Path for Codecov Action
+        run: |
+          if [[ "${{ matrix.os }}" -eq "windows-latest" ]] 
+          then
+            echo "CODE_COVERAGE_PATH=$(cygpath -u '${{ steps.pester.outputs.coverage_results_path }}')" >> $GITHUB_ENV
+          else
+            echo "CODE_COVERAGE_PATH=${{ steps.pester.outputs.coverage_results_path }}" >> $GITHUB_ENV
+          fi
+        shell: bash
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ${{ steps.pester.outputs.coverage_results_path }}
+          files: ${{ env.CODE_COVERAGE_PATH }}
           fail_ci_if_error: true
