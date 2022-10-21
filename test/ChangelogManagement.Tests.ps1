@@ -1965,6 +1965,7 @@ InModuleScope $ModuleName {
         }
         Context "-LinkMode GitHub" {
             BeforeAll {
+                $env:GITHUB_REPOSITORY_BACKUP = $env:GITHUB_REPOSITORY
                 $env:GITHUB_REPOSITORY = "testuser/testrepo"
             }
             It "First Release" {
@@ -2126,6 +2127,9 @@ InModuleScope $ModuleName {
                     "[1.2.0]: https://github.com/testuser/testrepo/compare/v1.1.0..v1.2.0$NL" +
                     "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                     "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+            }
+            AfterAll {
+                $env:GITHUB_REPOSITORY = $env:GITHUB_REPOSITORY_BACKUP
             }
         }
         Context "-LinkMode AzureDevOps" {
