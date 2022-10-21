@@ -42,6 +42,7 @@ jobs:
         uses: zyborg/pester-tests-report@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: true
           tests_fail_step: true
           report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
           coverage_paths: src\private,src\public
