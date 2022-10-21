@@ -1,10 +1,5 @@
 name: CI
-on: 
-  push:
-    paths-ignore:
-    - '**.md'
-    - '**.yml'
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 jobs:
   Test:
     runs-on: ${{ matrix.os }}
@@ -27,31 +22,42 @@ jobs:
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Run Pester Tests
-        id: pester
+      - name: Run Pester Tests (non-PR)
+        id: pester-non-pr
+        if: github.event_name != 'pull_request'
         uses: zyborg/pester-tests-report@v1
         with:
-          skip_check_run: true
-          report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          tests_fail_step: true
+          report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
+          gist_token: ${{ secrets.PESTER_GIST_TOKEN }}
           gist_name: ${{ env.BARE_REPOSITORY }}_TestResults_${{ runner.os }}_${{ matrix.shell }}.md
           gist_badge_label: ${{ runner.os }} ${{ matrix.shell }}
-          gist_token: ${{ secrets.PESTER_GIST_TOKEN }}
-          tests_fail_step: true
           coverage_paths: src\private,src\public
           coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
           coverage_gist: true
           coverage_gist_badge_label: Code Coverage
+      - name: Run Pester Tests (PR)
+        if: github.event_name == 'pull_request'
+        uses: zyborg/pester-tests-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tests_fail_step: true
+          report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
+          coverage_paths: src\private,src\public
+          coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
       - name: Convert Path for Codecov Action
+        if: github.event_name != 'pull_request'
         run: |
           if [[ "${{ matrix.os }}" -eq "windows-latest" ]] 
           then
-            echo "CODE_COVERAGE_PATH=$(cygpath -u '${{ steps.pester.outputs.coverage_results_path }}')" >> $GITHUB_ENV
+            echo "CODE_COVERAGE_PATH=$(cygpath -u '${{ steps.pester-non-pr.outputs.coverage_results_path }}')" >> $GITHUB_ENV
           else
-            echo "CODE_COVERAGE_PATH=${{ steps.pester.outputs.coverage_results_path }}" >> $GITHUB_ENV
+            echo "CODE_COVERAGE_PATH=${{ steps.pester-non-pr.outputs.coverage_results_path }}" >> $GITHUB_ENV
           fi
         shell: bash
       - name: Upload to Codecov
+        if: github.event_name != 'pull_request'
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
