@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New property 'ReleaseNotes' returned by Get-ChangelogData containing a formatted version of the changes from the most recent released version
 
 ### Changed
+- Build/test/deploy switched from Azure DevOps to GitHub Actions
 - New-Changelog now populates an initial change 'Added: Initial release'. This can be overridden to match previous behavior via the new '-NoInitialChange' parameter
 - Get-ChangelogData's Output.Unreleased is now null if there are no unreleased changes to match the behavior of Output.Released
 - Module structure changed to use dot-sourcing
