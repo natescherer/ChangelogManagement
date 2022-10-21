@@ -1,6 +1,11 @@
 # ChangelogManagement
 
-[![Build Status](https://img.shields.io/azure-devops/build/natescherer/changelogmanagement/8.svg?logo=azuredevops)](https://dev.azure.com/natescherer/ChangelogManagement/_build/latest?definitionId=8&branchName=main) ![Tests](https://img.shields.io/azure-devops/tests/natescherer/changelogmanagement/8.svg?logo=azuredevops) ![Code Coverage](https://img.shields.io/azure-devops/coverage/natescherer/changelogmanagement/8.svg?logo=azuredevops) ![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)
+[![Tests Windows PowerShell](https://raw.githubusercontent.com/gist/natescherer/aaaff94b47d7bf3029e61b95d6f4557c/raw/78c318d11859cc3601f79c54229f39d0f4d9466c/ChangelogManagement_TestResults_Windows_powershell.md_badge.svg)](https://gist.github.com/natescherer/aaaff94b47d7bf3029e61b95d6f4557c)
+[![Tests Windows Pwsh](https://raw.githubusercontent.com/gist/natescherer/c77c8bb9fe0066f4488621a199ebedc5/raw/a1ac84cd380e76b8247de997761ec864b8443597/ChangelogManagement_TestResults_Windows_pwsh.md_badge.svg)](https://gist.github.com/natescherer/c77c8bb9fe0066f4488621a199ebedc5)
+[![Tests Linux](https://raw.githubusercontent.com/gist/natescherer/e91fdb66a9fdd83c2d329a513d477cc9/raw/eaa3fc9500e82e5ad242af7ab54ae65fa8f6811d/ChangelogManagement_TestResults_Linux_pwsh.md_badge.svg)](https://gist.github.com/natescherer/e91fdb66a9fdd83c2d329a513d477cc9)
+[![Tests macOS](https://raw.githubusercontent.com/gist/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a/raw/fbab2c80e2a1f2f0311d07cbdf7934491eded948/ChangelogManagement_TestResults_macOS_pwsh.md_badge.svg)](https://gist.github.com/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a)
+[![codecov](https://codecov.io/gh/natescherer/ChangelogManagement/branch/main/graph/badge.svg?token=rXSOfdrmo2)](https://codecov.io/gh/natescherer/ChangelogManagement)
+[![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)](https://github.com/natescherer/ChangelogManagement/issues)
 
 ChangelogManagement is a PowerShell module for reading and manipulating changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
@@ -15,7 +20,7 @@ Other features include:
 
 ## Getting Started
 
-ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 5.0+ and PowerShell Core 6.0+ on Windows/Linux/macOS.
+ChangelogManagement is designed to be cross-platform and fully compatible with Windows PowerShell 5.1 and PowerShell 7+ on Windows/Linux/macOS.
 
 ### Prerequisites
 
@@ -23,20 +28,11 @@ No prerequisites are required beyond having PowerShell installed.
 
 ### Installing
 
-ChangelogManagement is listed in the PowerShell Gallery [here](https://www.powershellgallery.com/packages/ChangelogManagement), which means you can install on any internet-connected computer running PowerShell 5+ by running this command:
+ChangelogManagement is listed in the PowerShell Gallery [here](https://www.powershellgallery.com/packages/ChangelogManagement), which means you can install on any internet-connected computer running PowerShell 5.1+ by running this command:
 
 ```PowerShell
 Install-Module -Name ChangelogManagement
 ```
-
-If you'd prefer to install manually, follow these instructions:
-
-1. Download the latest release from [releases](../../releases).
-1. Extract it, then run the following to install
-
-    ```PowerShell
-    Install-Module -Path EXTRACTION-PATH-HERE\ChangelogManagement
-    ```
 
 ## Usage
 
