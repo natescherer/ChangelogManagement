@@ -69,5 +69,3 @@ jobs:
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.5.0
