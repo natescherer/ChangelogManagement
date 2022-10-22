@@ -1,0 +1,30 @@
+name: CI-PR
+on: pull_request
+jobs:
+  Test:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        shell: [pwsh, powershell]
+        exclude:
+          - os: ubuntu-latest
+            shell: powershell
+          - os: macos-latest
+            shell: powershell
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Pester Tests for PR
+        uses: zyborg/pester-tests-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: true
+          tests_fail_step: true
+          report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
+          coverage_paths: src\private,src\public
+          coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
