@@ -5,7 +5,6 @@
 [![Tests Linux](https://raw.githubusercontent.com/gist/natescherer/e91fdb66a9fdd83c2d329a513d477cc9/raw/eaa3fc9500e82e5ad242af7ab54ae65fa8f6811d/ChangelogManagement_TestResults_Linux_pwsh.md_badge.svg)](https://gist.github.com/natescherer/e91fdb66a9fdd83c2d329a513d477cc9)
 [![Tests macOS](https://raw.githubusercontent.com/gist/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a/raw/fbab2c80e2a1f2f0311d07cbdf7934491eded948/ChangelogManagement_TestResults_macOS_pwsh.md_badge.svg)](https://gist.github.com/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a)
 [![codecov](https://codecov.io/gh/natescherer/ChangelogManagement/branch/main/graph/badge.svg?token=rXSOfdrmo2)](https://codecov.io/gh/natescherer/ChangelogManagement)
-[![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)](https://github.com/natescherer/ChangelogManagement/issues)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
