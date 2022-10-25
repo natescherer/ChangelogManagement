@@ -1,7 +1,4 @@
 # ChangelogManagement
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Tests Windows PowerShell](https://raw.githubusercontent.com/gist/natescherer/aaaff94b47d7bf3029e61b95d6f4557c/raw/78c318d11859cc3601f79c54229f39d0f4d9466c/ChangelogManagement_TestResults_Windows_powershell.md_badge.svg)](https://gist.github.com/natescherer/aaaff94b47d7bf3029e61b95d6f4557c)
 [![Tests Windows Pwsh](https://raw.githubusercontent.com/gist/natescherer/c77c8bb9fe0066f4488621a199ebedc5/raw/a1ac84cd380e76b8247de997761ec864b8443597/ChangelogManagement_TestResults_Windows_pwsh.md_badge.svg)](https://gist.github.com/natescherer/c77c8bb9fe0066f4488621a199ebedc5)
@@ -9,6 +6,9 @@
 [![Tests macOS](https://raw.githubusercontent.com/gist/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a/raw/fbab2c80e2a1f2f0311d07cbdf7934491eded948/ChangelogManagement_TestResults_macOS_pwsh.md_badge.svg)](https://gist.github.com/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a)
 [![codecov](https://codecov.io/gh/natescherer/ChangelogManagement/branch/main/graph/badge.svg?token=rXSOfdrmo2)](https://codecov.io/gh/natescherer/ChangelogManagement)
 [![Open Issues](https://img.shields.io/github/issues-raw/natescherer/changelogmanagement.svg?logo=github)](https://github.com/natescherer/ChangelogManagement/issues)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ChangelogManagement is a PowerShell module for reading and manipulating changelog files in [Keep a Changelog 1.0.0](https://keepachangelog.com/en/1.0.0/) format.
 
