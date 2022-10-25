@@ -1,9 +1,9 @@
-name: ReleaseToTest
+name: Publish to JFrog
 on: 
   workflow_dispatch:
 jobs:
   PublishToJFrog:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: pwsh
