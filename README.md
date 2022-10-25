@@ -1,4 +1,7 @@
 # ChangelogManagement
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Tests Windows PowerShell](https://raw.githubusercontent.com/gist/natescherer/aaaff94b47d7bf3029e61b95d6f4557c/raw/78c318d11859cc3601f79c54229f39d0f4d9466c/ChangelogManagement_TestResults_Windows_powershell.md_badge.svg)](https://gist.github.com/natescherer/aaaff94b47d7bf3029e61b95d6f4557c)
 [![Tests Windows Pwsh](https://raw.githubusercontent.com/gist/natescherer/c77c8bb9fe0066f4488621a199ebedc5/raw/a1ac84cd380e76b8247de997761ec864b8443597/ChangelogManagement_TestResults_Windows_pwsh.md_badge.svg)](https://gist.github.com/natescherer/c77c8bb9fe0066f4488621a199ebedc5)
@@ -95,6 +98,20 @@ Building is unnecessary, per se. The provided build YAML generates documentation
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://www.linkedin.com/in/natescherer01/"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Code">💻</a> <a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table></table>
