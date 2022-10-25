@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - BREAKING CHANGE: New-Changelog now populates an initial change 'Added: Initial release'. This can be overridden to match previous behavior via the new '-NoInitialChange' parameter
 - BREAKING CHANGE: Get-ChangelogData's Output.Unreleased is now null if there are no unreleased changes to match the behavior of Output.Released
+- BREAKING CHANGE: Minimum supported PowerShell raised to 5.1 instead of 5.0
 - Module structure changed to use dot-sourcing
 - Build/test/deploy switched from Azure DevOps to GitHub Actions
 
