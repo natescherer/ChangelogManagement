@@ -1,6 +1,6 @@
 # ChangelogManagement
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Tests Windows PowerShell](https://raw.githubusercontent.com/gist/natescherer/aaaff94b47d7bf3029e61b95d6f4557c/raw/78c318d11859cc3601f79c54229f39d0f4d9466c/ChangelogManagement_TestResults_Windows_powershell.md_badge.svg)](https://gist.github.com/natescherer/aaaff94b47d7bf3029e61b95d6f4557c)
@@ -103,8 +103,10 @@ Building is unnecessary, per se. The provided build YAML generates documentation
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://github.com/jcharlesworthuk"><img src="https://avatars.githubusercontent.com/u/9157892?v=4?s=100" width="100px;" alt="James Charlesworth"/><br /><sub><b>James Charlesworth</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=jcharlesworthuk" title="Code">💻</a></td>
-      <td align="center"><a href="https://www.linkedin.com/in/natescherer01/"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Code">💻</a> <a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/natescherer01/"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Code">💻</a> <a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jcharlesworthuk"><img src="https://avatars.githubusercontent.com/u/9157892?v=4?s=100" width="100px;" alt="James Charlesworth"/><br /><sub><b>James Charlesworth</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=jcharlesworthuk" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://gaelcolas.com/"><img src="https://avatars.githubusercontent.com/u/8962101?v=4?s=100" width="100px;" alt="Gael"/><br /><sub><b>Gael</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=gaelcolas" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://se.linkedin.com/in/johanljunggren"><img src="https://avatars.githubusercontent.com/u/7189721?v=4?s=100" width="100px;" alt="Johan Ljunggren"/><br /><sub><b>Johan Ljunggren</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=johlju" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
