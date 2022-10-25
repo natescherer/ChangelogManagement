@@ -14,6 +14,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "natescherer",
+      "name": "Nate Scherer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/376408?v=4",
+      "profile": "https://www.linkedin.com/in/natescherer01/",
+      "contributions": [
+        "code",
+        "doc",
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,

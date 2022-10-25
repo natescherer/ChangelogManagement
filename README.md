@@ -104,17 +104,10 @@ Building is unnecessary, per se. The provided build YAML generates documentation
   <tbody>
     <tr>
       <td align="center"><a href="https://github.com/jcharlesworthuk"><img src="https://avatars.githubusercontent.com/u/9157892?v=4?s=100" width="100px;" alt="James Charlesworth"/><br /><sub><b>James Charlesworth</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=jcharlesworthuk" title="Code">💻</a></td>
+      <td align="center"><a href="https://www.linkedin.com/in/natescherer01/"><img src="https://avatars.githubusercontent.com/u/376408?v=4?s=100" width="100px;" alt="Nate Scherer"/><br /><sub><b>Nate Scherer</b></sub></a><br /><a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Code">💻</a> <a href="https://github.com/natescherer/ChangelogManagement/commits?author=natescherer" title="Documentation">📖</a> <a href="#infra-natescherer" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     </tr>
   </tbody>
 </table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table></table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
