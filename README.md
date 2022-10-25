@@ -92,20 +92,21 @@ Contributions and bug reports are gladly accepted! Please see [CONTRIBUTING.md](
 
 Building is unnecessary, per se. The provided build YAML generates documentation files and metadata, then does the actual releasing and publishing. If modifying locally, you can simply use the updated .psd1/.psm1 files without running a build process.
 
-## Authors
+## Contributors
 
-**Nate Scherer** - *Initial work* - [natescherer](https://github.com/natescherer)
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table></table>
 
-**James Charlesworth** - *Fix for Issue #9* [jcharlesworthuk](https://github.com/jcharlesworthuk)
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
-**Gael Colas** - *Fix for Issue #11* [gaelcolas](https://github.com/gaelcolas)
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
-**Johan Ljunggren** - *Fix for Issue #11* [johlju](https://github.com/johlju)
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ## License
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
-
-## Acknowledgements
-
-[oliverlachlan](https://github.com/olivierlacan/keep-a-changelog) - For creating the Keep a Changelog format
