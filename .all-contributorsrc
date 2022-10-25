@@ -7,6 +7,15 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "jcharlesworthuk",
+      "name": "James Charlesworth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9157892?v=4",
+      "profile": "https://github.com/jcharlesworthuk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
       "login": "natescherer",
       "name": "Nate Scherer",
       "avatar_url": "https://avatars.githubusercontent.com/u/376408?v=4",
