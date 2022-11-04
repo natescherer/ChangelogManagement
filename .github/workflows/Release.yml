@@ -15,6 +15,8 @@ jobs:
       - name: Set Variables
         run: |
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $ModuleManifest = Get-ChildItem *.psm1 -Recurse
+          "MODULE_PATH=$($ModuleManifest.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -42,7 +44,14 @@ jobs:
           functionsToExportPath: src\public
           description: ${{ steps.metadata.outputs.description }}
       - name: Generate Markdown Help Files
-        uses: StartAutomating/HelpOut@v0.4
+        run: |
+          $DocsPath = Join-Path $env:GITHUB_WORKSPACE docs
+          if (!(Test-Path -Path $DocsPath)) { New-Item -Path $DocsPath -ItemType Directory | Out-Null }
+          Set-PSRespoitory -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name platyPS
+          Get-Module -Name $env:BARE_REPOSITORY -All | Remove-Module -Force -ErrorAction Ignore
+          Import-Module -Name $env:MODULE_PATH -Force -ErrorAction Stop
+          New-MarkdownHelp -Module $env:BARE_REPOSITORY -OutputFolder $DocsPath | Out-Null
       - name: Create Documentation for Release
         uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
