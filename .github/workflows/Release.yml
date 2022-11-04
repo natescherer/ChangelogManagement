@@ -47,7 +47,7 @@ jobs:
         run: |
           $DocsPath = Join-Path $env:GITHUB_WORKSPACE docs
           if (!(Test-Path -Path $DocsPath)) { New-Item -Path $DocsPath -ItemType Directory | Out-Null }
-          Set-PSRespoitory -Name PSGallery -InstallationPolicy Trusted
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
           Install-Module -Name platyPS
           Get-Module -Name $env:BARE_REPOSITORY -All | Remove-Module -Force -ErrorAction Ignore
           Import-Module -Name $env:MODULE_PATH -Force -ErrorAction Stop
