@@ -121,3 +121,9 @@ Contributions of any kind are welcome!
 ## License
 
 This project is licensed under The MIT License - see [LICENSE](LICENSE) for details.
+
+## Acknowledgements
+
+[![Hosted By: Cloudsmith](https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith&style=flat-square)](https://cloudsmith.com)
+
+Package repository hosting is graciously provided by Cloudsmith.
