@@ -46,7 +46,12 @@ jobs:
       - name: Generate Markdown Help Files
         run: |
           $DocsPath = Join-Path $env:GITHUB_WORKSPACE docs
-          if (!(Test-Path -Path $DocsPath)) { New-Item -Path $DocsPath -ItemType Directory | Out-Null }
+          if (Test-Path -Path $DocsPath)) {
+            $CleanPath = Join-Path $DocsPath "*"
+            Remove-Item -Path $CleanPath
+          } else {
+            New-Item -Path $DocsPath -ItemType Directory | Out-Null
+          }
           Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
           Install-Module -Name platyPS
           Get-Module -Name $env:BARE_REPOSITORY -All | Remove-Module -Force -ErrorAction Ignore
