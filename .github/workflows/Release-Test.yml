@@ -28,7 +28,7 @@ jobs:
       - name: Publish Module to Cloudsmith
         uses: natescherer/publish-powershell-action@v1
         with:
-          token: ${{ secrets.CLOUDSMITH_TOKEN }}
+          token: ${{ secrets.CLOUDSMITH_KEY }}
           target: nuget
           nugetUrl: https://nuget.cloudsmith.io/natescherer/changelogmanagement/v2/
           path: src

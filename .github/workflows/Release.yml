@@ -1,0 +1,60 @@
+name: Release
+on: 
+  workflow_dispatch:
+    inputs:
+      ReleaseHeader:
+        description: The header to be added to the release.
+        required: false
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.14
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.14
+      - name: Update Changelog
+        id: changelog
+        uses: natescherer/changelog-management-action@main
+        with:
+          mode: release
+          releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
+      - name: Update PowerShell Metadata
+        uses: natescherer/update-powershell-metadata-action@v2
+        with:
+          path: src
+          version: ${{ steps.gitversion.outputs.SemVer }}
+          copyright: (c) YYYY Nate Scherer. All rights reserved.
+          releaseNotes: ${{ steps.changelog.outputs.releasenotes }}
+          functionsToExportPath: src\public
+          description: ${{ steps.metadata.outputs.description }}
+      - name: Push SemVer Tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: v${{ steps.gitversion.outputs.SemVer }}
+      - name: Commit Changes to Repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
+          file_pattern: ":!test\\* :!test/*"
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.gitversion.outputs.SemVer }}
+          tag_name: v${{ steps.gitversion.outputs.SemVer }}
+          body: |
+            # Release v${{ steps.gitversion.outputs.SemVer }}
+            ${{ github.event.inputs.ReleaseHeader}}
+
+            ## Changes
+            ${{ steps.changelog.outputs.releasenotes }}
