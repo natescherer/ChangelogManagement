@@ -12,15 +12,15 @@ jobs:
       run:
         shell: pwsh
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Set Variables
         run: |
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           $ModuleManifest = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Include *.psm1 -Recurse
           "MODULE_PATH=$($ModuleManifest.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.14
         with:
