@@ -12,6 +12,9 @@ jobs:
       run:
         shell: pwsh
     steps:
+      - name: Set Variables
+        run: |
+          "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -38,23 +41,51 @@ jobs:
           releaseNotes: ${{ steps.changelog.outputs.releasenotes }}
           functionsToExportPath: src\public
           description: ${{ steps.metadata.outputs.description }}
-      - name: Push SemVer Tag
-        uses: rickstaa/action-create-tag@v1
+      - name: Generate Markdown Help Files
+        uses: StartAutomating/HelpOut@v0.4
+      - name: Create Documentation for Release
+        uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
-          tag: v${{ steps.gitversion.outputs.SemVer }}
-      - name: Commit Changes to Repo
-        uses: stefanzweifel/git-auto-commit-action@v4
+          path: README.md,CHANGELOG.md,docs
+          outputpath: out
+          matchpathstructure: true
+      - name: Compress module for GitHub release
+        id: compress
+        run: |
+          $CopySourcePath = Join-Path $env:GITHUB_WORKSPACE "src"
+          $CopyDestPath = Join-Path $env:GITHUB_WORKSPACE "out"
+          Copy-Item -Path $CopySourcePath -Destination $CopyDestPath -Recurse
+          $ZipPath = Join-Path $env:GITHUB_WORKSPACE "out" "$env:BARE_REPOSITORY-v$env:GITVERSION_SEMVER.zip"
+          Compress-Archive -Path $SourcePath -DestinationPath $ZipPath
+          "ZipPath=$ZipPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - uses: actions/upload-artifact@v3
         with:
-          commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
-          file_pattern: ":!test\\* :!test/*"
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: v${{ steps.gitversion.outputs.SemVer }}
-          tag_name: v${{ steps.gitversion.outputs.SemVer }}
-          body: |
-            # Release v${{ steps.gitversion.outputs.SemVer }}
-            ${{ github.event.inputs.ReleaseHeader}}
+          name: my-artifact
+          path: ${{ github.workspace }}
+      # - name: Push SemVer Tag
+      #   uses: rickstaa/action-create-tag@v1
+      #   with:
+      #     tag: v${{ steps.gitversion.outputs.SemVer }}
+      # - name: Commit Changes to Repo
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
+      #     file_pattern: ":!test\\* :!test/*"
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     name: v${{ steps.gitversion.outputs.SemVer }}
+      #     tag_name: v${{ steps.gitversion.outputs.SemVer }}
+      #     files: ${{ steps.compress.outputs.ZipPath }}
+      #     body: |
+      #       # Release v${{ steps.gitversion.outputs.SemVer }}
+      #       ${{ github.event.inputs.ReleaseHeader}}
 
-            ## Changes
-            ${{ steps.changelog.outputs.releasenotes }}
+      #       ## Changes
+      #       ${{ steps.changelog.outputs.releasenotes }}
+      # - name: Publish Module to Gallery
+      #   uses: natescherer/publish-powershell-action@v1
+      #   with:
+      #     token: ${{ secrets.POWERSHELLGALLERY_KEY }}
+      #     target: gallery
+      #     path: src
