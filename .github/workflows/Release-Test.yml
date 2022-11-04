@@ -1,8 +1,8 @@
-name: Publish to Cloudsmith
+name: Test Release
 on: 
   workflow_dispatch:
 jobs:
-  TestPublish:
+  TestRelease:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -30,5 +30,5 @@ jobs:
         with:
           token: ${{ secrets.CLOUDSMITH_KEY }}
           target: nuget
-          nugetUrl: https://nuget.cloudsmith.io/natescherer/changelogmanagement/v2/
+          nugetUrl: https://nuget.cloudsmith.io/natescherer/changelogmanagement/v3/index.json
           path: src
