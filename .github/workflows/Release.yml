@@ -66,11 +66,11 @@ jobs:
       - name: Compress module for GitHub release
         id: compress
         run: |
-          $CopySourcePath = Join-Path $env:GITHUB_WORKSPACE "src"
-          $CopyDestPath = Join-Path $env:GITHUB_WORKSPACE "out"
-          Copy-Item -Path $CopySourcePath -Destination $CopyDestPath -Recurse
+          $SourcePath = Join-Path $env:GITHUB_WORKSPACE "src"
+          $DestPath = Join-Path $env:GITHUB_WORKSPACE "out"
+          Copy-Item -Path $SourcePath -Destination $DestPath -Recurse
           $ZipPath = Join-Path $env:GITHUB_WORKSPACE "out" "$env:BARE_REPOSITORY-v$env:GITVERSION_SEMVER.zip"
-          Compress-Archive -Path $SourcePath -DestinationPath $ZipPath
+          Compress-Archive -Path $DestPath -DestinationPath $ZipPath
           "ZipPath=$ZipPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - uses: actions/upload-artifact@v3
         with:
