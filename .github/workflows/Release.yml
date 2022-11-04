@@ -73,34 +73,30 @@ jobs:
           $ZipDestPath = Join-Path $env:GITHUB_WORKSPACE "out" "$env:BARE_REPOSITORY-v$env:GITVERSION_SEMVER.zip"
           Compress-Archive -Path $ZipSourcePath -DestinationPath $ZipDestPath
           "ZipPath=$ZipDestPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-      - uses: actions/upload-artifact@v3
+      - name: Push SemVer Tag
+        uses: rickstaa/action-create-tag@v1
         with:
-          name: my-artifact
-          path: ${{ github.workspace }}
-      # - name: Push SemVer Tag
-      #   uses: rickstaa/action-create-tag@v1
-      #   with:
-      #     tag: v${{ steps.gitversion.outputs.SemVer }}
-      # - name: Commit Changes to Repo
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
-      #     file_pattern: ":!test\\* :!test/*"
-      # - name: Create Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     name: v${{ steps.gitversion.outputs.SemVer }}
-      #     tag_name: v${{ steps.gitversion.outputs.SemVer }}
-      #     files: ${{ steps.compress.outputs.ZipPath }}
-      #     body: |
-      #       # Release v${{ steps.gitversion.outputs.SemVer }}
-      #       ${{ github.event.inputs.ReleaseHeader}}
+          tag: v${{ steps.gitversion.outputs.SemVer }}
+      - name: Commit Changes to Repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
+          file_pattern: ":!test\\* :!test/*"
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.gitversion.outputs.SemVer }}
+          tag_name: v${{ steps.gitversion.outputs.SemVer }}
+          files: ${{ steps.compress.outputs.ZipPath }}
+          body: |
+            # Release v${{ steps.gitversion.outputs.SemVer }}
+            ${{ github.event.inputs.ReleaseHeader}}
 
-      #       ## Changes
-      #       ${{ steps.changelog.outputs.releasenotes }}
-      # - name: Publish Module to Gallery
-      #   uses: natescherer/publish-powershell-action@v1
-      #   with:
-      #     token: ${{ secrets.POWERSHELLGALLERY_KEY }}
-      #     target: gallery
-      #     path: out
+            ## Changes
+            ${{ steps.changelog.outputs.releasenotes }}
+      - name: Publish Module to Gallery
+        uses: natescherer/publish-powershell-action@v1
+        with:
+          token: ${{ secrets.POWERSHELLGALLERY_KEY }}
+          target: gallery
+          path: out
