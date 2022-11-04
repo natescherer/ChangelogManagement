@@ -13,7 +13,7 @@ Creates a new, blank changelog in Keep a Changelog 1.0.0 format.
 ## SYNTAX
 
 ```
-New-Changelog [[-Path] <String>] [-NoSemVer] [<CommonParameters>]
+New-Changelog [[-Path] <String>] [-NoSemVer] [-NoInitialChange] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,16 +24,14 @@ This cmdlet creates a new, blank changelog in Keep a Changelog 1.0.0 format.
 ### EXAMPLE 1
 ```
 New-Changelog
-```
-
 Does not generate output, but creates a new changelog at .\CHANGELOG.md
+```
 
 ### EXAMPLE 2
 ```
 New-Changelog -Path project\CHANGELOG.md -NoSemVer
-```
-
 Does not generate output, but creates a new changelog at project\CHANGELOG.md while excluding SemVer statement from the header
+```
 
 ## PARAMETERS
 
@@ -54,6 +52,21 @@ Accept wildcard characters: False
 
 ### -NoSemVer
 Exclude the statement about Semantic Versioning from the changelog
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NoInitialChange
+Don't include the default initial change "Added: Initial release"
 
 ```yaml
 Type: SwitchParameter

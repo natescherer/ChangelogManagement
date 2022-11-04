@@ -17,16 +17,15 @@ Get-ChangelogData [[-Path] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This cmdlet parses the data in a changelog file using Keep a Changelog 1.0.0 format into a PowerShell object.
+Takes a changelog in Keep a Changelog 1.0.0 format and parses the data into a PowerShell object.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
 Get-ChangelogData
-```
-
 Returns an object containing Header, Unreleased, Released, Footer, and LastVersion properties.
+```
 
 ## PARAMETERS
 

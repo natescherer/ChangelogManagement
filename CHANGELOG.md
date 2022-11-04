@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.0] - 2022-11-04
 ### Added
 - New LinkModes 'GitHub' and 'AzureDevOps' on Update-Changelog which remove the need to manually specify a LinkPattern
 - New property 'ReleaseNotes' returned by Get-ChangelogData containing a formatted version of the changes from the most recent released version
@@ -62,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: /compare/v2.1.4..HEAD
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.0..HEAD
+[3.0.0]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.4..v3.0.0
 [2.1.4]: /compare/v2.1.3..v2.1.4
 [2.1.3]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.2..v2.1.3
 [2.1.2]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.1..v2.1.2

@@ -29,15 +29,11 @@ then makes a new, blank Unreleased section.
 ### EXAMPLE 1
 ```
 Update-Changelog -ReleaseVersion 1.1.1 -LinkMode Automatic -LinkPattern @{FirstRelease="https://github.com/testuser/testrepo/tree/v{CUR}";NormalRelease="https://github.com/testuser/testrepo/compare/v{PREV}..v{CUR}";Unreleased="https://github.com/testuser/testrepo/compare/v{CUR}..HEAD"}
-```
-
 Does not generate output, but:
-1.
-Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
-2.
-Updates links according to LinkPattern.
-3.
-Creates a new, blank Unreleased section
+1. Takes all Unreleased changes in .\CHANGELOG.md and adds them to a new release tagged with ReleaseVersion and today's date.
+2. Updates links according to LinkPattern.
+3. Creates a new, blank Unreleased section
+```
 
 ## PARAMETERS
 
@@ -89,8 +85,13 @@ Accept wildcard characters: False
 ### -LinkMode
 Mode used for adding links at the bottom of the Changelog for new versions.
 Can either be Automatic
-(adding based pattern provided via -LinkPattern), Manual (adding placeholders which
-will need manually updated), or None (not adding links).
+(adding based on pattern provided via -LinkPattern), Manual (adding placeholders which
+will need manually updated), None (not adding links), GitHub (adding based on GitHub Actions context),
+or AzureDevOps (adding based on Azure Pipelines environment variables).
+Note that you must be running
+this cmdlet inside GitHub Actions to use GitHub option.
+Likewise, you must be running this cmdlet inside
+Azure Pipelines and using an Azure DevOps repository to use AzureDevOps option.
 
 ```yaml
 Type: String

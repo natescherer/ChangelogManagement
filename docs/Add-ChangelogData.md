@@ -26,16 +26,14 @@ changelog in Keep a Changelog 1.0.0 format.
 ### EXAMPLE 1
 ```
 Add-ChangelogData -Type "Added" -Data "Spanish language translation"
-```
-
 Does not generate output, but adds a new Added change into changelog at  .\CHANGELOG.md.
+```
 
 ### EXAMPLE 2
 ```
 Add-ChangelogData -Type "Removed" -Data "TLS 1.0 support" -Path project\CHANGELOG.md
-```
-
 Does not generate output, but adds a new Security change into changelog at project\CHANGELOG.md.
+```
 
 ## PARAMETERS
 
