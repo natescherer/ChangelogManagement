@@ -66,7 +66,7 @@ jobs:
       - name: Compress module for GitHub release
         id: compress
         run: |
-          $SourcePath = Join-Path $env:GITHUB_WORKSPACE "src"
+          $SourcePath = Join-Path $env:GITHUB_WORKSPACE "src" "*"
           $DestPath = Join-Path $env:GITHUB_WORKSPACE "out"
           Copy-Item -Path $SourcePath -Destination $DestPath -Recurse
           $ZipPath = Join-Path $env:GITHUB_WORKSPACE "out" "$env:BARE_REPOSITORY-v$env:GITVERSION_SEMVER.zip"
