@@ -1,8 +1,8 @@
-name: Publish to JFrog
+name: Publish to Cloudsmith
 on: 
   workflow_dispatch:
 jobs:
-  PublishToJFrog:
+  TestPublish:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,10 +25,10 @@ jobs:
           path: src
           version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
           copyright: (c) YYYY Nate Scherer. All rights reserved.
-      - name: Publish Module to JFrog
+      - name: Publish Module to Cloudsmith
         uses: natescherer/publish-powershell-action@v1
         with:
-          token: ${{ secrets.JFROG_TOKEN }}
+          token: ${{ secrets.CLOUDSMITH_TOKEN }}
           target: nuget
-          nugetUrl: https://natescherer.jfrog.io/artifactory/api/nuget/nuget
+          nugetUrl: https://nuget.cloudsmith.io/natescherer/changelogmanagement/v2/
           path: src
