@@ -57,3 +57,34 @@ jobs:
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+  TestRelease:
+    needs: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.15
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.15
+      - name: Update PowerShell Metadata
+        uses: natescherer/update-powershell-metadata-action@v2
+        with:
+          path: src
+          version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
+          copyright: (c) YYYY Nate Scherer. All rights reserved.
+      - name: Publish Module to Cloudsmith
+        uses: natescherer/publish-powershell-action@v1
+        with:
+          token: ${{ secrets.CLOUDSMITH_KEY }}
+          target: nuget
+          nugetUrl: https://nuget.cloudsmith.io/natescherer/changelogmanagement/v3/index.json
+          path: src
