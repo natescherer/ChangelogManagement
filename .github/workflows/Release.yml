@@ -46,7 +46,7 @@ jobs:
       - name: Generate Markdown Help Files
         run: |
           $DocsPath = Join-Path $env:GITHUB_WORKSPACE docs
-          if (Test-Path -Path $DocsPath)) {
+          if (Test-Path -Path $DocsPath) {
             $CleanPath = Join-Path $DocsPath "*"
             Remove-Item -Path $CleanPath
           } else {
