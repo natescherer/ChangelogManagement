@@ -29,7 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Pester Tests
-        uses: natescherer/pester-tests-report@feature/windows-powershell-support
+        uses: natescherer/pester-tests-report@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           shell: ${{ matrix.shell }}
@@ -47,7 +47,7 @@ jobs:
         with:
           fail_ci_if_error: true
   TestRelease:
-    if: github.ref_name != 'main'
+    if: github.ref_name != 'main' && github.event_name != 'workflow_dispatch'
     needs: Test
     runs-on: ubuntu-latest
     defaults:
