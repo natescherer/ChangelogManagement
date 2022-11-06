@@ -29,9 +29,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Pester Tests
-        uses: natescherer/pester-tests-report@bugfix/check-runs-with-workflow-dispatch 
+        uses: natescherer/pester-tests-report@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          shell: ${{ matrix.shell }}
           tests_fail_step: true
           report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
           gist_token: ${{ secrets.PESTER_GIST_TOKEN }}
