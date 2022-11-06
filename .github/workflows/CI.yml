@@ -47,7 +47,7 @@ jobs:
         with:
           fail_ci_if_error: true
   TestRelease:
-    if: github.ref_name != 'main'
+    if: github.ref_name != 'main' && github.event_name != 'workflow_dispatch'
     needs: Test
     runs-on: ubuntu-latest
     defaults:
