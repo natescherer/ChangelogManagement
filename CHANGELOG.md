@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Get-ChangelogData now always outputs a PSCustomObject for the Unreleased property when there is an Unreleased section header in the changelog. The PSCustomObject property RawData will contain the Unreleased header and any change type headers that exist. The properties Added, Changed, Deprecated, Removed, Fixed, and Security will be null if there are no corresponding change type under the Unreleased section header.
+
+### Fixed
+
+- Get-ChangelogData will now return null for the property Unreleased if there are no Unreleased section header in the changelog.
+
 ## [3.0.0] - 2022-11-04
 ### Added
 - New LinkModes 'GitHub' and 'AzureDevOps' on Update-Changelog which remove the need to manually specify a LinkPattern
