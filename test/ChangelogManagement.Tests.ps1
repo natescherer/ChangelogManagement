@@ -281,11 +281,8 @@ InModuleScope $ModuleName {
                 Set-Content -Value $SeedDataNoUnreleased -Path $TestPathNoUnreleased -NoNewline
                 $DataNoUnreleased = Get-ChangelogData -Path $TestPathNoUnreleased
             }
-            It "Data.Unreleased.RawData" {
-                $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
-            }
-            It "Data.Unreleased.Data" {
-                $DataNoUnreleased.Unreleased.RawData | Should -BeNullOrEmpty
+            It "Data.Unreleased" {
+                $DataNoUnreleased.Unreleased | Should -BeNullOrEmpty
             }
         }
         It "Output.ReleaseNotes" {
