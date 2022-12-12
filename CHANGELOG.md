@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2022-12-12
+
 ### Changed
 
 - Get-ChangelogData now always outputs a PSCustomObject for the Unreleased property when there is an Unreleased section header in the changelog. The PSCustomObject property RawData will contain the Unreleased header and any change type headers that exist. The properties Added, Changed, Deprecated, Removed, Fixed, and Security will be null if there are no corresponding change type under the Unreleased section header.
@@ -72,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.0..HEAD
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.1..HEAD
+[3.0.1]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.0..v3.0.1
 [3.0.0]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.4..v3.0.0
 [2.1.4]: /compare/v2.1.3..v2.1.4
 [2.1.3]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.2..v2.1.3
