@@ -69,19 +69,20 @@ function Get-ChangelogData {
         $UnreleasedTemp = $Sections[0]
         $Sections.Remove($UnreleasedTemp)
     } else {
-        $UnreleasedTemp = ""
+        $UnreleasedTemp = $null
     }
 
-    # Construct the $Output.Unreleased object
-    foreach ($ChangeType in $ChangeTypes) {
-        if ($UnreleasedTemp -notlike "*### $ChangeType*") {
-            Set-Variable -Name "Unreleased$ChangeType" -Value $null
-        } else {
-            $Value = (($UnreleasedTemp -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
-            Set-Variable -Name "Unreleased$ChangeType" -Value $Value
+    if ($UnreleasedTemp) {
+        # Construct the $Output.Unreleased object
+        foreach ($ChangeType in $ChangeTypes) {
+            if ($UnreleasedTemp -notlike "*### $ChangeType*") {
+                Set-Variable -Name "Unreleased$ChangeType" -Value $null
+            } else {
+                $Value = (($UnreleasedTemp -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
+                Set-Variable -Name "Unreleased$ChangeType" -Value $Value
+            }
         }
-    }
-    if ($UnreleasedAdded -or $UnreleasedChanged -or $UnreleasedDeprecated -or $UnreleasedRemoved -or $UnreleasedFixed -or $UnreleasedSecurity) {
+
         $Output.Unreleased = [PSCustomObject]@{
             "RawData" = $UnreleasedTemp
             "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $FileNewline)[0]
@@ -94,6 +95,8 @@ function Get-ChangelogData {
                 Security   = $UnreleasedSecurity
             }
         }
+    } else {
+        $Output.Unreleased = $null
     }
 
     # Construct the $Output.Released array
