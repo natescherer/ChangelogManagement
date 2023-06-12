@@ -22,12 +22,12 @@ jobs:
           $ModuleManifest = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Include *.psm1 -Recurse
           "MODULE_PATH=$($ModuleManifest.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.15
+        uses: gittools/actions/gitversion/setup@v0.10.2
         with:
           versionSpec: '5.x'
       - name: Determine Version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.15
+        uses: gittools/actions/gitversion/execute@v0.10.2
       - name: Update Changelog
         id: changelog
         uses: natescherer/changelog-management-action@v1
