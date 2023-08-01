@@ -26,7 +26,7 @@ jobs:
       - name: Set Variables
         run: |
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          "LOWERCASE_REPOSITORY"=$env:GITHUB_REPOSITORY.ToLower() | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "LOWERCASE_REPOSITORY=$($env:GITHUB_REPOSITORY.ToLower())" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Pester Tests
