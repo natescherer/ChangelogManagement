@@ -26,6 +26,7 @@ jobs:
       - name: Set Variables
         run: |
           "BARE_REPOSITORY=$($env:GITHUB_REPOSITORY.split("/")[1])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "LOWERCASE_REPOSITORY"=$env:GITHUB_REPOSITORY.ToLower() | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Pester Tests
@@ -47,7 +48,7 @@ jobs:
         with:
           fail_ci_if_error: true
   TestRelease:
-    if: github.ref_name != 'main' && github.event_name != 'workflow_dispatch'
+    if: github.event_name != 'workflow_dispatch'
     needs: Test
     runs-on: ubuntu-latest
     defaults:
@@ -76,5 +77,5 @@ jobs:
         with:
           token: ${{ secrets.CLOUDSMITH_KEY }}
           target: nuget
-          nugetUrl: https://nuget.cloudsmith.io/${{ github.repository }}/v3/index.json
+          nugetUrl: https://nuget.cloudsmith.io/${{ env.LOWERCASE_REPOSITORY }}/v3/index.json
           path: src
