@@ -1,10 +1,15 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Get-ChangelogData now returns an additional `ChangeCount` property on `Unreleased` and `Released` properties. `ChangeCount` contains an integer count of the number of changes in that section. (Note that counts for individual change types in a section are available via `$OutputVariable.SECTION-NAME-HERE.Data.CHANGE-TYPE-HERE.Count` syntax.)
 
 ## [3.0.1] - 2022-12-12
 
@@ -17,11 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Get-ChangelogData will now return null for the property Unreleased if there are no Unreleased section header in the changelog.
 
 ## [3.0.0] - 2022-11-04
+
 ### Added
+
 - New LinkModes 'GitHub' and 'AzureDevOps' on Update-Changelog which remove the need to manually specify a LinkPattern
 - New property 'ReleaseNotes' returned by Get-ChangelogData containing a formatted version of the changes from the most recent released version
 
 ### Changed
+
 - BREAKING CHANGE: New-Changelog now populates an initial change 'Added: Initial release'. This can be overridden to match previous behavior via the new '-NoInitialChange' parameter
 - BREAKING CHANGE: Get-ChangelogData's Output.Unreleased is now null if there are no unreleased changes to match the behavior of Output.Released
 - BREAKING CHANGE: Minimum supported PowerShell raised to 5.1 instead of 5.0
@@ -29,45 +37,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build/test/deploy switched from Azure DevOps to GitHub Actions
 
 ### Fixed
+
 - Add-ChangelogData now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
 - Update-Changelog now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
 - Get-ChangelogData now detects type of newline used in file rather than assuming it matches [System.Environment]::NewLine
 
 ## [2.1.4] - 2020-02-05
+
 ### Fixed
+
 - Newline matching in regex updated to work properly on Linux [#11](https://github.com/natescherer/ChangelogManagement/issues/11)
 
 ## [2.1.3] - 2019-03-06
+
 ### Fixed
+
 - Capitalization on ConvertFrom-Changelog now matches verb specifications
 - Handling of missing Unreleased section in changelog file
 
 ## [2.1.2] - 2019-02-13
+
 ### Fixed
+
 - Broken links and badly formatted text in module metadata
 
 ## [2.1.1] - 2019-02-11
+
 ### Fixed
+
 - Inaccurate parameter documentation corrected
 - Update-Changelog ReleaseVersion validation no longer forces SemVer format
 
 ## [2.1.0] - 2019-02-08
+
 ### Added
+
 - Support for macOS
 
 ### Changed
+
 - Building/releasing/testing changed from AppVeyor to Azure Pipelines
 
 ### Fixed
+
 - Version comparison check in Update-Changelog required .NET System.Version; check has been removed to support any versioning scheme
 - Unreleased sections now match specification in that they only contain headers for types of changes that exist
 
 ## [2.0.0] - 2019-01-28
+
 ### Changed
+
 - Update-Changelog -LinkMode Automatic now uses a -LinkPattern parameter (replacing -LinkBase and -ReleasePrefix) which can support any VCS
 
 ## [1.0.0] - 2018-10-20
+
 ### Added
+
 - Get-ChangelogData cmdlet
 - Add-ChangelogData cmdlet
 - New-Changelog cmdlet

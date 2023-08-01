@@ -31,7 +31,8 @@ function Get-ChangelogData {
     $NL = [System.Environment]::NewLine
     if ((Get-Content -Path $Path -Raw) -like "*`r`n*") {
         $FileNewline = "`r`n"
-    } else {
+    }
+    else {
         $FileNewline = "`n"
     }
 
@@ -39,11 +40,11 @@ function Get-ChangelogData {
     $ChangelogData = Get-Content -Path $Path -Raw
 
     $Output = [PSCustomObject]@{
-        "Header"      = ""
-        "Unreleased"  = [PSCustomObject]@{ }
-        "Released"    = @()
-        "Footer"      = ""
-        "LastVersion" = ""
+        "Header"       = ""
+        "Unreleased"   = [PSCustomObject]@{ }
+        "Released"     = @()
+        "Footer"       = ""
+        "LastVersion"  = ""
         "ReleaseNotes" = ""
     }
 
@@ -68,7 +69,8 @@ function Get-ChangelogData {
     if ($Sections[0] -match "## \[Unreleased\].*") {
         $UnreleasedTemp = $Sections[0]
         $Sections.Remove($UnreleasedTemp)
-    } else {
+    }
+    else {
         $UnreleasedTemp = $null
     }
 
@@ -77,16 +79,17 @@ function Get-ChangelogData {
         foreach ($ChangeType in $ChangeTypes) {
             if ($UnreleasedTemp -notlike "*### $ChangeType*") {
                 Set-Variable -Name "Unreleased$ChangeType" -Value $null
-            } else {
+            }
+            else {
                 $Value = (($UnreleasedTemp -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
                 Set-Variable -Name "Unreleased$ChangeType" -Value $Value
             }
         }
 
         $Output.Unreleased = [PSCustomObject]@{
-            "RawData" = $UnreleasedTemp
-            "Link"    = (($Output.Footer -split "Unreleased\]: ")[1] -split $FileNewline)[0]
-            "Data"    = [PSCustomObject]@{
+            "RawData"     = $UnreleasedTemp
+            "Link"        = (($Output.Footer -split "Unreleased\]: ")[1] -split $FileNewline)[0]
+            "Data"        = [PSCustomObject]@{
                 Added      = $UnreleasedAdded
                 Changed    = $UnreleasedChanged
                 Deprecated = $UnreleasedDeprecated
@@ -94,8 +97,10 @@ function Get-ChangelogData {
                 Fixed      = $UnreleasedFixed
                 Security   = $UnreleasedSecurity
             }
+            "ChangeCount" = $UnreleasedAdded.Count + $UnreleasedChanged.Count + $UnreleasedDeprecated.Count + $UnreleasedRemoved.Count + $UnreleasedFixed.Count + $UnreleasedSecurity.Count
         }
-    } else {
+    }
+    else {
         $Output.Unreleased = $null
     }
 
@@ -104,7 +109,8 @@ function Get-ChangelogData {
         foreach ($ChangeType in $ChangeTypes) {
             if ($Release -notlike "*### $ChangeType*") {
                 Set-Variable -Name "Release$ChangeType" -Value $null
-            } else {
+            }
+            else {
                 $Value = (($Release -split "### $ChangeType$FileNewline")[1] -split "###")[0].TrimEnd($FileNewline) -split $FileNewline | ForEach-Object { $_.TrimStart("- ") }
                 Set-Variable -Name "Release$ChangeType" -Value $Value
             }
@@ -112,11 +118,11 @@ function Get-ChangelogData {
 
         $LoopVersionNumber = $Release.Split("[")[1].Split("]")[0]
         $Output.Released += [PSCustomObject]@{
-            "RawData" = $Release
-            "Date"    = Get-Date ($Release -split "\] \- ")[1].Split($FileNewline)[0]
-            "Version" = $LoopVersionNumber
-            "Link"    = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $FileNewline)[0]
-            "Data"    = [PSCustomObject]@{
+            "RawData"     = $Release
+            "Date"        = Get-Date ($Release -split "\] \- ")[1].Split($FileNewline)[0]
+            "Version"     = $LoopVersionNumber
+            "Link"        = (($Output.Footer -split "$LoopVersionNumber\]: ")[1] -split $FileNewline)[0]
+            "Data"        = [PSCustomObject]@{
                 Added      = $ReleaseAdded
                 Changed    = $ReleaseChanged
                 Deprecated = $ReleaseDeprecated
@@ -124,6 +130,7 @@ function Get-ChangelogData {
                 Fixed      = $ReleaseFixed
                 Security   = $ReleaseSecurity
             }
+            "ChangeCount" = $ReleaseAdded.Count + $ReleaseChanged.Count + $ReleaseDeprecated.Count + $ReleaseRemoved.Count + $ReleaseFixed.Count + $ReleaseSecurity.Count
         }
     }
 
@@ -131,13 +138,15 @@ function Get-ChangelogData {
     # have not been any releases yet
     if ($Output.Released[0].Version) {
         $Output.LastVersion = $Output.Released[0].Version
-    } else {
+    }
+    else {
         $Output.LastVersion = $null
     }
 
     if ($Output.Released[0]) {
         $Output.ReleaseNotes = ($Output.Released[0].RawData -replace "^## .*", "").Trim()
-    } else {
+    }
+    else {
         $Output.ReleaseNotes = $null
     }
 
