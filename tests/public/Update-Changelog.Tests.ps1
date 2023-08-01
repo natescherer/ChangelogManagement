@@ -829,6 +829,61 @@ Describe "Update-Changelog" {
                 "[1.1.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo/branchCompare?baseVersion=GTv1.0.0&targetVersion=GTv1.1.0&_a=commits$NL" +
                 "[1.0.0]: https://dev.azure.com/testcompany/testproject/_git/testrepo?version=GTv1.0.0")
         }
+        AfterAll {
+            $env:SYSTEM_TASKDEFINITIONSURI = $null
+            $env:SYSTEM_TEAMPROJECT = $null
+            $env:BUILD_REPOSITORY_NAME = $null
+        }
+    }
+    Context "-LinkMode GitHub, but wrong env" {
+        It "Throw" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "$NL")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+            $UCSplat = @{
+                Path           = $TestPath
+                ReleaseVersion = "1.0.0"
+                LinkMode       = "GitHub"
+            }
+            { Update-Changelog @UCSplat } | Should -Throw -ExpectedMessage "You must be running in GitHub Actions to use GitHub LinkMode"
+        }
+    }
+    Context "-LinkMode AzureDevOps, but wrong env" {
+        It "Throw" {
+            $TestPath = "TestDrive:\CHANGELOG.md"
+
+            $SeedData = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "### Added$NL" +
+                "- Unreleased Addition 1$NL" +
+                "$NL")
+
+            Set-Content -Value $SeedData -Path $TestPath -NoNewline
+
+            $UCSplat = @{
+                Path           = $TestPath
+                ReleaseVersion = "1.0.0"
+                LinkMode       = "AzureDevOps"
+            }
+            { Update-Changelog @UCSplat } | Should -Throw -ExpectedMessage "You must be running in Azure Pipelines to use AzureDevOps LinkMode"
+        }
     }
     It "-OutputPath" {
         $TestPath = "TestDrive:\CHANGELOG.md"
