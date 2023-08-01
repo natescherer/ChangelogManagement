@@ -270,6 +270,40 @@ Describe "Get-ChangelogData" {
     It "Output.LastVersion" {
         $Data.LastVersion | Should -Be "1.1.0"
     }
+    It "Output.ReleaseNotes" {
+        $Data.ReleaseNotes | Should -Be ("### Added$NL" +
+            "- Released Addition 1$NL" +
+            "$NL" +
+            "### Changed$NL" +
+            "- Released Change 1$NL" +
+            "- Released Change 2$NL" +
+            "$NL" +
+            "### Deprecated$NL" +
+            "- Released Deprecation 1$NL" +
+            "- Released Deprecation 2$NL" +
+            "- Released Deprecation 3$NL" +
+            "$NL" +
+            "### Removed$NL" +
+            "- Released Removal 1$NL" +
+            "- Released Removal 2$NL" +
+            "- Released Removal 3$NL" +
+            "- Released Removal 4$NL" +
+            "$NL" +
+            "### Fixed$NL" +
+            "- Released Fix 1$NL" +
+            "- Released Fix 2$NL" +
+            "- Released Fix 3$NL" +
+            "- Released Fix 4$NL" +
+            "- Released Fix 5$NL" +
+            "$NL" +
+            "### Security$NL" +
+            "- Released Vulnerability 1$NL" +
+            "- Released Vulnerability 2$NL" +
+            "- Released Vulnerability 3$NL" +
+            "- Released Vulnerability 4$NL" +
+            "- Released Vulnerability 5$NL" +
+            "- Released Vulnerability 6")
+    }
     Context "Missing Unreleased Section" {
         BeforeAll {
             $TestPathNoUnreleased = "TestDrive:\CHANGELOGNOUNRELEASED.md"
@@ -319,39 +353,59 @@ Describe "Get-ChangelogData" {
             $DataNoUnreleased.Unreleased | Should -BeNullOrEmpty
         }
     }
-    It "Output.ReleaseNotes" {
-        $Data.ReleaseNotes | Should -Be ("### Added$NL" +
-            "- Released Addition 1$NL" +
-            "$NL" +
-            "### Changed$NL" +
-            "- Released Change 1$NL" +
-            "- Released Change 2$NL" +
-            "$NL" +
-            "### Deprecated$NL" +
-            "- Released Deprecation 1$NL" +
-            "- Released Deprecation 2$NL" +
-            "- Released Deprecation 3$NL" +
-            "$NL" +
-            "### Removed$NL" +
-            "- Released Removal 1$NL" +
-            "- Released Removal 2$NL" +
-            "- Released Removal 3$NL" +
-            "- Released Removal 4$NL" +
-            "$NL" +
-            "### Fixed$NL" +
-            "- Released Fix 1$NL" +
-            "- Released Fix 2$NL" +
-            "- Released Fix 3$NL" +
-            "- Released Fix 4$NL" +
-            "- Released Fix 5$NL" +
-            "$NL" +
-            "### Security$NL" +
-            "- Released Vulnerability 1$NL" +
-            "- Released Vulnerability 2$NL" +
-            "- Released Vulnerability 3$NL" +
-            "- Released Vulnerability 4$NL" +
-            "- Released Vulnerability 5$NL" +
-            "- Released Vulnerability 6")
+    Context "Empty Unreleased Section" {
+        BeforeAll {
+            $TestPathEmptyUnreleased = "TestDrive:\CHANGELOGEMPTYUNRELEASED.md"
+            $SeedDataEmptyUnreleased = ("# Changelog$NL" +
+                "All notable changes to this project will be documented in this file.$NL" +
+                "$NL" +
+                "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),$NL" +
+                "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).$NL" +
+                "$NL" +
+                "## [Unreleased]$NL" +
+                "$NL" +
+                "## [1.1.0] - 2001-01-01$NL" +
+                "### Added$NL" +
+                "- Released Addition 1$NL" +
+                "- Released Addition 2$NL" +
+                "$NL" +
+                "### Changed$NL" +
+                "- Released Change 1$NL" +
+                "- Released Change 2$NL" +
+                "$NL" +
+                "### Deprecated$NL" +
+                "- Released Deprecation 1$NL" +
+                "- Released Deprecation 2$NL" +
+                "$NL" +
+                "### Removed$NL" +
+                "- Released Removal 1$NL" +
+                "- Released Removal 2$NL" +
+                "$NL" +
+                "### Fixed$NL" +
+                "- Released Fix 1$NL" +
+                "- Released Fix 2$NL" +
+                "$NL" +
+                "### Security$NL" +
+                "- Released Vulnerability 1$NL" +
+                "- Released Vulnerability 2$NL" +
+                "$NL" +
+                "## [1.0.0] - 2000-01-01$NL" +
+                "### Added$NL" +
+                "- Initial release$NL" +
+                "$NL" +
+                "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
+                "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
+                "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Set-Content -Value $SeedDataEmptyUnreleased -Path $TestPathEmptyUnreleased -NoNewline
+            $DataEmptyUnreleased = Get-ChangelogData -Path $TestPathEmptyUnreleased
+        }
+        It "Data.Unreleased" {
+            $DataEmptyUnreleased.Unreleased | Should -Not -BeNullOrEmpty
+        }
+        It "Data.Unreleased.ChangeCount" {
+            $DataEmptyUnreleased.Unreleased.ChangeCount | Should -Be 0
+        }
     }
     Context "Different Newline Encodings" {
         It "Changelog with Linux/macOS Newlines" {
