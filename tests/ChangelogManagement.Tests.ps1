@@ -1,6 +1,6 @@
 BeforeAll {
-    $Separator = [IO.Path]::DirectorySeparatorChar
-    $ModuleManifestPath = $PSCommandPath.Replace("$($Separator)tests$($Separator)", "$($Separator)src$($Separator)").Replace(".Tests.ps1", ".psd1")
+    $ProjectRoot = Split-Path $PSScriptRoot -Parent
+    $ModuleManifestPath = $(Get-ChildItem -Path (Join-Path $ProjectRoot "src") -Filter "*.psd1").FullName
 }
 
 Describe 'Module Manifest Tests' {

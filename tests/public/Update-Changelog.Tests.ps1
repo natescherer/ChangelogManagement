@@ -1,6 +1,7 @@
 BeforeAll {
-    $Separator = [IO.Path]::DirectorySeparatorChar
-    . $PSCommandPath.Replace("$($Separator)tests$($Separator)", "$($Separator)src$($Separator)").Replace(".Tests.ps1", ".ps1")
+    $ProjectRoot = Split-Path $(Split-Path $PSScriptRoot -Parent) -Parent
+    $ModuleName = $(Get-ChildItem -Path (Join-Path $ProjectRoot "src") -Filter "*.psm1").Name.Replace(".psm1", "")
+    $ModulePath = Join-Path $ProjectRoot "src" "$ModuleName.psm1"
 
     $NL = [System.Environment]::NewLine
     $Today = (Get-Date -Format 'o').Split('T')[0]
