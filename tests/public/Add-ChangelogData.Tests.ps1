@@ -185,6 +185,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Changed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -236,6 +238,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Deprecated" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -287,6 +291,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Removed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -338,6 +344,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Fixed" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -389,6 +397,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Security" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -440,6 +450,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
     }
     Context "Unpopulated Source -Type" {
@@ -477,6 +489,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Changed" {
             Set-Content -Value $SeedDataUnpopulated -Path $TestPath -NoNewline
@@ -512,6 +526,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Deprecated" {
             Set-Content -Value $SeedDataUnpopulated -Path $TestPath -NoNewline
@@ -547,6 +563,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Removed" {
             Set-Content -Value $SeedDataUnpopulated -Path $TestPath -NoNewline
@@ -582,6 +600,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Fixed" {
             Set-Content -Value $SeedDataUnpopulated -Path $TestPath -NoNewline
@@ -617,6 +637,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Security" {
             Set-Content -Value $SeedDataUnpopulated -Path $TestPath -NoNewline
@@ -652,6 +674,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
     }
     Context "Partially Populated Source -Type" {
@@ -692,6 +716,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Changed" {
             Set-Content -Value $SeedDataPartiallyPopulatedAdded -Path $TestPath -NoNewline
@@ -730,6 +756,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Deprecated" {
             Set-Content -Value $SeedDataPartiallyPopulatedAdded -Path $TestPath -NoNewline
@@ -768,6 +796,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Removed" {
             Set-Content -Value $SeedDataPartiallyPopulatedAdded -Path $TestPath -NoNewline
@@ -806,6 +836,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Fixed" {
             Set-Content -Value $SeedDataPartiallyPopulatedAdded -Path $TestPath -NoNewline
@@ -844,6 +876,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Security" {
             Set-Content -Value $SeedDataPartiallyPopulatedAdded -Path $TestPath -NoNewline
@@ -882,6 +916,8 @@ Describe "Add-ChangelogData" {
                 "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
     }
     It "-OutputPath" {
@@ -935,6 +971,8 @@ Describe "Add-ChangelogData" {
             "[Unreleased]: https://github.com/testuser/testrepo/compare/v1.0.0..HEAD$NL" +
             "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
             "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+        Remove-Item $TestPath
     }
     Context "Different Newline Encodings" {
         It "Changelog with Linux/macOS Newlines - Added" {
@@ -970,6 +1008,8 @@ Describe "Add-ChangelogData" {
                 "`n")
 
             $Result | Should -Be $ExpectedResult
+
+            Remove-Item $TestPath
         }
         It "Changelog with Linux/macOS Newlines - Changed" {
             $TestPath = "TestDrive:\CHANGELOG.md"
@@ -1006,6 +1046,8 @@ Describe "Add-ChangelogData" {
                 "`n")
 
             $Result | Should -Be $ExpectedResult
+
+            Remove-Item $TestPath
         }
         It "Changelog with Windows Newlines - Added" {
             $TestPath = "TestDrive:\CHANGELOG.md"
@@ -1040,6 +1082,8 @@ Describe "Add-ChangelogData" {
                 "`r`n")
 
             $Result | Should -Be $ExpectedResult
+
+            Remove-Item $TestPath
         }
         It "Changelog with Windows Newlines - Changed" {
             $TestPath = "TestDrive:\CHANGELOG.md"
@@ -1076,6 +1120,8 @@ Describe "Add-ChangelogData" {
                 "`r`n")
 
             $Result | Should -Be $ExpectedResult
+
+            Remove-Item $TestPath
         }
     }
 }

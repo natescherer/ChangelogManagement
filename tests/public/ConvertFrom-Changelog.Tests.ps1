@@ -65,6 +65,8 @@ Describe "ConvertFrom-Changelog" {
                 "$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Text" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -93,6 +95,8 @@ Describe "ConvertFrom-Changelog" {
                 "[1.0.0] - 2000-01-01$NL" +
                 "Added$NL" +
                 "- Initial release")
+
+            Remove-Item $TestPath
         }
         It "TextRelease" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -117,6 +121,8 @@ Describe "ConvertFrom-Changelog" {
                 "[1.0.0] - 2000-01-01$NL" +
                 "Added$NL" +
                 "- Initial release")
+
+            Remove-Item $TestPath
         }
     }
     Context "-NoHeader" {
@@ -140,6 +146,8 @@ Describe "ConvertFrom-Changelog" {
                 "$NL" +
                 "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
                 "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+            Remove-Item $TestPath
         }
         It "Text" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -162,6 +170,8 @@ Describe "ConvertFrom-Changelog" {
                 "[1.0.0] - 2000-01-01$NL" +
                 "Added$NL" +
                 "- Initial release")
+
+            Remove-Item $TestPath
         }
         It "TextRelease" {
             Set-Content -Value $SeedData -Path $TestPath -NoNewline
@@ -180,6 +190,8 @@ Describe "ConvertFrom-Changelog" {
                 "[1.0.0] - 2000-01-01$NL" +
                 "Added$NL" +
                 "- Initial release")
+
+            Remove-Item $TestPath
         }
     }
     It "-OutputPath" {
@@ -204,5 +216,8 @@ Describe "ConvertFrom-Changelog" {
             "$NL" +
             "[1.1.0]: https://github.com/testuser/testrepo/compare/v1.0.0..v1.1.0$NL" +
             "[1.0.0]: https://github.com/testuser/testrepo/tree/v1.0.0")
+
+        Remove-Item $TestPath
+        Remove-Item $TestPath2
     }
 }
