@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Pester test structure modernized and updated to offer increased coverage and more test cases
 
+### Fixed
+- Now documented that AzureDevOps option for Update-Changelog's LinkMode requires default branch be main
+
 ## [3.0.1] - 2022-12-12
 
 ### Changed
