@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- 
 - Get-ChangelogData now returns an additional `ChangeCount` property on `Unreleased` and `Released` properties. `ChangeCount` contains an integer count of the number of changes in that section. (Note that counts for individual change types in a section are available via `$OutputVariable.SECTION-NAME-HERE.Data.CHANGE-TYPE-HERE.Count` syntax.)
 
 ### Changed
