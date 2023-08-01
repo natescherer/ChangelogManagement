@@ -1,10 +1,10 @@
 name: CI
 on:
   push:
-    branches:
+    branches-ignore:
       - main
-      - bugfix/**
-      - feature/**
+    paths-ignore:
+      - .github/**
   workflow_dispatch:
 jobs:
   Test:
