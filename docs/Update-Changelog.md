@@ -88,10 +88,13 @@ Can either be Automatic
 (adding based on pattern provided via -LinkPattern), Manual (adding placeholders which
 will need manually updated), None (not adding links), GitHub (adding based on GitHub Actions context),
 or AzureDevOps (adding based on Azure Pipelines environment variables).
-Note that you must be running
-this cmdlet inside GitHub Actions to use GitHub option.
-Likewise, you must be running this cmdlet inside
-Azure Pipelines and using an Azure DevOps repository to use AzureDevOps option.
+
+GITHUB ACTIONS NOTE: You must be running in a Github Actions workflow to use GitHub option. 
+
+AZURE DEVOPS NOTE: You must be running in an Azure Pipelines workflow to use AzureDevOps option.
+ 
+Additionally, your default branch must be 'main', if it is not, you should use the Automatic option with
+a custom pattern for your default branch.
 
 ```yaml
 Type: String
