@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.1.0] - 2023-08-02
 ### Added
 - Get-ChangelogData now returns an additional `ChangeCount` property on `Unreleased` and `Released` properties. `ChangeCount` contains an integer count of the number of changes in that section. (Note that counts for individual change types in a section are available via `$OutputVariable.SECTION-NAME-HERE.Data.CHANGE-TYPE-HERE.Count` syntax.)
 
@@ -103,7 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update-Changelog cmdlet
 - Convertfrom-Changelog cmdlet
 
-[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.1..HEAD
+[Unreleased]: https://github.com/natescherer/ChangelogManagement/compare/v3.1.0..HEAD
+[3.1.0]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.1..v3.1.0
 [3.0.1]: https://github.com/natescherer/ChangelogManagement/compare/v3.0.0..v3.0.1
 [3.0.0]: https://github.com/natescherer/ChangelogManagement/compare/v2.1.4..v3.0.0
 [2.1.4]: /compare/v2.1.3..v2.1.4
