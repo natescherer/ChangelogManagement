@@ -1,5 +1,12 @@
 name: CI-PR
-on: pull_request
+on: 
+  pull_request:
+    paths-ignore:
+      - .github/**
+      - README.md
+      - .all-contributorsrc
+      - CHANGELOG.md
+      - LICENSE
 jobs:
   Test:
     runs-on: ${{ matrix.os }}

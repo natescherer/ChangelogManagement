@@ -77,11 +77,14 @@ jobs:
         uses: rickstaa/action-create-tag@v1
         with:
           tag: v${{ steps.gitversion.outputs.SemVer }}
-      - name: Commit Changes to Repo
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
-          commit_message: Release v${{ steps.gitversion.outputs.SemVer }}
-          file_pattern: ":!test\\* :!test/*"
+          base: main
+          commit-message: Release v${{ steps.gitversion.outputs.SemVer }}
+          branch: release/v${{ steps.gitversion.outputs.SemVer }}
+          delete-branch: true
+          title: Release v${{ steps.gitversion.outputs.SemVer }}
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
