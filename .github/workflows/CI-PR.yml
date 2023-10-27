@@ -25,7 +25,7 @@ jobs:
             shell: powershell
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run Pester Tests for PR
         uses: zyborg/pester-tests-report@v1
         with:
