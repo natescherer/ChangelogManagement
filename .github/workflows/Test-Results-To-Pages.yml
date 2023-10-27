@@ -1,0 +1,56 @@
+name: Test Results to Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+   contents: read
+   pages: write
+   id-token: write
+
+concurrency:
+   group: 'pages'
+   cancel-in-progress: true
+
+jobs:
+  Test:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        shell: [pwsh, powershell]
+        exclude:
+          - os: ubuntu-latest
+            shell: powershell
+          - os: macos-latest
+            shell: powershell
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run Pester Tests
+        id: pester
+        uses: natescherer/pester-tests-report@feature/pages-publishing
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          shell: ${{ matrix.shell }}
+          skip_check_run: true
+          tests_fail_step: true
+          report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
+          page_name: ${{ github.event.repository.name }}_TestResults_${{ runner.os }}_${{ matrix.shell }}
+          page_badge_label: ${{ runner.os }} ${{ matrix.shell }}
+          coverage_paths: src\private,src\public
+          coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
+          coverage_page: true
+          coverage_page_badge_label: Code Coverage
+      - name: Upload Pages Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }}_${{ matrix.shell }}
+          path: ${{ steps.pester.outputs.pages_path }}
