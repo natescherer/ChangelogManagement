@@ -31,6 +31,8 @@ jobs:
             shell: powershell
           - os: macos-latest
             shell: powershell
+          - os: windows-latest
+            shell: powershell
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,3 +56,17 @@ jobs:
         with:
           name: ${{ runner.os }}_${{ matrix.shell }}
           path: ${{ steps.pester.outputs.pages_path }}
+  Deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: Test
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+      - name: Upload Combined Pages Artifact
+        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
