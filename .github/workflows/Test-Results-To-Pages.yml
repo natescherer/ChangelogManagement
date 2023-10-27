@@ -65,6 +65,11 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
       - name: Upload Combined Pages Artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
