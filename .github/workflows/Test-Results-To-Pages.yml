@@ -75,13 +75,10 @@ jobs:
           path: _config.yml
           contents: |
             markdown: GFM
-            remote_theme: pages-themes/hacker@v0.2.0
-            exclude:
-              - tests/
-              - src/
-              - *.md
+            remote_theme: abhinavs/moonwalk
             plugins:
               - jekyll-remote-theme
+              - jemoji
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
