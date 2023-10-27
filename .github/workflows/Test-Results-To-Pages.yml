@@ -63,13 +63,24 @@ jobs:
     runs-on: ubuntu-latest
     needs: Test
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Download Artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: ${{ runner.temp }}/testreports
+      - name: Write File
+        uses: DamianReeves/write-file-action@v1.2
+        with:
+          path: _config.yml
+          contents: |
+            markdown: GFM
+            theme: hacker
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
-          destination: ./_site/testreports
+          source: .
+          destination: ./_site
       - name: Generate Directory Listings
         uses: jayanta525/github-pages-directory-listing@v3.0.0
         with:
