@@ -1,9 +1,9 @@
 # ChangelogManagement
 
-[![Tests Windows PowerShell](https://raw.githubusercontent.com/gist/natescherer/aaaff94b47d7bf3029e61b95d6f4557c/raw/78c318d11859cc3601f79c54229f39d0f4d9466c/ChangelogManagement_TestResults_Windows_powershell.md_badge.svg)](https://gist.github.com/natescherer/aaaff94b47d7bf3029e61b95d6f4557c)
-[![Tests Windows Pwsh](https://raw.githubusercontent.com/gist/natescherer/c77c8bb9fe0066f4488621a199ebedc5/raw/a1ac84cd380e76b8247de997761ec864b8443597/ChangelogManagement_TestResults_Windows_pwsh.md_badge.svg)](https://gist.github.com/natescherer/c77c8bb9fe0066f4488621a199ebedc5)
-[![Tests Linux](https://raw.githubusercontent.com/gist/natescherer/e91fdb66a9fdd83c2d329a513d477cc9/raw/eaa3fc9500e82e5ad242af7ab54ae65fa8f6811d/ChangelogManagement_TestResults_Linux_pwsh.md_badge.svg)](https://gist.github.com/natescherer/e91fdb66a9fdd83c2d329a513d477cc9)
-[![Tests macOS](https://raw.githubusercontent.com/gist/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a/raw/fbab2c80e2a1f2f0311d07cbdf7934491eded948/ChangelogManagement_TestResults_macOS_pwsh.md_badge.svg)](https://gist.github.com/natescherer/120b8e0b4fa7a2a68ba69f7ddc2c5b0a)
+[![Tests Windows PowerShell](https://natescherer.github.io/ChangelogManagement/testreports/Windows_powershell/Windows_powershell_badge.svg)](https://natescherer.github.io/ChangelogManagement/testreports/Windows_powershell/Windows_powershell.html)
+[![Tests Windows Pwsh](https://natescherer.github.io/ChangelogManagement/testreports/Windows_pwsh/Windows_pwsh_badge.svg)](https://natescherer.github.io/ChangelogManagement/testreports/Windows_pwsh/Windows_pwsh.html)
+[![Tests Linux](https://natescherer.github.io/ChangelogManagement/testreports/Linux_pwsh/Linux_pwsh_badge.svg)](https://natescherer.github.io/ChangelogManagement/testreports/Linux_pwsh/Linux_pwsh.html)
+[![Tests macOS](https://natescherer.github.io/ChangelogManagement/testreports/macOS_pwsh/macOS_pwsh_badge.svg)](https://natescherer.github.io/ChangelogManagement/testreports/macOS_pwsh/macOS_pwsh.html)
 [![codecov](https://codecov.io/gh/natescherer/ChangelogManagement/branch/main/graph/badge.svg?token=rXSOfdrmo2)](https://codecov.io/gh/natescherer/ChangelogManagement)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)

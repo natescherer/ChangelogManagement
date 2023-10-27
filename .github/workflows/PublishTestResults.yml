@@ -1,4 +1,4 @@
-name: Publish Test Results to Pages
+name: Publish Test Results
 
 on:
   push:
@@ -52,6 +52,12 @@ jobs:
         with:
           name: ${{ runner.os }}_${{ matrix.shell }}
           path: ${{ steps.pester.outputs.pages_path }}
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        if: runner.os == 'Linux'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
   Deploy:
     environment:
       name: github-pages
@@ -76,6 +82,7 @@ jobs:
               - .github/
               - src/
               - tests/
+              - "**.md"
             plugins:
               - jekyll-remote-theme
               - jemoji
