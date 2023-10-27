@@ -68,7 +68,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
-          path: ${{ runner.temp }}/testreports
+          path: testreports
       - name: Write File
         uses: DamianReeves/write-file-action@v1.2
         with:
@@ -86,7 +86,7 @@ jobs:
       - name: Generate Directory Listings
         uses: jayanta525/github-pages-directory-listing@v3.0.0
         with:
-          FOLDER: ./_site/testreports
+          FOLDER: ./_site
       - name: Upload Combined Pages Artifact
         uses: actions/upload-pages-artifact@v2
       - name: Deploy to GitHub Pages
