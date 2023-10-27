@@ -1,10 +1,9 @@
-name: Test Results to Pages
+name: Publish Test Results to Pages
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
    contents: read
@@ -31,8 +30,6 @@ jobs:
             shell: powershell
           - os: macos-latest
             shell: powershell
-          - os: windows-latest
-            shell: powershell
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,12 +37,11 @@ jobs:
         id: pester
         uses: natescherer/pester-tests-report@feature/pages-publishing
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           shell: ${{ matrix.shell }}
           skip_check_run: true
           tests_fail_step: true
           report_name: TestResults_${{ runner.os }}_${{ matrix.shell }}
-          page_name: ${{ github.event.repository.name }}_TestResults_${{ runner.os }}_${{ matrix.shell }}
+          page_name: ${{ runner.os }}_${{ matrix.shell }}
           page_badge_label: ${{ runner.os }} ${{ matrix.shell }}
           coverage_paths: src\private,src\public
           coverage_report_name: CoverageResults_${{ runner.os }}_${{ matrix.shell }}
@@ -76,6 +72,10 @@ jobs:
           contents: |
             markdown: GFM
             remote_theme: pages-themes/hacker@v0.2.0
+            exclude:
+              - .github/
+              - src/
+              - tests/
             plugins:
               - jekyll-remote-theme
               - jemoji
