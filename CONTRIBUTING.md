@@ -14,38 +14,32 @@ If I accept your contribution, I'll add you to the Authors section in the README
 
 ## How to Contribute
 
-If you would like to make a simple contribution (a few lines or less), please put it in an Issue with the "contribution" label.
-
-For larger contributions, please fork this project, make the changes/additions, and then issue a Pull Request.
+For contributions, please fork this project, make the changes/additions, and then issue a Pull Request.
 Never done a pull request before? There's an easy tutorial [here](http://makeapullrequest.com/).
 
 ## How to report a bug
 
 ### Vulnerabilities
 
-If you find a security vulnerability, please do NOT open an Issue. Instead, email security@REPLACE-THIS-WITH-MY-GITHUB-USERNAME.com
+If you find a security vulnerability, please do NOT open an Issue. Instead, see [SECURITY.md](SECURITY.md)
 
 ### Non-Security Bugs
 
-For non-security bugs, please open a GitHub issue with the "bug" label containing the following information:
+For non-security bugs, please search GitHub issues to make sure someone else hasn't already reported the issue, and, if not, open an issue with the "bug" label containing the following information:
 
-> 1. What OS and PowerShell version are you using?
-> 2. What did you do?
-> 3. What did you expect to see?
-> 4. What did you see instead?
+> 1. What release are you using?
+> 1. What did you do?
+> 1. What did you expect to see?
+> 1. What did you see instead?
 
 ## How to suggest a feature or enhancement
 
-If you wish to suggest a feature or enhancement, please enter a GitHub issue with the "enhancement" label detailing the suggestion.
+If you wish to suggest a feature or enhancement, please search GitHub issues to make sure someone else hasn't already made the request, and, if not, enter an issue with the "enhancement" label.
 
 ## Code review process
 
-As I'm just one person, and my scripting is a side-project to my normal sysadmin work, it may take me a while to review.
+As I'm just one person, and my GitHub projects are a side-project to my normal job, it may take me a while to review.
 
 ## Questions
 
 If you have additional questions about contributing, please open a GitHub issue with the "question" tag.
-
-## Code Style
-
-I write all my PowerShell code according to the [PowerShell Best Practices and Style Guide](https://github.com/PoshCode/PowerShellPracticeAndStyle), so any contributions will be altered to match this style if they do not already follow it.
