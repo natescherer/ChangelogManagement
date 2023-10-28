@@ -82,7 +82,6 @@ jobs:
               - .github/
               - src/
               - tests/
-              - "**.md"
             plugins:
               - jekyll-remote-theme
               - jemoji
