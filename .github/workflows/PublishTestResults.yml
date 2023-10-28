@@ -32,7 +32,7 @@ jobs:
             shell: powershell
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run Pester Tests
         id: pester
         uses: natescherer/pester-tests-report@combined
@@ -66,7 +66,7 @@ jobs:
     needs: Test
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
