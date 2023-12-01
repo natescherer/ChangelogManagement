@@ -91,7 +91,7 @@ jobs:
           source: .
           destination: ./_site
       - name: Generate Directory Listings
-        uses: jayanta525/github-pages-directory-listing@v3.0.0
+        uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
           FOLDER: ./_site
       - name: Upload Combined Pages Artifact
