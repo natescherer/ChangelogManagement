@@ -48,7 +48,7 @@ jobs:
           coverage_page: true
           coverage_page_badge_label: Code Coverage
       - name: Upload Pages Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}_${{ matrix.shell }}
           path: ${{ steps.pester.outputs.pages_path }}
