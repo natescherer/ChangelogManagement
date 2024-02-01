@@ -53,7 +53,7 @@ jobs:
           name: ${{ runner.os }}_${{ matrix.shell }}
           path: ${{ steps.pester.outputs.pages_path }}
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: runner.os == 'Linux'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
